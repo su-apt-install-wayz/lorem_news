@@ -2,7 +2,7 @@ FROM php:8.4-fpm
 
 RUN apt-get update && apt-get install -y \
     libpq-dev postgresql-client wget vim git zip unzip zlib1g-dev libzip-dev libpng-dev \
-    nano tzdata locales nodejs npm cron libxml2-dev tesseract-ocr tesseract-ocr-fra \
+    nano tzdata locales nodejs npm cron libxml2-dev tesseract-ocr tesseract-ocr-fra dos2unix \
     poppler-utils \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
@@ -53,6 +53,7 @@ RUN php -r "copy('https://getcomposer.org/installer', 'composer-setup.php');" &&
 WORKDIR /var/www/html
 
 COPY --chown=www-data:www-data ./entrypoint.sh /usr/local/bin/entrypoint.sh
+RUN dos2unix /usr/local/bin/entrypoint.sh
 RUN chmod +x /usr/local/bin/entrypoint.sh
 
 COPY . .
