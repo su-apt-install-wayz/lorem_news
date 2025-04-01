@@ -1,0 +1,152 @@
+"use client";
+
+import React, { useState } from "react";
+import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
+import { Pagination, PaginationContent, PaginationItem, PaginationLink, PaginationNext, PaginationPrevious } from "@/components/ui/pagination";
+import { Spacing } from "@/components/Spacing";
+import CategoryBadge from "./CategoryBadge";
+import { cn } from "@/lib/utils";
+import { Skeleton } from "@/components/ui/skeleton";
+
+export interface Article {
+    id: number;
+    title: string;
+    content: string;
+    slug: string;
+    image: string;
+    published_at: string;
+    user: {
+        username: string;
+        picture: string;
+    };
+    category: {
+        id: number;
+        name: string;
+        color: string;
+    };
+    tags: string;
+}
+
+interface ArticlesListProps {
+    articles: Article[];
+    className?: string;
+    filters?: { category: string; sortBy: string };
+    loading?: boolean;
+}
+
+const ArticlesList: React.FC<ArticlesListProps> = ({ articles, className, filters = { category: "all", sortBy: "recent" }, loading = false }) => {
+    const [currentPage, setCurrentPage] = useState<number>(1);
+    const articlesPerPage = 12;
+
+    const filteredArticles = articles.filter(article =>
+        filters.category === "all" || article.category.name === filters.category
+    );
+
+    const sortedArticles = [...filteredArticles].sort((a, b) => {
+        if (filters.sortBy === "recent") {
+            return new Date(b.published_at).getTime() - new Date(a.published_at).getTime();
+        }
+        return 0;
+    });
+
+    const totalPages = Math.ceil(sortedArticles.length / articlesPerPage);
+    const indexOfLastArticle = currentPage * articlesPerPage;
+    const indexOfFirstArticle = indexOfLastArticle - articlesPerPage;
+    const currentArticles = sortedArticles.slice(indexOfFirstArticle, indexOfLastArticle);
+
+    const paginate = (pageNumber: number) => {
+        if (pageNumber >= 1 && pageNumber <= totalPages) {
+            setCurrentPage(pageNumber);
+        }
+    };
+
+    if (loading) {
+        return (
+            <div className={cn("default-classes", className)}>
+                <div className="grid w-full grid-cols-[repeat(auto-fill,minmax(290px,1fr))] justify-center gap-4">
+                    {Array.from({ length: articlesPerPage }).map((_, index) => (
+                        <Card key={index} className="p-0 rounded-md gap-4 overflow-hidden shadow-none">
+                            <Skeleton className="w-full h-62 rounded-none" />
+                            {/* <img className="w-full h-auto object-cover" src="/assets/image.png" alt="" /> */}
+                            <CardHeader className="px-3">
+                                <Skeleton className="h-4 w-1/3 mb-2" />
+                                <Skeleton className="h-6 w-2/3" />
+                            </CardHeader>
+                            <CardContent className="px-3">
+                                <Skeleton className="h-4 w-full mb-1" />
+                                <Skeleton className="h-4 w-5/6" />
+                            </CardContent>
+                            <CardFooter className="px-3 pb-4 flex items-center gap-2">
+                                <Skeleton className="w-10 h-10 rounded-full" />
+                                <div className="flex flex-col gap-1">
+                                    <Skeleton className="h-4 w-28" />
+                                    <Skeleton className="h-3 w-20" />
+                                </div>
+                            </CardFooter>
+                        </Card>
+                    ))}
+                </div>
+            </div>
+        );
+    }
+
+    return (
+        <div className={cn("default-classes", className)}>
+            <div className="grid w-full grid-cols-[repeat(auto-fill,minmax(290px,1fr))] justify-center gap-4">
+                {currentArticles.map((article, index) => (
+                    <Card key={index} className="p-0 rounded-md gap-4 overflow-hidden shadow-none">
+                        <img className="w-full h-auto object-cover" src={article?.image ?? "/assets/image.png"} alt="" />
+                        <CardHeader className="px-3">
+                            <CardDescription><CategoryBadge bgColor={article?.category?.color} categoryName={article?.category?.name} /></CardDescription>
+                            <CardTitle>{article.title}</CardTitle>
+                        </CardHeader>
+                        <CardContent className="px-3">
+                            <CardDescription>{article?.content.length > 100 ? article?.content.slice(0, 100) + "..." : article?.content}</CardDescription>
+                        </CardContent>
+                        <CardFooter className="px-3 pb-4">
+                            <div className="flex items-center gap-2">
+                                <img src={`/assets/profile/${article?.user?.picture ?? "Ander.png"}`} className="w-10 h-10 rounded-full" />
+                                <div className="flex flex-col">
+                                    <span className="text-sm font-semibold">{article?.user?.username}</span>
+                                    <span className="text-xs text-muted-foreground">{article?.published_at}</span>
+                                </div>
+                            </div>
+                        </CardFooter>
+                    </Card>
+                ))}
+            </div>
+            {filteredArticles.length > articlesPerPage && (
+                <>
+                    <Spacing size="sm" />
+                    <Pagination>
+                        <PaginationContent>
+                            <PaginationItem>
+                                <PaginationPrevious
+                                    href="#"
+                                    onClick={() => paginate(currentPage - 1)}
+                                    className={currentPage === 1 ? "opacity-50 pointer-events-none" : ""}
+                                />
+                            </PaginationItem>
+                            {Array.from({ length: totalPages }).map((_, index) => (
+                                <PaginationItem key={index} className={currentPage === index + 1 ? "bg-primary text-white rounded" : ""}>
+                                    <PaginationLink href="#" onClick={() => paginate(index + 1)}>
+                                        {index + 1}
+                                    </PaginationLink>
+                                </PaginationItem>
+                            ))}
+                            <PaginationItem>
+                                <PaginationNext
+                                    href="#"
+                                    onClick={() => paginate(currentPage + 1)}
+                                    className={currentPage === totalPages ? "opacity-50 pointer-events-none" : ""}
+                                />
+                            </PaginationItem>
+                        </PaginationContent>
+                    </Pagination>
+                </>
+            )}
+        </div>
+    );
+};
+
+export default ArticlesList;

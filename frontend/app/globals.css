@@ -1,0 +1,75 @@
+@import "tailwindcss";
+
+@plugin "tailwindcss-animate";
+
+@custom-variant dark (&:is(.dark *));
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --font-sans: var(--font-geist-sans);
+  --font-mono: var(--font-geist-mono);
+  --color-chart-5: var(--chart-5);
+  --color-chart-4: var(--chart-4);
+  --color-chart-3: var(--chart-3);
+  --color-chart-2: var(--chart-2);
+  --color-chart-1: var(--chart-1);
+  --color-ring: var(--ring);
+  --color-input: var(--input);
+  --color-border: var(--border);
+  --color-destructive-foreground: var(--destructive-foreground);
+  --color-destructive: var(--destructive);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-accent: var(--accent);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-muted: var(--muted);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-secondary: var(--secondary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-primary: var(--primary);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-popover: var(--popover);
+  --color-card-foreground: var(--card-foreground);
+  --color-card: var(--card);
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 4px);
+}
+
+:root {
+    --background: #EBEBEC;
+    --foreground: #030A16;
+    --card: #EFEFEF;
+    --card-foreground: #030812;
+    --popover: #EFEFEF;
+    --popover-foreground: #030812;
+    --primary: #313545;
+    --primary-foreground: #fff;
+    --secondary: #516577;
+    --secondary-foreground: #fff;
+    --muted: #D1D7E0;
+    --muted-foreground: #5B5C5D;
+    --accent: #3135450e;
+    --accent-foreground: #313545;
+    --destructive: #ad3941;
+    --destructive-foreground: #FFEFED;
+    --border: #DDE1E6;
+    --input: #DDE1E6;
+    --ring: #B3BBC8;
+    --chart-1: #313545;
+    --chart-2: #516577;
+    --chart-3: #CAD2DA;
+    --chart-4: #DDE1E6;
+    --chart-5: #8B9CB8;
+    --radius: 0.625rem;
+}  
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+  body {
+    @apply bg-background text-foreground;
+  }
+}
