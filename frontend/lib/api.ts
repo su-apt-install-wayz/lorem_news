@@ -1,22 +1,25 @@
+import { getSession } from "next-auth/react"
 import axios from "axios";
-import { getSession } from "next-auth/react";
 
-export async function axiosWithoutAuth() {
-    return axios.create({
-        baseURL: "http://localhost:88/api",
-    });
-}
+const api = axios.create({
+    baseURL: "http://localhost:8080",
+    headers: {
+        "Content-Type": "application/json",
+    },
+});
 
-export async function axiosWithAuth() {
+api.interceptors.request.use(async (config) => {
     const session = await getSession();
-    if (!session?.accessToken) {
-        throw new Error("No access token available");
+
+    console.log("Session", session?.user?.token);
+
+    if (session?.user?.token) {
+        config.headers.Authorization = `Bearer ${session.user.token}`
     }
 
-    return axios.create({
-        baseURL: "http://localhost:88/api",
-        headers: {
-            Authorization: `Bearer ${session.accessToken}`,
-        },
-    });
-}
+    return config;
+}, (error) => {
+    return Promise.reject(error);
+});
+
+export default api;

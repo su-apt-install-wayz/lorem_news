@@ -5,7 +5,7 @@ import { Footer } from "@/components/Footer";
 import { Header } from "@/components/Header";
 import { Section } from "@/components/Section";
 import { Spacing } from "@/components/Spacing";
-import { axiosWithAuth, axiosWithoutAuth } from "@/lib/api";
+import api from "@/lib/api";
 import Image from "next/image";
 import { useEffect, useState } from "react";
 
@@ -19,8 +19,7 @@ export default function Home() {
             setLoading(true);
             setError(null);
             try {
-                const api = await axiosWithAuth();
-                const response = await api.get("/articles");
+                const response = await api.get("/api/articles");
                 setArticles(response.data);
             } catch (err) {
                 setError("Impossible de récupérer les articles. Veuillez réessayer plus tard.");

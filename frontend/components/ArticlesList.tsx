@@ -67,7 +67,6 @@ const ArticlesList: React.FC<ArticlesListProps> = ({ articles, className, filter
                     {Array.from({ length: articlesPerPage }).map((_, index) => (
                         <Card key={index} className="p-0 rounded-md gap-4 overflow-hidden shadow-none">
                             <Skeleton className="w-full h-62 rounded-none" />
-                            {/* <img className="w-full h-auto object-cover" src="/assets/image.png" alt="" /> */}
                             <CardHeader className="px-3">
                                 <Skeleton className="h-4 w-1/3 mb-2" />
                                 <Skeleton className="h-6 w-2/3" />
@@ -95,7 +94,7 @@ const ArticlesList: React.FC<ArticlesListProps> = ({ articles, className, filter
             <div className="grid w-full grid-cols-[repeat(auto-fill,minmax(290px,1fr))] justify-center gap-4">
                 {currentArticles.map((article, index) => (
                     <Card key={index} className="p-0 rounded-md gap-4 overflow-hidden shadow-none">
-                        <img className="w-full h-auto object-cover" src={article?.image ?? "/assets/image.png"} alt="" />
+                        <img className="w-full h-auto object-cover" src={article?.image ?? "/assets/Image.png"} alt="" />
                         <CardHeader className="px-3">
                             <CardDescription><CategoryBadge bgColor={article?.category?.color} categoryName={article?.category?.name} /></CardDescription>
                             <CardTitle>{article.title}</CardTitle>
