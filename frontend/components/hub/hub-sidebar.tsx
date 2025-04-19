@@ -5,9 +5,10 @@ import { IconChartBubbleFilled, IconDashboard, IconFolder, IconHelp, IconSearch,
 import { NavMain } from "@/components/hub/nav-main"
 import { NavUser } from "@/components/hub/nav-user"
 import { Sidebar, SidebarContent, SidebarFooter, SidebarHeader, SidebarMenu, SidebarMenuButton, SidebarMenuItem } from "@/components/ui/sidebar"
-import { AdminNav } from "@/components/hub/nav-admin"
+import { NavAdmin } from "@/components/hub/nav-admin"
 import { NavBottom } from "@/components/hub/nav-bottom"
-import { ArrowLeftFromLine, WrapText } from "lucide-react"
+import { WrapText } from "lucide-react"
+import { NavProjects } from "@/components/hub/nav-projects"
 
 const data = {
     user: {
@@ -49,6 +50,44 @@ const data = {
             icon: IconSearch,
         },
     ],
+    navProjects: [
+        {
+            title: "Dashboard",
+            url: "#",
+        },
+        {
+            title: "Projets",
+            url: "#",
+        },
+        {
+            title: "Equipes",
+            url: "#",
+        },
+        {
+            title: "Dashboard",
+            url: "#",
+        },
+        {
+            title: "Projets",
+            url: "#",
+        },
+        {
+            title: "Equipes",
+            url: "#",
+        },
+        {
+            title: "Dashboard",
+            url: "#",
+        },
+        {
+            title: "Projets",
+            url: "#",
+        },
+        {
+            title: "Equipes",
+            url: "#",
+        },
+    ],
     navBottom: [
         {
           title: "Retour sur le site",
@@ -75,7 +114,8 @@ export function HubSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
             </SidebarHeader>
             <SidebarContent>
                 <NavMain items={data.navMain} />
-                <AdminNav items={data.navAdmin} />
+                <NavAdmin items={data.navAdmin} />
+                <NavProjects items={data.navProjects} />
                 <NavBottom items={data.navBottom} className="mt-auto" />
             </SidebarContent>
             <SidebarFooter>

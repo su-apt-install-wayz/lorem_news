@@ -1,19 +1,9 @@
 "use client"
 
 import { type Icon } from "@tabler/icons-react"
+import { SidebarGroup, SidebarGroupContent, SidebarGroupLabel, SidebarMenu, SidebarMenuButton, SidebarMenuItem } from "@/components/ui/sidebar"
 
-import {
-    SidebarGroup,
-    SidebarGroupContent,
-    SidebarGroupLabel,
-    SidebarMenu,
-    SidebarMenuButton,
-    SidebarMenuItem,
-} from "@/components/ui/sidebar"
-
-export function AdminNav({
-    items,
-}: {
+export function NavAdmin({ items }: {
     items: {
         title: string
         url: string
@@ -22,7 +12,7 @@ export function AdminNav({
 }) {
     return (
         <SidebarGroup>
-            <SidebarGroupLabel>Panel Admin</SidebarGroupLabel>
+            <SidebarGroupLabel>Administration</SidebarGroupLabel>
             <SidebarGroupContent className="flex flex-col gap-2">
                 <SidebarMenu>
                     {items.map((item) => (
