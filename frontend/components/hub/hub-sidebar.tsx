@@ -19,7 +19,7 @@ const data = {
     navMain: [
         {
             title: "Dashboard",
-            url: "#",
+            url: "/hub/dashboard",
             icon: IconDashboard,
         },
         {
@@ -52,7 +52,7 @@ const data = {
     ],
     navProjects: [
         {
-            title: "Dashboard",
+            title: "Dashboard guojsfh fdisf fshlkklf dfkhsf djdg hfgdh",
             url: "#",
         },
         {
@@ -91,7 +91,7 @@ const data = {
     navBottom: [
         {
           title: "Retour sur le site",
-          url: "#",
+          url: "/",
           icon: WrapText,
         },
       ]

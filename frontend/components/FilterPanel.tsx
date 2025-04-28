@@ -34,7 +34,7 @@ export const FilterPanel: React.FC<FilterPanelProps> = ({ onFilterChange }) => {
     return (
         <Sheet>
             <SheetTrigger asChild>
-                <Button variant="outline" className="flex items-center gap-2 cursor-pointer">
+                <Button variant={"outline"} className="flex items-center gap-2 cursor-pointer">
                     <Filter />
                     <span>Filtrer</span>
                 </Button>

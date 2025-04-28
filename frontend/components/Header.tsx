@@ -60,7 +60,7 @@ export const Header = () => {
                     <div className="flex gap-3 items-center">
                         <Drawer>
                             <DrawerTrigger asChild>
-                                <Button className="hidden max-sm:flex cursor-pointer w-10 h-10" variant="ghost" size="icon">
+                                <Button className="hidden max-sm:flex cursor-pointer w-10 h-10" variant={"ghost"} size="icon">
                                     <svg aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
                                         <path stroke="currentColor" strokeLinecap="round" strokeWidth="2" d="m21 21-3.5-3.5M17 10a7 7 0 1 1-14 0 7 7 0 0 1 14 0Z" />
                                     </svg>
@@ -82,7 +82,7 @@ export const Header = () => {
                         {session ? (
                         <DropdownMenu>
                             <DropdownMenuTrigger asChild>
-                                <Button className="cursor-pointer rounded-full w-12 h-12 max-sm:w-10 max-sm:h-10 border" variant="link" size="icon">
+                                <Button className="cursor-pointer rounded-full w-12 h-12 max-sm:w-10 max-sm:h-10 border" variant={"link"} size="icon">
                                     <Image className='rounded-full' src={Avatar} alt="Avatar" />
                                 </Button>
                             </DropdownMenuTrigger>
@@ -124,7 +124,7 @@ export const Header = () => {
                             </DropdownMenuContent>
                         </DropdownMenu>
                         ) : (
-                            <Button onClick={() => signIn()} variant="default" className="rounded-xs cursor-pointer" asChild>
+                            <Button onClick={() => signIn()} variant={"default"} className="rounded-xs cursor-pointer" asChild>
                                 <Link href="/login">Se connecter</Link>
                             </Button>
                         )}

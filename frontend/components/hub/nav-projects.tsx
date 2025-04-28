@@ -4,6 +4,7 @@ import { Folder, Forward, Frame, MoreHorizontal, MouseIcon, Trash2 } from "lucid
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
 import { SidebarGroup, SidebarGroupLabel, SidebarMenu, SidebarMenuAction, SidebarMenuButton, SidebarMenuItem, useSidebar } from "@/components/ui/sidebar"
 import { ScrollArea } from "@/components/ui/scroll-area"
+import { cn } from "@/lib/utils"
 
 export function NavProjects({ items }: {
     items: {
@@ -27,11 +28,11 @@ export function NavProjects({ items }: {
                             <SidebarMenuButton asChild>
                                 <a href={item.url}>
                                     <Frame />
-                                    <span>{item.title}</span>
+                                    <span className="truncate max-w-[190px]">{item.title}</span>
                                 </a>
                             </SidebarMenuButton>
                             <DropdownMenu>
-                                <DropdownMenuTrigger asChild>
+                                <DropdownMenuTrigger className={cn(showMouseIcon && "mr-3")} asChild>
                                     <SidebarMenuAction showOnHover>
                                         <MoreHorizontal />
                                         <span className="sr-only">Plus</span>

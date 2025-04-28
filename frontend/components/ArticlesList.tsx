@@ -32,11 +32,11 @@ interface ArticlesListProps {
     className?: string;
     filters?: { category: string; sortBy: string };
     loading?: boolean;
+    articlesPerPage?: number;
 }
 
-const ArticlesList: React.FC<ArticlesListProps> = ({ articles, className, filters = { category: "all", sortBy: "recent" }, loading = false }) => {
+const ArticlesList: React.FC<ArticlesListProps> = ({ articles, className, filters = { category: "all", sortBy: "recent" }, loading = false, articlesPerPage = 12 }) => {
     const [currentPage, setCurrentPage] = useState<number>(1);
-    const articlesPerPage = 12;
 
     const filteredArticles = articles.filter(article =>
         filters.category === "all" || article.category.name === filters.category
