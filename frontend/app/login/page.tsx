@@ -102,10 +102,10 @@ export default function LoginPage() {
                         />
 
                         <div className="mx-1 flex flex-wrap gap-3 justify-between">
-                            <Button variant="link" className="text-secondary text-xs p-0 cursor-pointer ml-auto">Mot de passe oublié ?</Button>
+                            <Button variant={"link"} className="text-secondary text-xs p-0 cursor-pointer ml-auto">Mot de passe oublié ?</Button>
                         </div>
 
-                        <Button variant="default" type="submit" className="w-full h-11 cursor-pointer">Se connecter</Button>
+                        <Button variant={"default"} type="submit" className="w-full h-11 cursor-pointer">Se connecter</Button>
                     </form>
                 </Form>
             </div>

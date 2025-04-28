@@ -5,8 +5,9 @@ import { Footer } from "@/components/Footer";
 import { Header } from "@/components/Header";
 import { Section } from "@/components/Section";
 import { Spacing } from "@/components/Spacing";
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import api from "@/lib/api";
-import Image from "next/image";
+import { AlertCircleIcon } from "lucide-react";
 import { useEffect, useState } from "react";
 
 export default function Home() {
@@ -23,8 +24,6 @@ export default function Home() {
                 setArticles(response.data);
             } catch (err) {
                 setError("Impossible de récupérer les articles. Veuillez réessayer plus tard.");
-            } finally {
-                setLoading(false);
             }
         };
 
@@ -39,14 +38,16 @@ export default function Home() {
                 <Section className="px-0">
                     <h1 className="text-2xl text-primary font-bold text-center">LES ACTUALITÉS<span className="max-sm:hidden">{" "}DE LOREM NEWS</span></h1>
                     <Spacing size="xs" />
-                    {error ? (
-                        <div className="flex flex-col items-center text-center py-10 gap-5">
-                            <p className="text-destructive font-semibold">{error}</p>
-                            <Image src="/assets/laptop-server-error-dark.png" alt="Erreur" width={300} height={200} />
-                        </div>
-                    ) : (
-                        <ArticlesList className="mt-3" articles={articles} loading={loading} />
+                    
+                    {error && (
+                        <Alert variant="destructive" className="mb-5 border-destructive/20 bg-destructive/5 text-destructive">
+                            <AlertCircleIcon className="h-4 w-4" />
+                            <AlertTitle>Une erreur est survenue.</AlertTitle>
+                            <AlertDescription>{error}</AlertDescription>
+                        </Alert>
                     )}
+
+                    <ArticlesList className="mt-3" articles={articles} loading={loading} articlesPerPage={error ? 4 : 12} />
                 </Section>
             </main>
             <Spacing size="lg" />

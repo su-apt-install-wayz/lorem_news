@@ -29,7 +29,7 @@ export default function CategoryBadge({ bgColor, categoryName }: CategoryBadgePr
     return (
         <Badge
             className="rounded-xs capitalize"
-            variant="outline"
+            variant={"outline"}
             style={{
                 backgroundColor: `rgba(${rgbColor.join(", ")}, 0.15)`,
                 borderColor: `rgba(${rgbColor.join(", ")}, 0.3)`,
