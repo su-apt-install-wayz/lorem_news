@@ -1,4 +1,4 @@
-import { DataTable } from "@/components/hub/data-table"
+import { DataTable } from "@/components/data-table"
 
 import data from "./data.json"
 import { Button } from "@/components/ui/button"

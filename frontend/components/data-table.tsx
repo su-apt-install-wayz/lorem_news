@@ -1,11 +1,11 @@
 "use client"
 
 import * as React from "react"
-import { IconChevronLeft, IconChevronRight, IconChevronsLeft, IconChevronsRight, IconCircleCheckFilled, IconDotsVertical, IconLoader} from "@tabler/icons-react"
+import { useState } from "react"
+import { IconChevronLeft, IconChevronRight, IconChevronsLeft, IconChevronsRight, IconDotsVertical} from "@tabler/icons-react"
 import { ColumnDef, ColumnFiltersState, SortingState, VisibilityState, flexRender, getCoreRowModel, getFacetedRowModel, getFacetedUniqueValues, getFilteredRowModel, getPaginationRowModel, getSortedRowModel, useReactTable } from "@tanstack/react-table"
 import { z } from "zod"
 import { useIsMobile } from "@/hooks/use-mobile"
-import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Checkbox } from "@/components/ui/checkbox"
 import { Drawer, DrawerClose, DrawerContent, DrawerDescription, DrawerFooter, DrawerHeader, DrawerTitle, DrawerTrigger } from "@/components/ui/drawer"
@@ -15,15 +15,14 @@ import { Label } from "@/components/ui/label"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import { Tabs, TabsContent } from "@/components/ui/tabs"
+import { toast } from "sonner" 
+import api from "@/lib/api"
 
 export const schema = z.object({
   id: z.number(),
   username: z.string(),
   email: z.string(),
-  status: z.string(),
   roles: z.string(),
-  limit: z.string(),
-  reviewer: z.string(),
 })
 
 const columns: ColumnDef<z.infer<typeof schema>>[] = [
@@ -73,20 +72,6 @@ const columns: ColumnDef<z.infer<typeof schema>>[] = [
           {row.original.email}
         </Label>
       </div>
-    ),
-  },
-  {
-    accessorKey: "status",
-    header: "Status",
-    cell: ({ row }) => (
-      <Badge variant="outline" className="text-muted-foreground px-1.5">
-        {row.original.status === "Done" ? (
-          <IconCircleCheckFilled className="fill-green-500 dark:fill-green-400" />
-        ) : (
-          <IconLoader />
-        )}
-        {row.original.status}
-      </Badge>
     ),
   },
   {
@@ -281,63 +266,70 @@ export function DataTable({data: initialData}: { data: z.infer<typeof schema>[] 
 
 function TableCellViewer({ item }: { item: z.infer<typeof schema> }) {
   const isMobile = useIsMobile()
+  const [username, setUsername] = useState(item.username)
+  const [email, setEmail] = useState(item.email)
+  const [roles, setRoles] = useState(item.roles)
+  const [loading, setLoading] = useState(false)
+
+  const handleUpdate = async () => {
+    setLoading(true)
+    try {
+      await api.patch(`/api/users/${item.id}`, {
+        username,
+        email,
+        roles,
+      })
+      toast.success("Utilisateur mis à jour avec succès !")
+    } catch (error) {
+      console.error(error)
+      toast.error("Erreur lors de la mise à jour !")
+    } finally {
+      setLoading(false)
+    }
+  }
 
   return (
-    <Drawer direction={isMobile ? "bottom" : "right"} >
-      <DrawerTrigger className="w-full hover:bg-muted rounded-sm">
-        <Button variant="link" className="cursor-pointer">
+    <Drawer direction={isMobile ? "bottom" : "right"}>
+      <DrawerTrigger asChild>
+        <Button variant="link" className="w-full hover:bg-muted rounded-sm cursor-pointer">
           Modifier
         </Button>
       </DrawerTrigger>
       <DrawerContent>
         <DrawerHeader className="gap-1">
           <DrawerTitle>{item.username}</DrawerTitle>
-          <DrawerDescription>
-            {"Modificaiton des informations de l'utilisateur"}
-          </DrawerDescription>
+          <DrawerDescription>Modification des informations de l&apos;utilisateur</DrawerDescription>
         </DrawerHeader>
         <div className="flex flex-col gap-4 overflow-y-auto px-4 text-sm">
-          <form className="flex flex-col gap-4">
+          <div className="flex flex-col gap-4">
             <div className="flex flex-col gap-3">
-              <Label htmlFor="header">Nom</Label>
-              <Input id="header" defaultValue={item.username}/>
-              <Label htmlFor="header">Email</Label>
-              <Input id="header" defaultValue={item.email} />
+              <Label htmlFor="username">Nom</Label>
+              <Input id="username" value={username} onChange={(e) => setUsername(e.target.value)} />
+              <Label htmlFor="email">Email</Label>
+              <Input id="email" value={email} onChange={(e) => setEmail(e.target.value)} />
             </div>
-            <div className="grid grid-cols-2 gap-4">
-              <div className="flex flex-col gap-3">
-                <Label htmlFor="type">Statut</Label>
-                <Select defaultValue={item.status}>
-                  <SelectTrigger id="type" className="w-full">
-                    <SelectValue placeholder="Select a type" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="in_progress">En cours</SelectItem>
-                    <SelectItem value="end">Fini</SelectItem>
-                    <SelectItem value="block">Bloquer</SelectItem>
-                    <SelectItem value="r_none">Rien</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-              <div className="flex flex-col gap-3">
-                <Label htmlFor="status">Role</Label>
-                <Select defaultValue={item.status}>
-                  <SelectTrigger id="status" className="w-full">
-                    <SelectValue placeholder="Select a status" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="admin">Admin</SelectItem>
-                    <SelectItem value="visitor">visiteur</SelectItem>
-                    <SelectItem value="user">utilisateur</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
+            <div className="flex flex-col gap-3">
+              <Label htmlFor="roles">Role</Label>
+              <Select defaultValue={roles} onValueChange={(value) => setRoles(value)}>
+                <SelectTrigger id="roles" className="w-full">
+                  <SelectValue placeholder="Sélectionne un rôle" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="ROLE_ADMIN">Admin</SelectItem>
+                  <SelectItem value="ROLE_TEAMLEADER">Chef équipe</SelectItem>
+                  <SelectItem value="ROLE_EDITOR">Chef équipe</SelectItem>
+                  <SelectItem value="ROLE_USER">Utilisateur</SelectItem>
+                </SelectContent>
+              </Select>
             </div>
-          </form>
+          </div>
         </div>
-        <DrawerFooter>
+        <DrawerFooter className="flex flex-col gap-2">
+          <Button onClick={handleUpdate} disabled={loading}>
+            {loading ? "Mise à jour..." : "Mettre à jour"}
+          </Button>
           <DrawerClose asChild>
-            <Button>Mettre à jours</Button>
+            <Button variant="outline">Fermer</Button>
           </DrawerClose>
         </DrawerFooter>
       </DrawerContent>
