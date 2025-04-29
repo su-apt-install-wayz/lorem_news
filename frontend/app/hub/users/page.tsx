@@ -1,6 +1,6 @@
 "use client";
 
-import { DataTable } from "@/components/data-table"
+import { DataTable } from "@/app/hub/users/data-table-user"
 import { Button } from "@/components/ui/button"
 import HubLayout from "@/components/hub/hub-layout"
 import api from "@/lib/api";
@@ -35,7 +35,7 @@ export default function Page() {
     } else if (loading) {
         content = <div className="flex justify-center items-center py-10">
                     <p>Chargement...</p>
-                    <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-primary"/>
+                    <div className="animate-spin rounded-full h-6 w-6 border-t-2 border-b-2 border-primary"/>
                   </div>;
     } else {
         content = <DataTable data={users} />;

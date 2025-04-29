@@ -1,5 +1,4 @@
-import { DataTable } from "@/components/data-table"
-
+import { DataTable } from "@/app/hub/dashboard/data-table-dashbord"
 import data from "./data.json"
 import { Button } from "@/components/ui/button"
 import HubLayout from "@/components/hub/hub-layout"
