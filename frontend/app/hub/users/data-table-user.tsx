@@ -170,9 +170,8 @@ function ActionsCell({ item }: { item: z.infer<typeof schema> }) {
   const [username, setUsername] = useState(item.username)
   const [email, setEmail] = useState(item.email)
   const [loading, setLoading] = useState(false)
-  const [selectedRoles, setSelectedRoles] = React.useState<string[]>(
-    Array.isArray(item.roles) ? item.roles : [item.roles]
-  )
+  const [selectedRoles, setSelectedRoles] = useState<string[]>(Array.isArray(item.roles) ? item.roles : [item.roles]);
+
 
   const handleUpdate = async () => {
     setLoading(true)
@@ -229,7 +228,7 @@ function ActionsCell({ item }: { item: z.infer<typeof schema> }) {
               <MultiRoleSelector
                 selectedRoles={selectedRoles}
                 setSelectedRoles={setSelectedRoles}
-                roles={["Admin", "Editor", "Viewer", "TeamLeader"]}
+                availableRoles={["ROLE_ADMIN", "ROLE_EDITOR", "ROLE_VIEWER", "ROLE_LEADER"]}
               />
             </div>
           </div>
