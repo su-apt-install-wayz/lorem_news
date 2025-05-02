@@ -78,7 +78,7 @@ const columns: ColumnDef<z.infer<typeof schema>>[] = [
     cell: ({ row }) => (
       <div className="w-32">
         <Label className="text-foreground w-fit px-0 text-left">
-          {row.original.roles}
+          {Array.isArray(row.original.roles) ? row.original.roles.join(", ") : row.original.roles}
         </Label>
       </div>
     ),
@@ -170,7 +170,7 @@ function ActionsCell({ item }: { item: z.infer<typeof schema> }) {
   const [username, setUsername] = useState(item.username)
   const [email, setEmail] = useState(item.email)
   const [loading, setLoading] = useState(false)
-  const [selectedRoles, setSelectedRoles] = useState<string[]>(Array.isArray(item.roles) ? item.roles : [item.roles]);
+  const [roles, setSelectedRoles] = useState<string[]>(Array.isArray(item.roles) ? item.roles : [item.roles]);
 
 
   const handleUpdate = async () => {
@@ -179,9 +179,10 @@ function ActionsCell({ item }: { item: z.infer<typeof schema> }) {
       await api.patch(`/api/users/${item.id}`, {
         username,
         email,
-        selectedRoles,
+        roles,
       })
       toast.success("Utilisateur mis à jour avec succès !")
+      window.location.reload(); // Reloads the page when the update is complete
     } catch (error) {
       console.error(error)
       toast.error("Erreur lors de la mise à jour !")
@@ -226,9 +227,9 @@ function ActionsCell({ item }: { item: z.infer<typeof schema> }) {
             <div className="flex flex-col gap-3">
               <Label htmlFor="roles">Rôles</Label>
               <MultiRoleSelector
-                selectedRoles={selectedRoles}
+                selectedRoles={roles}
                 setSelectedRoles={setSelectedRoles}
-                availableRoles={["ROLE_ADMIN", "ROLE_EDITOR", "ROLE_VIEWER", "ROLE_LEADER"]}
+                availableRoles={["ROLE_ADMIN", "ROLE_EDITOR", "ROLE_USER", "ROLE_LEADER"]}
               />
             </div>
           </div>
