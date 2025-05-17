@@ -15,6 +15,8 @@ import { Tabs, TabsContent } from "@/components/ui/tabs"
 import { toast } from "sonner" 
 import api from "@/lib/api"
 import { MultiRoleSelector } from "@/components/MultiSelected"
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
+import { IconChevronLeft, IconChevronRight, IconChevronsLeft, IconChevronsRight} from "@tabler/icons-react"
 
 export const schema = z.object({
   id: z.number(),
@@ -124,6 +126,28 @@ export function DataTable({ data: initialData }: { data: z.infer<typeof schema>[
   return (
     <Tabs defaultValue="outline" className="w-full flex-col justify-start gap-6">
       <TabsContent value="outline" className="relative flex flex-col gap-4 overflow-auto px-4 lg:px-6">
+        {Object.keys(rowSelection).length > 0 && (
+          <div className="mb-4 flex items-center justify-end">
+            <Button
+              variant="destructive"
+              onClick={async () => {
+                if (!window.confirm("Supprimer les utilisateurs sélectionnés ?")) return
+              
+                const selectedIds = table.getFilteredSelectedRowModel().rows.map(row => row.original.id)
+                try {
+                  await Promise.all(selectedIds.map(id => api.delete(`/api/users/${id}`)))
+                  toast.success("Utilisateurs supprimés avec succès.")
+                  window.location.reload()
+                } catch (error) {
+                  console.error(error)
+                  toast.error("Erreur lors de la suppression.")
+                }
+              }}
+            >
+              Supprimer sélection
+            </Button>
+          </div>
+        )}
         <div className="overflow-hidden rounded-lg border">
           <Table>
             <TableHeader className="bg-muted sticky top-0 z-10">
