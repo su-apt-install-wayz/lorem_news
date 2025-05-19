@@ -14,6 +14,7 @@ import Link from 'next/link';
 import { cn } from '@/lib/utils';
 import { signOut, useSession, signIn } from 'next-auth/react';
 import { Drawer, DrawerContent, DrawerDescription, DrawerHeader, DrawerTitle, DrawerTrigger } from "@/components/ui/drawer";
+import { useRouter } from 'next/navigation';
 
 const components: { title: string; href: string; }[] = [
     {
@@ -48,6 +49,7 @@ const components: { title: string; href: string; }[] = [
 
 export const Header = () => {
     const { data: session } = useSession();
+    const router = useRouter();
 
     return (
         <header className="sticky top-0 w-full flex flex-col justify-end items-center bg-background border-b shadow-sm z-99">
@@ -93,31 +95,8 @@ export const Header = () => {
                                 </DropdownMenuLabel>
                                 <DropdownMenuSeparator />
                                 <DropdownMenuGroup>
-                                    <DropdownMenuItem>
-                                        Profil
-                                    </DropdownMenuItem>
-                                    <DropdownMenuItem>
-                                        Paramètres
-                                    </DropdownMenuItem>
-                                    <DropdownMenuItem>
-                                        Admin
-                                    </DropdownMenuItem>
-                                    <DropdownMenuItem>Team</DropdownMenuItem>
-                                    <DropdownMenuSub>
-                                        <DropdownMenuSubTrigger>Invite users</DropdownMenuSubTrigger>
-                                        <DropdownMenuPortal>
-                                            <DropdownMenuSubContent>
-                                                <DropdownMenuItem>Email</DropdownMenuItem>
-                                                <DropdownMenuItem>Message</DropdownMenuItem>
-                                                <DropdownMenuSeparator />
-                                                <DropdownMenuItem>More...</DropdownMenuItem>
-                                            </DropdownMenuSubContent>
-                                        </DropdownMenuPortal>
-                                    </DropdownMenuSub>
-                                    <DropdownMenuItem>
-                                        New Team
-                                        <DropdownMenuShortcut>⌘+T</DropdownMenuShortcut>
-                                    </DropdownMenuItem>
+                                    <DropdownMenuItem>Paramètres</DropdownMenuItem>
+                                    <DropdownMenuItem onClick={() => router.push('/hub')}>Hub Lorem News</DropdownMenuItem>
                                 </DropdownMenuGroup>
                                 <DropdownMenuSeparator />
                                 <DropdownMenuItem onClick={() => signOut()}>Se déconnecter</DropdownMenuItem>

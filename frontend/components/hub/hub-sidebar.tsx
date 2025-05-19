@@ -19,7 +19,7 @@ const data = {
     navMain: [
         {
             title: "Dashboard",
-            url: "/hub/dashboard",
+            url: "/hub",
             icon: IconDashboard,
         },
         {

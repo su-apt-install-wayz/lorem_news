@@ -11,6 +11,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 export interface Article {
     id: number;
     title: string;
+    description: string;
     content: string;
     slug: string;
     image: string;
@@ -93,21 +94,23 @@ const ArticlesList: React.FC<ArticlesListProps> = ({ articles, className, filter
         <div className={cn("default-classes", className)}>
             <div className="grid w-full grid-cols-[repeat(auto-fill,minmax(290px,1fr))] justify-center gap-4">
                 {currentArticles.map((article, index) => (
-                    <Card key={index} className="p-0 rounded-md gap-4 overflow-hidden shadow-none">
+                    <Card key={index} className="relative p-0 rounded-md gap-4 overflow-hidden shadow-none">
                         <img className="w-full h-auto object-cover" src={article?.image ?? "/assets/Image.png"} alt="" />
                         <CardHeader className="px-3">
-                            <CardDescription><CategoryBadge bgColor={article?.category?.color} categoryName={article?.category?.name} /></CardDescription>
+                            {article?.category && (<CardDescription><CategoryBadge bgColor={article.category.color} categoryName={article.category.name} /></CardDescription>)}
                             <CardTitle>{article.title}</CardTitle>
                         </CardHeader>
                         <CardContent className="px-3">
-                            <CardDescription>{article?.content.length > 100 ? article?.content.slice(0, 100) + "..." : article?.content}</CardDescription>
+                            <CardDescription>{article?.description}</CardDescription>
                         </CardContent>
-                        <CardFooter className="px-3 pb-4">
+                        <CardFooter className="mt-auto px-3 pb-4">
                             <div className="flex items-center gap-2">
                                 <img src={`/assets/profile/${article?.user?.picture ?? "Ander.png"}`} className="w-10 h-10 rounded-full" />
                                 <div className="flex flex-col">
                                     <span className="text-sm font-semibold">{article?.user?.username}</span>
-                                    <span className="text-xs text-muted-foreground">{article?.published_at}</span>
+                                    <span className="text-xs text-muted-foreground capitalize">
+                                        {new Date(article?.published_at).toLocaleDateString('fr-FR', { day: 'numeric', month: 'long', year: 'numeric' })}
+                                    </span>
                                 </div>
                             </div>
                         </CardFooter>

@@ -18,6 +18,10 @@ api.interceptors.request.use(async (config) => {
         config.headers.Authorization = `Bearer ${session.user.token}`
     }
 
+    if (config.method === "patch") {
+        config.headers["Content-Type"] = "application/merge-patch+json";
+    }
+
     return config;
 }, (error) => {
     return Promise.reject(error);

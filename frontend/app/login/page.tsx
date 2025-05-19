@@ -12,12 +12,12 @@ import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Separator } from "@/components/ui/separator";
+import { LoaderCircleIcon } from "lucide-react";
 
 // Schéma de validation
 const loginSchema = z.object({
     email: z.string().min(1, "L'email est requis").email("Email invalide"),
-    password: z.string()
-        .min(6, "Le mot de passe doit contenir au moins 8 caractères"),
+    password: z.string().min(6, "Le mot de passe doit contenir au moins 8 caractères"),
 });
 
 type LoginFormValues = z.infer<typeof loginSchema>;
@@ -25,10 +25,14 @@ type LoginFormValues = z.infer<typeof loginSchema>;
 export default function LoginPage() {
     const router = useRouter();
     const form = useForm<LoginFormValues>({
-        resolver: zodResolver(loginSchema),
+        resolver: zodResolver(loginSchema), 
+        defaultValues: {
+            email: "",
+            password: "",
+        },
     });
 
-    const { handleSubmit, control, setError, formState: { errors } } = form;
+    const { handleSubmit, control, setError, formState: { errors, isSubmitting } } = form;
 
     const onSubmit = async (data: LoginFormValues) => {
         const result = await signIn("credentials", {
@@ -79,7 +83,7 @@ export default function LoginPage() {
                                 <FormItem>
                                     <FormLabel className="ml-1">Adresse email</FormLabel>
                                     <FormControl>
-                                        <Input type="email" placeholder="Saisissez votre adresse email" {...field} className="h-11" />
+                                        <Input type="email" placeholder="Saisissez votre adresse email" {...field} className="h-11" disabled={isSubmitting} />
                                     </FormControl>
                                     <FormMessage className="ml-3">{errors.email?.message}</FormMessage>
                                 </FormItem>
@@ -94,7 +98,7 @@ export default function LoginPage() {
                                 <FormItem className="mb-1">
                                     <FormLabel className="ml-1">Mot de passe</FormLabel>
                                     <FormControl>
-                                        <Input type="password" placeholder="••••••••••••" {...field} className="h-11" />
+                                        <Input type="password" placeholder="••••••••••••" {...field} className="h-11" disabled={isSubmitting} />
                                     </FormControl>
                                     <FormMessage className="ml-3">{errors.password?.message}</FormMessage>
                                 </FormItem>
@@ -102,10 +106,12 @@ export default function LoginPage() {
                         />
 
                         <div className="mx-1 flex flex-wrap gap-3 justify-between">
-                            <Button variant={"link"} className="text-secondary text-xs p-0 cursor-pointer ml-auto">Mot de passe oublié ?</Button>
+                            <Button variant={"link"} className="text-secondary text-xs p-0 cursor-pointer ml-auto" disabled={isSubmitting}>Mot de passe oublié ?</Button>
                         </div>
 
-                        <Button variant={"default"} type="submit" className="w-full h-11 cursor-pointer">Se connecter</Button>
+                        <Button type="submit" className="w-full h-11 cursor-pointer" disabled={isSubmitting}>
+                            {isSubmitting ? <LoaderCircleIcon className="animate-spin h-6 w-6 text-primary-foreground" /> : "Se connecter"}
+                        </Button>
                     </form>
                 </Form>
             </div>

@@ -25,6 +25,7 @@ export default function ArticlesPage() {
             try {
                 const response = await api.get("/api/articles");
                 setArticles(response.data);
+                setLoading(false);
             } catch (err) {
                 setError("Impossible de récupérer les articles. Veuillez réessayer plus tard.");
             }

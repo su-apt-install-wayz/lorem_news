@@ -22,6 +22,7 @@ export default function Home() {
             try {
                 const response = await api.get("/api/articles");
                 setArticles(response.data);
+                setLoading(false);
             } catch (err) {
                 setError("Impossible de récupérer les articles. Veuillez réessayer plus tard.");
             }
@@ -38,7 +39,7 @@ export default function Home() {
                 <Section className="px-0">
                     <h1 className="text-2xl text-primary font-bold text-center">LES ACTUALITÉS<span className="max-sm:hidden">{" "}DE LOREM NEWS</span></h1>
                     <Spacing size="xs" />
-                    
+
                     {error && (
                         <Alert variant="destructive" className="mb-5 border-destructive/20 bg-destructive/5 text-destructive">
                             <AlertCircleIcon className="h-4 w-4" />

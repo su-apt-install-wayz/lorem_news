@@ -20,12 +20,23 @@ class ArticleEntityListener
 
     public function prePersist(Article $article, LifecycleEventArgs $event): void
     {
+        // $article->setImage($this->convertImageToBase64($article->getImage()));
         $article->computeSlug($this->slugger);
         $article->setUser($this->security->getUser());
     }
 
     public function preUpdate(Article $article, LifecycleEventArgs $event): void
     {
+        // $article->setImage($this->convertImageToBase64($article->getImage()));
         $article->computeSlug($this->slugger);
+    }
+
+    private function convertImageToBase64($image): ?string
+    {
+        if (!is_file($image)) {
+            return null;
+        }
+        
+        return base64_encode(file_get_contents($image));
     }
 }

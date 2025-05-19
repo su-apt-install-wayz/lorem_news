@@ -1,6 +1,7 @@
 import { Badge } from "@/components/ui/badge";
 
 function hexToRgb(hex: string): [number, number, number] {
+    if (!hex) throw new Error("hex color is undefined");
     hex = hex.replace(/^#/, '');
     if (hex.length === 3) {
         hex = hex.split('').map(x => x + x).join('');
@@ -23,7 +24,9 @@ interface CategoryBadgeProps {
 }
 
 export default function CategoryBadge({ bgColor, categoryName }: CategoryBadgeProps) {
-    const rgbColor = hexToRgb(bgColor);
+    const fallbackColor = "#313545";
+    const rgbColor = hexToRgb(bgColor || fallbackColor);
+
     const textColor = getTextColor(rgbColor);
 
     return (
@@ -33,7 +36,7 @@ export default function CategoryBadge({ bgColor, categoryName }: CategoryBadgePr
             style={{
                 backgroundColor: `rgba(${rgbColor.join(", ")}, 0.15)`,
                 borderColor: `rgba(${rgbColor.join(", ")}, 0.3)`,
-                color: textColor,
+                color: `var(--color-primary)`,
             }}
         >
             {categoryName}
