@@ -5,7 +5,7 @@ import HubLayout from "@/components/hub/hub-layout"
 
 export default function Page() {
     return (
-        <HubLayout title="Mes commandes" actions={<Button size="sm">Nouvelle commande</Button>}>
+        <HubLayout title="Hub Test" actions={<Button size="sm">Test</Button>}>
             <DataTable data={data} />
         </HubLayout>
     )

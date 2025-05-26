@@ -1,7 +1,6 @@
 "use client";
 
 import { DataTable } from "@/app/hub/users/data-table-user"
-import { Button } from "@/components/ui/button"
 import HubLayout from "@/components/hub/hub-layout"
 import api from "@/lib/api";
 import { useEffect, useState } from "react";
@@ -42,7 +41,7 @@ export default function Page() {
     }
 
     return (
-        <HubLayout title="Mes commandes" actions={<Button size="sm">Nouvelle commande</Button>}>
+        <HubLayout title="Hub">
             {content}
         </HubLayout>
     );

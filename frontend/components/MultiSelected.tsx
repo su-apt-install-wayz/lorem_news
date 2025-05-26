@@ -1,40 +1,42 @@
+import { Checkbox } from "@/components/ui/checkbox"
+import { Label } from "@/components/ui/label"
 
 const roleMap: { [key: string]: string } = {
   "ROLE_ADMIN": "Admin",
-  "ROLE_EDITOR": "Editor",
+  "ROLE_EDITOR": "Éditeur",
   "ROLE_USER": "Utilisateur",
   "ROLE_LEADER": "Chef d'équipe",
-};
+}
 
 export function MultiRoleSelector({
   selectedRoles,
   setSelectedRoles,
-  availableRoles, // List of roles to be displayed
+  availableRoles,
 }: {
-  selectedRoles: string[];
-  setSelectedRoles: React.Dispatch<React.SetStateAction<string[]>>;
-  availableRoles: string[];
+  selectedRoles: string[]
+  setSelectedRoles: React.Dispatch<React.SetStateAction<string[]>>
+  availableRoles: string[]
 }) {
-  const handleRoleChange = (role: string) => {
-    if (selectedRoles.includes(role)) {
-      setSelectedRoles(selectedRoles.filter((r) => r !== role));
+  const handleRoleChange = (role: string, checked: boolean) => {
+    if (checked) {
+      setSelectedRoles([...selectedRoles, role])
     } else {
-      setSelectedRoles([...selectedRoles, role]);
+      setSelectedRoles(selectedRoles.filter((r) => r !== role))
     }
-  };
+  }
 
   return (
-    <div>
+    <div className="flex flex-col gap-2">
       {availableRoles.map((role) => (
-        <label key={role} className="flex items-center gap-2">
-          <input
-            type="checkbox"
-            checked={selectedRoles.includes(role)} // Pre-check if the user already has this role
-            onChange={() => handleRoleChange(role)} // Update status on changeover
+        <div key={role} className="flex items-center space-x-2">
+          <Checkbox
+            id={role}
+            checked={selectedRoles.includes(role)}
+            onCheckedChange={(checked) => handleRoleChange(role, checked === true)}
           />
-          <span>{roleMap[role] || role}</span>
-        </label>
+          <Label htmlFor={role}>{roleMap[role] || role}</Label>
+        </div>
       ))}
     </div>
-  );
+  )
 }

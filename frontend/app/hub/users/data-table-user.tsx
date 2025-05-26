@@ -305,8 +305,9 @@ function ActionsCell({ item }: { item: z.infer<typeof schema> }) {
       })
 
       toast.success("Utilisateur mis à jour avec succès !")
-      setOpen(false)
-      //window.location.reload(); // Reloads the page when the update is complete
+      setTimeout(() => {
+        window.location.reload()
+      }, 1500)
     } catch (error) {
       console.error(error)
       toast.error("Erreur lors de la mise à jour !")
