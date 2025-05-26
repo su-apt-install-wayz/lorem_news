@@ -17,6 +17,7 @@ import api from "@/lib/api"
 import { MultiRoleSelector } from "@/components/MultiSelected"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { IconChevronLeft, IconChevronRight, IconChevronsLeft, IconChevronsRight} from "@tabler/icons-react"
+import { AlertDialog, AlertDialogTrigger, AlertDialogContent, AlertDialogHeader, AlertDialogTitle, AlertDialogDescription, AlertDialogFooter, AlertDialogCancel, AlertDialogAction } from "@/components/ui/alert-dialog"
 
 export const schema = z.object({
   id: z.number(),
@@ -92,7 +93,7 @@ const columns: ColumnDef<z.infer<typeof schema>>[] = [
 ]
 
 export function DataTable({ data: initialData }: { data: z.infer<typeof schema>[] }) {
-  const [data] = React.useState(() => initialData)
+  const [data, setData] = React.useState(initialData)
   const [rowSelection, setRowSelection] = React.useState({})
   const [columnVisibility, setColumnVisibility] = React.useState<VisibilityState>({})
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>([])
@@ -128,24 +129,46 @@ export function DataTable({ data: initialData }: { data: z.infer<typeof schema>[
       <TabsContent value="outline" className="relative flex flex-col gap-4 overflow-auto px-4 lg:px-6">
         {Object.keys(rowSelection).length > 0 && (
           <div className="mb-4 flex items-center justify-end">
-            <Button
-              variant="destructive"
-              onClick={async () => {
-                if (!window.confirm("Supprimer les utilisateurs sélectionnés ?")) return
-              
-                const selectedIds = table.getFilteredSelectedRowModel().rows.map(row => row.original.id)
-                try {
-                  await Promise.all(selectedIds.map(id => api.delete(`/api/users/${id}`)))
-                  toast.success("Utilisateurs supprimés avec succès.")
-                  window.location.reload()
-                } catch (error) {
-                  console.error(error)
-                  toast.error("Erreur lors de la suppression.")
-                }
-              }}
-            >
-              Supprimer sélection
-            </Button>
+            <AlertDialog>
+              <AlertDialogTrigger asChild>
+                <Button variant="destructive">
+                  Supprimer sélection
+                </Button>
+              </AlertDialogTrigger>
+              <AlertDialogContent>
+                <AlertDialogHeader>
+                  <AlertDialogTitle>Supprimer les utilisateurs ?</AlertDialogTitle>
+                  <AlertDialogDescription>
+                    Cette action est irréversible. Les utilisateurs sélectionnés seront définitivement supprimés.
+                  </AlertDialogDescription>
+                </AlertDialogHeader>
+                <AlertDialogFooter>
+                  <AlertDialogCancel>Annuler</AlertDialogCancel>
+                  <AlertDialogAction
+                    onClick={async () => {
+                      const selectedIds = table.getFilteredSelectedRowModel().rows.map(
+                        (row) => row.original.id
+                      )
+                      try {
+                        await Promise.all(
+                          selectedIds.map((id) => api.delete(`/api/users/${id}`))
+                        )
+
+                        // Removes deleted users from the table
+                        setData((currentData) => currentData.filter((user) => !selectedIds.includes(user.id)))
+
+                        toast.success("Utilisateurs supprimés avec succès.")
+                      } catch (error) {
+                        console.error(error)
+                        toast.error("Erreur lors de la suppression.")
+                      }
+                    }}
+                  >
+                    Confirmer
+                  </AlertDialogAction>
+                </AlertDialogFooter>
+              </AlertDialogContent>
+            </AlertDialog>
           </div>
         )}
         <div className="overflow-hidden rounded-lg border">
@@ -280,8 +303,10 @@ function ActionsCell({ item }: { item: z.infer<typeof schema> }) {
         email,
         roles,
       })
+
       toast.success("Utilisateur mis à jour avec succès !")
-      window.location.reload(); // Reloads the page when the update is complete
+      setOpen(false)
+      //window.location.reload(); // Reloads the page when the update is complete
     } catch (error) {
       console.error(error)
       toast.error("Erreur lors de la mise à jour !")
