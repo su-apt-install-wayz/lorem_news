@@ -116,8 +116,14 @@ const TextEditor: React.FC<{ defaultContent?: string, onContentChange?: (value: 
         onUpdate({ editor }) {
             const html = editor.getHTML();
             onContentChange?.(html);
-          }
+        }
     });
+
+    useEffect(() => {
+        if (editor && defaultContent) {
+            editor.commands.setContent(defaultContent);
+        }
+    }, [editor, defaultContent]);
 
     const addLink = () => {
         if (editor && linkUrl) {

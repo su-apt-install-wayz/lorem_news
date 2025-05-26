@@ -19,8 +19,9 @@ import { ImageCard } from "@/components/editor/editor-image-selector";
 import { CardDateSelector } from "@/components/editor/editor-publication-date";
 import { CardCategorySelector } from "@/components/editor/editor-category";
 import { CardTagInput } from "@/components/editor/editor-tags";
+import { useParams } from "next/navigation";
 
-const articleSchema = z.object({
+const getArticleSchema = (articleId: string) => z.object({
     title: z.string().min(1, "Le titre est requis").max(50, "Le titre ne peut pas dépasser 50 caractères"),
     description: z.string().min(1, "La description est requise").max(100, "La description ne peut pas dépasser 100 caractères"),
     content: z.string().min(1, "Le contenu est requis"),
@@ -32,14 +33,19 @@ const articleSchema = z.object({
 }).superRefine(async (data, ctx) => {
     try {
         const res = await api.get("/api/articles", { params: { title: data.title } });
-        if (res.data.length > 0) {
+
+        const sameTitleButDifferentId = res.data.some(
+            (article: any) => String(article.id) !== String(articleId)
+        );
+
+        if (sameTitleButDifferentId) {
             ctx.addIssue({
                 path: ["title"],
                 code: z.ZodIssueCode.custom,
                 message: "Ce titre est déjà utilisé.",
             });
         }
-    } catch (error) {
+    } catch {
         ctx.addIssue({
             path: ["title"],
             code: z.ZodIssueCode.custom,
@@ -53,6 +59,10 @@ export default function ArticleEditorCreate() {
     const [titleCheckLoading, setTitleCheckLoading] = useState(false);
     let titleCheckTimeout: ReturnType<typeof setTimeout>;
 
+    const params = useParams();
+    const articleId = params["article-id"];
+    const articleSchema = getArticleSchema(String(articleId));
+
     const { register, handleSubmit, control, setValue, watch, formState: { errors, isSubmitting } } = useForm<z.infer<typeof articleSchema>>({
         resolver: zodResolver(articleSchema),
         mode: "onChange",
@@ -64,7 +74,7 @@ export default function ArticleEditorCreate() {
             published_at: undefined,
             category: 0,
             tags: [],
-            status: "0",
+            status: "0", // si article terminé et publié, on peut le remodifier derrière donc faire attention au status
         },
     });
 
@@ -79,7 +89,7 @@ export default function ArticleEditorCreate() {
                 category: data.category ? { id: data.category } : null
             };
 
-            await api.post("/api/articles", payload);
+            await api.patch(`/api/articles/${articleId}`, payload);
 
             toast(
                 <div className="flex gap-2">
@@ -131,8 +141,13 @@ export default function ArticleEditorCreate() {
             try {
                 const res = await api.get("/api/articles", { params: { title: value } });
 
-                const isAvailable = res.data.length == 0;
-                setIsTitleAvailable(isAvailable);
+                if (res.data.length === 0) {
+                    setIsTitleAvailable(true);
+                } else {
+                    // S'il y a un article, mais que c'est celui en cours d'édition, c'est OK
+                    const isAvailable = res.data.every((article: any) => article.id == articleId);
+                    setIsTitleAvailable(isAvailable);
+                }
             } catch {
                 setIsTitleAvailable(null);
             } finally {
@@ -140,6 +155,30 @@ export default function ArticleEditorCreate() {
             }
         }, 500);
     };
+
+    useEffect(() => {
+        const fetchArticle = async () => {
+            if (!articleId) return;
+
+            try {
+                const res = await api.get(`/api/articles/${articleId}`);
+                const article = res.data;
+
+                setValue("title", article.title);
+                setValue("description", article.description);
+                setValue("content", article.content);
+                setValue("image", article.image || null);
+                setValue("published_at", new Date(article.published_at));
+                setValue("category", article.category?.id || 0);
+                setValue("tags", article.tags || []);
+                setValue("status", article.status.toString());
+            } catch (err) {
+                toast.error("Erreur lors du chargement de l'article.");
+            }
+        };
+
+        fetchArticle();
+    }, [articleId, setValue]);
 
     return (
         <HubLayout title="Création d'un article"
