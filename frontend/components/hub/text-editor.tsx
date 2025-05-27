@@ -28,7 +28,7 @@ import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 
-const TextEditor: React.FC<{ setEditorInstance: (editor: any) => void }> = ({ setEditorInstance }) => {
+const TextEditor: React.FC<{ defaultContent?: string, onContentChange?: (value: string) => void }> = ({ defaultContent = "", onContentChange }) => {
     const [selectedColor, setSelectedColor] = useState("#1f2937");
     const [selectedFont, setSelectedFont] = useState("");
     const [linkUrl, setLinkUrl] = useState("");
@@ -107,24 +107,23 @@ const TextEditor: React.FC<{ setEditorInstance: (editor: any) => void }> = ({ se
             ListItem,
             Blockquote,
         ],
-        content: "",
+        content: defaultContent,
         editorProps: {
             attributes: {
                 class: "max-w-none text-foreground min-h-[200px] focus-visible:outline-none [&_ul]:list-disc [&_ol]:list-decimal [&_ul,&_ol]:pl-6 [&_li]:my-1 [&_blockquote]:border-l-4 [&_blockquote]:pl-4 [&_blockquote]:italic [&_blockquote]:my-4 [&_h1]:text-3xl [&_h1]:font-bold [&_h1]:mt-4 [&_h1]:mb-2 [&_h2]:text-2xl [&_h2]:font-bold [&_h2]:mt-4 [&_h2]:mb-2 [&_h3]:text-xl [&_h3]:font-semibold [&_h3]:mt-4 [&_h3]:mb-2 [&_h4]:text-lg [&_h4]:font-semibold [&_h4]:mt-3 [&_h4]:mb-2 [&_h5]:text-md [&_h5]:font-medium [&_h5]:mt-3 [&_h5]:mb-2 [&_h6]:text-base [&_h6]:font-medium [&_h6]:mt-2 [&_h6]:mb-2",
             },
+        },
+        onUpdate({ editor }) {
+            const html = editor.getHTML();
+            onContentChange?.(html);
         }
     });
 
     useEffect(() => {
-        if (editor) {
-            setEditorInstance(editor);
+        if (editor && defaultContent) {
+            editor.commands.setContent(defaultContent);
         }
-    }, [editor]);
-
-    // const addLink = () => {
-    //     const url = prompt("Enter the URL") || "";
-    //     if (editor) editor.chain().focus().extendMarkRange("link").setLink({ href: url }).run();
-    // };
+    }, [editor, defaultContent]);
 
     const addLink = () => {
         if (editor && linkUrl) {
@@ -136,12 +135,6 @@ const TextEditor: React.FC<{ setEditorInstance: (editor: any) => void }> = ({ se
 
     const removeLink = () => {
         if (editor) editor.chain().focus().unsetLink().run();
-    };
-
-    const setFontSize = (size: string) => {
-        if (editor) {
-            editor.chain().focus().setMark("textStyle", { fontSize: size }).run();
-        }
     };
 
     const setTextColor = (color: string) => {
@@ -166,11 +159,6 @@ const TextEditor: React.FC<{ setEditorInstance: (editor: any) => void }> = ({ se
             }
         }
     };
-
-    // const addImage = () => {
-    //     const url = prompt("Enter image URL") || "";
-    //     if (editor) editor.chain().focus().setImage({ src: url }).run();
-    // };
 
     const addImage = () => {
         if (editor && imageUrl) {
@@ -208,7 +196,7 @@ const TextEditor: React.FC<{ setEditorInstance: (editor: any) => void }> = ({ se
                                             aria-label="Toggle bold"
                                             onClick={() => editor.chain().focus().toggleBold().run()}
                                             disabled={!editor.can().chain().focus().toggleBold().run()}
-                                            className={editor.isActive("bold") ? "bg-muted" : ""}
+                                            className={editor.isActive("bold") ? "bg-accent text-accent-foreground" : ""}
                                         >
                                             <BoldIcon />
                                         </ToggleGroupItem>
@@ -225,7 +213,7 @@ const TextEditor: React.FC<{ setEditorInstance: (editor: any) => void }> = ({ se
                                             aria-label="Toggle italic"
                                             onClick={() => editor.chain().focus().toggleItalic().run()}
                                             disabled={!editor.can().chain().focus().toggleItalic().run()}
-                                            className={editor.isActive("italic") ? "bg-muted" : ""}
+                                            className={editor.isActive("italic") ? "bg-accent text-accent-foreground" : ""}
                                         >
                                             <ItalicIcon />
                                         </ToggleGroupItem>
@@ -242,7 +230,7 @@ const TextEditor: React.FC<{ setEditorInstance: (editor: any) => void }> = ({ se
                                             aria-label="Toggle underline"
                                             onClick={() => editor.chain().focus().toggleUnderline().run()}
                                             disabled={!editor.can().chain().focus().toggleUnderline().run()}
-                                            className={editor.isActive("underline") ? "bg-muted" : ""}
+                                            className={editor.isActive("underline") ? "bg-accent text-accent-foreground" : ""}
                                         >
                                             <UnderlineIcon />
                                         </ToggleGroupItem>
@@ -259,7 +247,7 @@ const TextEditor: React.FC<{ setEditorInstance: (editor: any) => void }> = ({ se
                                             aria-label="Toggle strikethrough"
                                             onClick={() => editor.chain().focus().toggleStrike().run()}
                                             disabled={!editor.can().chain().focus().toggleStrike().run()}
-                                            className={editor.isActive("strike") ? "bg-muted" : ""}
+                                            className={editor.isActive("strike") ? "bg-accent text-accent-foreground" : ""}
                                         >
                                             <StrikethroughIcon />
                                         </ToggleGroupItem>
@@ -276,7 +264,7 @@ const TextEditor: React.FC<{ setEditorInstance: (editor: any) => void }> = ({ se
                                             aria-label="Toggle highlight"
                                             onClick={() => editor.chain().focus().toggleHighlight().run()}
                                             disabled={!editor.can().chain().focus().toggleHighlight().run()}
-                                            className={editor.isActive("highlight") ? "bg-muted" : ""}
+                                            className={editor.isActive("highlight") ? "bg-accent text-accent-foreground" : ""}
                                         >
                                             <HighlighterIcon />
                                         </ToggleGroupItem>
@@ -293,7 +281,7 @@ const TextEditor: React.FC<{ setEditorInstance: (editor: any) => void }> = ({ se
                                             aria-label="Toggle code"
                                             onClick={() => editor.chain().focus().toggleCode().run()}
                                             disabled={!editor.can().chain().focus().toggleCode().run()}
-                                            className={editor.isActive("code") ? "bg-muted" : ""}
+                                            className={editor.isActive("code") ? "bg-accent text-accent-foreground" : ""}
                                         >
                                             <CodeIcon />
                                         </ToggleGroupItem>
@@ -364,39 +352,6 @@ const TextEditor: React.FC<{ setEditorInstance: (editor: any) => void }> = ({ se
                             onValueChange={handleToggleChange}
                         >
                             <TooltipProvider>
-                                {/* <Tooltip>
-                                    <DropdownMenu>
-                                        <TooltipTrigger asChild>
-                                            <DropdownMenuTrigger asChild>
-                                                <ToggleGroupItem value="font-size" aria-label="Font size">
-                                                    <CaseSensitiveIcon />
-                                                </ToggleGroupItem>
-                                            </DropdownMenuTrigger>
-                                        </TooltipTrigger>
-                                        <DropdownMenuContent className="w-48">
-                                            {[
-                                                { size: "16px", label: "16px (Défaut)", class: "text-base" },
-                                                { size: "12px", label: "12px (Tiny)", class: "text-xs" },
-                                                { size: "14px", label: "14px (Small)", class: "text-sm" },
-                                                { size: "18px", label: "18px (Lead)", class: "text-lg" },
-                                                { size: "24px", label: "24px (Large)", class: "text-2xl" },
-                                                { size: "36px", label: "36px (Huge)", class: "text-4xl" },
-                                            ].map((item) => (
-                                                <DropdownMenuItem
-                                                    key={item.size}
-                                                    className={item.class}
-                                                    onSelect={() => setFontSize(item.size)}
-                                                >
-                                                    {item.label}
-                                                </DropdownMenuItem>
-                                            ))}
-                                        </DropdownMenuContent>
-                                    </DropdownMenu>
-                                    <TooltipContent>
-                                        <p>Taille du texte</p>
-                                    </TooltipContent>
-                                </Tooltip> */}
-
                                 <Tooltip>
                                     <DropdownMenu>
                                         <TooltipTrigger asChild>
@@ -485,7 +440,7 @@ const TextEditor: React.FC<{ setEditorInstance: (editor: any) => void }> = ({ se
                                             aria-label="Align left"
                                             onClick={() => editor.chain().focus().setTextAlign("left").run()}
                                             disabled={!editor.can().chain().focus().setTextAlign("left").run()}
-                                            className={editor.isActive("left") ? "bg-muted" : ""}
+                                            className={editor.isActive("left") ? "bg-accent text-accent-foreground" : ""}
                                         >
                                             <AlignLeftIcon />
                                         </ToggleGroupItem>
@@ -502,7 +457,7 @@ const TextEditor: React.FC<{ setEditorInstance: (editor: any) => void }> = ({ se
                                             aria-label="Align center"
                                             onClick={() => editor.chain().focus().setTextAlign("center").run()}
                                             disabled={!editor.can().chain().focus().setTextAlign("center").run()}
-                                            className={editor.isActive("center") ? "bg-muted" : ""}
+                                            className={editor.isActive("center") ? "bg-accent text-accent-foreground" : ""}
                                         >
                                             <AlignCenterIcon />
                                         </ToggleGroupItem>
@@ -519,7 +474,7 @@ const TextEditor: React.FC<{ setEditorInstance: (editor: any) => void }> = ({ se
                                             aria-label="Align right"
                                             onClick={() => editor.chain().focus().setTextAlign("right").run()}
                                             disabled={!editor.can().chain().focus().setTextAlign("right").run()}
-                                            className={editor.isActive("right") ? "bg-muted" : ""}
+                                            className={editor.isActive("right") ? "bg-accent text-accent-foreground" : ""}
                                         >
                                             <AlignLeftIcon />
                                         </ToggleGroupItem>
@@ -626,7 +581,7 @@ const TextEditor: React.FC<{ setEditorInstance: (editor: any) => void }> = ({ se
                                         aria-label="Toggle bullet list"
                                         onClick={() => editor.chain().focus().toggleBulletList().run()}
                                         disabled={!editor.can().chain().focus().toggleBulletList().run()}
-                                        className={editor.isActive("bulletList") ? "bg-muted" : ""}
+                                        className={editor.isActive("bulletList") ? "bg-accent text-accent-foreground" : ""}
                                     >
                                         <ListIcon />
                                     </ToggleGroupItem>
@@ -643,7 +598,7 @@ const TextEditor: React.FC<{ setEditorInstance: (editor: any) => void }> = ({ se
                                         aria-label="Toggle ordered list"
                                         onClick={() => editor.chain().focus().toggleOrderedList().run()}
                                         disabled={!editor.can().chain().focus().toggleOrderedList().run()}
-                                        className={editor.isActive("orderedList") ? "bg-muted" : ""}
+                                        className={editor.isActive("orderedList") ? "bg-accent text-accent-foreground" : ""}
                                     >
                                         <ListOrderedIcon />
                                     </ToggleGroupItem>
@@ -660,7 +615,7 @@ const TextEditor: React.FC<{ setEditorInstance: (editor: any) => void }> = ({ se
                                         aria-label="Toggle blockquote"
                                         onClick={() => editor.chain().focus().toggleBlockquote().run()}
                                         disabled={!editor.can().chain().focus().toggleBlockquote().run()}
-                                        className={editor.isActive("blockquote") ? "bg-muted" : ""}
+                                        className={editor.isActive("blockquote") ? "bg-accent text-accent-foreground" : ""}
                                     >
                                         <MessageSquareQuoteIcon />
                                     </ToggleGroupItem>

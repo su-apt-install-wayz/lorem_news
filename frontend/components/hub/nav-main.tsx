@@ -47,7 +47,7 @@ export function NavMain({ items }: {
                                 </SidebarMenuButton>
                             </PopoverTrigger>
                             <PopoverContent className="w-64 p-1 flex flex-col gap-1">
-                                <Button variant={"ghost"} className="justify-between" onClick={() => router.push("/hub/editor")}>
+                                <Button variant={"ghost"} className="justify-between" onClick={() => router.push("/hub/articles/create")}>
                                     <span>Créer un projet</span>
                                     <kbd className="text-xs text-muted-foreground space-x-0.5">
                                         <span>⌘</span>
