@@ -277,7 +277,7 @@ export default function ArticleEditorCreate() {
                                     name="status"
                                     control={control}
                                     render={({ field }) => (
-                                        <Switch id="article-finished" checked={field.value === "1"} onCheckedChange={(checked) => field.onChange(checked ? "1" : "0")} />
+                                        <Switch id="article-finished" checked={field.value === "1"} onCheckedChange={(checked: any) => field.onChange(checked ? "1" : "0")} />
                                     )}
                                 />
 

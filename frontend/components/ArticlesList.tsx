@@ -98,7 +98,7 @@ const ArticlesList: React.FC<ArticlesListProps> = ({ articles, className, filter
                         <img className="w-full h-auto object-cover" src={article?.image ?? "/assets/Image.png"} alt="" />
 
                         <div className="mt-3 px-3">
-                            {article?.category && (<CategoryBadge bgColor={article.category.color} categoryName={article.category.name} />)}
+                            {article?.category && (<CategoryBadge categoryName={article.category.name} />)}
                         </div>
                         
                         <CardHeader className="mt-4 px-3">
