@@ -33,7 +33,7 @@ const data = {
         },
         {
             title: "Utilisateurs",
-            url: "#",
+            url: "/hub/users",
             icon: IconUsersGroup,
         },
         {
