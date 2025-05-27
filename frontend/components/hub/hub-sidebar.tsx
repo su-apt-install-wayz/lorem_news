@@ -1,11 +1,10 @@
 "use client"
 
 import * as React from "react"
-import { IconChartBubbleFilled, IconDashboard, IconFolder, IconHelp, IconSearch, IconSettings, IconUsers } from "@tabler/icons-react"
+import { IconCategory, IconChartBubbleFilled, IconDashboard, IconFolder, IconUsers, IconUsersGroup } from "@tabler/icons-react"
 import { NavMain } from "@/components/hub/nav-main"
 import { NavUser } from "@/components/hub/nav-user"
 import { Sidebar, SidebarContent, SidebarFooter, SidebarHeader, SidebarMenu, SidebarMenuButton, SidebarMenuItem } from "@/components/ui/sidebar"
-import { NavAdmin } from "@/components/hub/nav-admin"
 import { NavBottom } from "@/components/hub/nav-bottom"
 import { WrapText } from "lucide-react"
 import { NavProjects } from "@/components/hub/nav-projects"
@@ -28,27 +27,20 @@ const data = {
             icon: IconFolder,
         },
         {
-            title: "Equipes",
+            title: "Equipes", // si admin = Equipes sinon Mon équipe
             url: "#",
             icon: IconUsers,
         },
-    ],
-    navAdmin: [
         {
             title: "Utilisateurs",
             url: "#",
-            icon: IconSettings,
-        },
-        {
-            title: "Articles",
-            url: "#",
-            icon: IconHelp,
+            icon: IconUsersGroup,
         },
         {
             title: "Catégories",
             url: "#",
-            icon: IconSearch,
-        },
+            icon: IconCategory,
+        }
     ],
     navProjects: [
         {
@@ -90,11 +82,11 @@ const data = {
     ],
     navBottom: [
         {
-          title: "Retour sur le site",
-          url: "/",
-          icon: WrapText,
+            title: "Retour sur le site",
+            url: "/",
+            icon: WrapText,
         },
-      ]
+    ]
 }
 
 export function HubSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
@@ -114,7 +106,6 @@ export function HubSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
             </SidebarHeader>
             <SidebarContent>
                 <NavMain items={data.navMain} />
-                <NavAdmin items={data.navAdmin} />
                 <NavProjects items={data.navProjects} />
                 <NavBottom items={data.navBottom} className="mt-auto" />
             </SidebarContent>
