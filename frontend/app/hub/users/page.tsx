@@ -20,7 +20,8 @@ export default function Page() {
                 const response = await api.get("/api/users");
                 setUsers(response.data);
             } catch (err) {
-                setError("Impossible de récupérer les utilisateurs : " + err);
+                console.error(err);
+                setError("Impossible de récupérer les utilisateurs");
             } finally {
                 setLoading(false);
             }

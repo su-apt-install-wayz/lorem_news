@@ -3,7 +3,7 @@ import { Label } from "@/components/ui/label"
 
 const roleMap: { [key: string]: string } = {
   "ROLE_ADMIN": "Admin",
-  "ROLE_EDITOR": "Éditeur",
+  "ROLE_MEMBER": "Membre",
   "ROLE_USER": "Utilisateur",
   "ROLE_LEADER": "Chef d'équipe",
 }

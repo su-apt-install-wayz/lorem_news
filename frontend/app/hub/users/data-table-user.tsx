@@ -354,7 +354,7 @@ function ActionsCell({ item }: { item: z.infer<typeof schema> }) {
               <MultiRoleSelector
                 selectedRoles={roles}
                 setSelectedRoles={setSelectedRoles}
-                availableRoles={["ROLE_ADMIN", "ROLE_EDITOR", "ROLE_USER", "ROLE_LEADER"]}
+                availableRoles={["ROLE_ADMIN", "ROLE_MEMBER", "ROLE_USER", "ROLE_LEADER"]}
               />
             </div>
           </div>
