@@ -36,7 +36,7 @@ const data = {
     navAdmin: [
         {
             title: "Utilisateurs",
-            url: "/hub/users",
+            url: "#",
             icon: IconSettings,
         },
         {

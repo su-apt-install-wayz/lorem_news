@@ -45,7 +45,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     private ?string $email = null;
 
     #[ORM\Column]
-    #[Groups(['user:list', 'user:read', 'user:write'])]
+    #[Groups(['user:list', 'user:read'])]
     private array $roles = [];
 
     #[ORM\Column]
