@@ -1,0 +1,51 @@
+name: CI/CD Pipeline for React
+
+on:
+  push:
+    branches:
+      - main
+      - develop
+  pull_request:
+    types: [opened, synchronize, reopened]
+
+jobs:
+  build-and-analyze:
+    name: Build, Lint, SonarQube and GitGuardian
+    runs-on: ubuntu-latest
+
+    steps:
+      # Étape 1 : Récupération du code
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      # Étape 2 : Configuration de Node.js
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '22'
+
+      # Étape 3 : Installation des dépendances
+      - name: Install dependencies
+        run: npm install
+
+      # Étape 4 : Exécution de ESLint
+      - name: Run ESLint
+        run: npm run lint
+
+      # Étape 5 : Exécution des tests
+      #- name: Run Tests
+      #  run: npm test -- --coverage
+
+      # Étape 6 : Analyse SonarQube
+      - name: SonarQube Scan
+        uses: SonarSource/sonarqube-scan-action@v4
+        continue-on-error: true
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+      
+      # Étape 7 : Analyse de secrets
+      - name: Detect secrets with GitGuardian
+        uses: GitGuardian/ggshield-action@v1.36.0
+        env:
+          GITGUARDIAN_API_KEY: ${{ secrets.GITGUARDIAN_API_KEY }}  
