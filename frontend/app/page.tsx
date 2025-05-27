@@ -9,6 +9,7 @@ import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import api from "@/lib/api";
 import { AlertCircleIcon } from "lucide-react";
 import { useEffect, useState } from "react";
+import { toast } from "sonner";
 
 export default function Home() {
     const [articles, setArticles] = useState<Article[]>([]);
@@ -24,6 +25,7 @@ export default function Home() {
                 setArticles(response.data);
                 setLoading(false);
             } catch (err) {
+                toast.error("Erreur lors du chargement des articles.");
                 setError("Impossible de récupérer les articles. Veuillez réessayer plus tard.");
             }
         };

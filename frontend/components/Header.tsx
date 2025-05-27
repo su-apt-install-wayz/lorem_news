@@ -2,7 +2,6 @@
 
 import Image from 'next/image';
 import Logo1 from '@/public/assets/logo1.png';
-import Avatar from '@/public/assets/profile/Ander.png';
 import { Section } from './Section';
 import { Button } from "@/components/ui/button";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuGroup, DropdownMenuItem, DropdownMenuLabel, DropdownMenuPortal, DropdownMenuSeparator, DropdownMenuShortcut, DropdownMenuSub, DropdownMenuSubContent, DropdownMenuSubTrigger, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
@@ -15,6 +14,7 @@ import { cn } from '@/lib/utils';
 import { signOut, useSession, signIn } from 'next-auth/react';
 import { Drawer, DrawerContent, DrawerDescription, DrawerHeader, DrawerTitle, DrawerTrigger } from "@/components/ui/drawer";
 import { useRouter } from 'next/navigation';
+import { Avatar , AvatarImage } from '@/components/ui/avatar';
 
 const components: { title: string; href: string; }[] = [
     {
@@ -82,26 +82,29 @@ export const Header = () => {
                         </Drawer>
 
                         {session ? (
-                        <DropdownMenu>
-                            <DropdownMenuTrigger asChild>
-                                <Button className="cursor-pointer rounded-full w-12 h-12 max-sm:w-10 max-sm:h-10 border" variant={"link"} size="icon">
-                                    <Image className='rounded-full' src={Avatar} alt="Avatar" />
-                                </Button>
-                            </DropdownMenuTrigger>
-                            <DropdownMenuContent className="w-56 z-99">
-                                <DropdownMenuLabel className='flex flex-col'>
-                                    <span>Toto Dupont</span>
-                                    <span className="font-semibold truncate">toto@mail.com</span>
-                                </DropdownMenuLabel>
-                                <DropdownMenuSeparator />
-                                <DropdownMenuGroup>
-                                    <DropdownMenuItem>Paramètres</DropdownMenuItem>
-                                    <DropdownMenuItem onClick={() => router.push('/hub')}>Hub Lorem News</DropdownMenuItem>
-                                </DropdownMenuGroup>
-                                <DropdownMenuSeparator />
-                                <DropdownMenuItem onClick={() => signOut()}>Se déconnecter</DropdownMenuItem>
-                            </DropdownMenuContent>
-                        </DropdownMenu>
+                            <DropdownMenu>
+                                <DropdownMenuTrigger asChild>
+                                    <Button className="cursor-pointer rounded-full w-10 h-10 border-4 focus-visible:ring-0 focus-visible:border-border" variant={"link"} size="icon">
+                                        <Avatar>
+                                            <AvatarImage src={`/assets/profile/Ander.png`} /> {/* Replace with session.user.image if available */}
+                                            <span className="sr-only">Ouvrir le menu utilisateur</span>
+                                        </Avatar>
+                                    </Button>
+                                </DropdownMenuTrigger>
+                                <DropdownMenuContent className="w-56 z-99">
+                                    <DropdownMenuLabel className='flex flex-col'>
+                                        <span>Toto Dupont</span>
+                                        <span className="font-semibold truncate">toto@mail.com</span>
+                                    </DropdownMenuLabel>
+                                    <DropdownMenuSeparator />
+                                    <DropdownMenuGroup>
+                                        <DropdownMenuItem>Paramètres</DropdownMenuItem>
+                                        <DropdownMenuItem onClick={() => router.push('/hub')}>Hub Lorem News</DropdownMenuItem>
+                                    </DropdownMenuGroup>
+                                    <DropdownMenuSeparator />
+                                    <DropdownMenuItem onClick={() => signOut()}>Se déconnecter</DropdownMenuItem>
+                                </DropdownMenuContent>
+                            </DropdownMenu>
                         ) : (
                             <Button onClick={() => signIn()} variant={"default"} className="rounded-xs cursor-pointer" asChild>
                                 <Link href="/login">Se connecter</Link>

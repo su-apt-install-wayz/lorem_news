@@ -7,6 +7,8 @@ import { Spacing } from "@/components/Spacing";
 import CategoryBadge from "./CategoryBadge";
 import { cn } from "@/lib/utils";
 import { Skeleton } from "@/components/ui/skeleton";
+import Link from "next/link";
+import { Avatar, AvatarImage } from "@/components/ui/avatar";
 
 export interface Article {
     id: number;
@@ -66,22 +68,28 @@ const ArticlesList: React.FC<ArticlesListProps> = ({ articles, className, filter
             <div className={cn("default-classes", className)}>
                 <div className="grid w-full grid-cols-[repeat(auto-fill,minmax(290px,1fr))] justify-center gap-4">
                     {Array.from({ length: articlesPerPage }).map((_, index) => (
-                        <Card key={index} className="p-0 rounded-md gap-4 overflow-hidden shadow-none">
-                            <Skeleton className="w-full h-62 rounded-none" />
-                            <CardHeader className="px-3">
-                                <Skeleton className="h-4 w-1/3 mb-2" />
-                                <Skeleton className="h-6 w-2/3" />
+                        <Card key={index} className="p-0 rounded-md gap-1 overflow-hidden shadow-none">
+                            <Skeleton className="w-full h-62 rounded-none bg-muted" />
+
+                            <div className="mt-3 px-3">
+                                <Skeleton className="h-4 w-24 bg-muted" />
+                            </div>
+
+                            <CardHeader className="mt-4 px-3">
+                                <Skeleton className="h-6 w-2/3 bg-muted" />
                             </CardHeader>
-                            <CardContent className="px-3">
-                                <Skeleton className="h-4 w-full mb-1" />
-                                <Skeleton className="h-4 w-5/6" />
+
+                            <CardContent className="mt-2 px-3 mb-6">
+                                <Skeleton className="h-4 w-full mb-1 bg-muted" />
+                                <Skeleton className="h-4 w-5/6 bg-muted" />
                             </CardContent>
-                            <CardFooter className="px-3 pb-4 flex items-center gap-2">
-                                <Skeleton className="w-10 h-10 rounded-full" />
-                                <div className="flex flex-col gap-1">
-                                    <Skeleton className="h-4 w-28" />
-                                    <Skeleton className="h-3 w-20" />
+
+                            <CardFooter className="mt-auto flex justify-between items-end px-3 pb-3">
+                                <div className="flex items-center gap-2">
+                                    <Skeleton className="w-7 h-7 rounded-full bg-muted" />
+                                    <Skeleton className="h-4 w-28 bg-muted" />
                                 </div>
+                                <Skeleton className="h-3 w-20 bg-muted" />
                             </CardFooter>
                         </Card>
                     ))}
@@ -100,16 +108,20 @@ const ArticlesList: React.FC<ArticlesListProps> = ({ articles, className, filter
                         <div className="mt-3 px-3">
                             {article?.category && (<CategoryBadge categoryName={article.category.name} />)}
                         </div>
-                        
+
                         <CardHeader className="mt-4 px-3">
-                            <CardTitle>{article.title}</CardTitle>
+                            <CardTitle className="hover:underline"><Link href={`/articles/${article.slug}`}>{article.title}</Link></CardTitle>
                         </CardHeader>
+
                         <CardContent className="px-3 mb-6">
                             <CardDescription>{article?.description}</CardDescription>
                         </CardContent>
+
                         <CardFooter className="mt-auto flex justify-between items-end px-3 pb-3">
                             <div className="flex items-center gap-2">
-                                <img src={`/assets/profile/${article?.user?.picture ?? "Ander.png"}`} className="w-7 h-7 rounded-full" />
+                                <Avatar className="w-7 h-7">
+                                    <AvatarImage src={`/assets/profile/${article?.user?.picture ?? "Ander.png"}`} />
+                                </Avatar>
                                 <span className="text-sm">{article?.user?.username}</span>
                             </div>
                             <span className="text-xs text-muted-foreground capitalize">{new Date(article?.published_at).toLocaleDateString('fr-FR', { day: 'numeric', month: 'long', year: 'numeric' })}</span>

@@ -1,6 +1,6 @@
 <?php
 
-namespace App\ApiFilter;
+namespace App\Filter;
 
 use ApiPlatform\Doctrine\Orm\Filter\AbstractFilter;
 use ApiPlatform\Doctrine\Orm\Util\QueryNameGeneratorInterface;

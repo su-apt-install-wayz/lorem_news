@@ -9,10 +9,11 @@ use ApiPlatform\Metadata\ApiResource;
 use ApiPlatform\Metadata\Delete;
 use ApiPlatform\Metadata\Get;
 use ApiPlatform\Metadata\GetCollection;
+use ApiPlatform\Metadata\Link;
 use ApiPlatform\Metadata\Patch;
 use ApiPlatform\Metadata\Post;
-use App\ApiFilter\ArticleSearchSluggerFilter;
 use App\Filter\ArticleSearchQueryFilter;
+use App\Filter\ArticleSearchSluggerFilter;
 use App\Repository\ArticleRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
@@ -28,6 +29,7 @@ use Symfony\Component\String\Slugger\SluggerInterface;
 #[ApiResource(
     operations: [
         new Get(normalizationContext: ['groups' => ['article:read']], security: "is_granted('PUBLIC_ACCESS')"),
+        new Get(uriTemplate: '/articles/slug/{slug}', uriVariables: ['slug' => new Link(fromClass: Article::class, identifiers: ['slug'])], normalizationContext: ['groups' => ['article:read']], security: "is_granted('PUBLIC_ACCESS')"),
         new GetCollection(normalizationContext: ['groups' => ['article:list']]),
         new Post(normalizationContext: ['groups' => ['article:read']], denormalizationContext: ['groups' => ['article:write']]),
         new Patch(normalizationContext: ['groups' => ['article:read']], denormalizationContext: ['groups' => ['article:write']], security: "(object.getUser() == user) or is_granted('ROLE_LEADER')"),

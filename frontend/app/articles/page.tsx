@@ -7,10 +7,10 @@ import { Footer } from "@/components/Footer";
 import { Header } from "@/components/Header";
 import { Section } from "@/components/Section";
 import { Spacing } from "@/components/Spacing";
-import Image from "next/image";
 import api from "@/lib/api";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { AlertCircleIcon } from "lucide-react";
+import { toast } from "sonner";
 
 export default function ArticlesPage() {
     const [filters, setFilters] = useState({ category: "all", sortBy: "recent" });
@@ -27,6 +27,7 @@ export default function ArticlesPage() {
                 setArticles(response.data);
                 setLoading(false);
             } catch (err) {
+                toast.error("Erreur lors du chargement des articles.");
                 setError("Impossible de récupérer les articles. Veuillez réessayer plus tard.");
             }
         };
