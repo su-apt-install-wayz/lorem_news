@@ -12,36 +12,132 @@ import Image from "next/image";
 import CategoryBadge from "@/components/CategoryBadge";
 import { cn } from "@/lib/utils";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
-import { AlertCircleIcon } from "lucide-react";
+import { AlertCircleIcon, EllipsisVertical, Flag, LoaderCircleIcon, Pencil, Save, Trash2 } from "lucide-react";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Avatar, AvatarImage } from "@/components/ui/avatar";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
+import { Button } from "@/components/ui/button";
+import { Textarea } from "@/components/ui/textarea";
+import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader } from "@/components/ui/alert-dialog";
+import { AlertDialogTitle } from "@radix-ui/react-alert-dialog";
 
 export default function ArticlePage() {
     const params = useParams();
     const articleId = params["article-id"];
 
     const [article, setArticle] = useState<any>(null);
-    const [loading, setLoading] = useState(true);
-    const [error, setError] = useState<string | null>(null);
+    const [loadingArticle, setLoadingArticle] = useState(true);
+    const [errorArticle, setErrorArticle] = useState<string | null>(null);
 
     useEffect(() => {
         const fetchArticle = async () => {
-            setLoading(true);
-            setError(null);
             if (!articleId) return;
 
             try {
+                setLoadingArticle(true);
+                setErrorArticle(null);
+
                 const res = await api.get(`/api/articles/slug/${articleId}`);
+
                 setArticle(res.data);
-                setLoading(false);
+                setLoadingArticle(false);
             } catch (err) {
                 toast.error("Erreur lors du chargement de l'article.");
-                setError("Erreur lors du chargement de l'article.");
+                setErrorArticle("Erreur lors du chargement de l'article.");
             }
         };
         fetchArticle();
     }, [articleId]);
+
+    const [comments, setComments] = useState<any[]>([]);
+    const [loadingComments, setLoadingComments] = useState(true);
+    const [errorComments, setErrorComments] = useState<string | null>(null);
+
+    useEffect(() => {
+        const fetchComments = async () => {
+            if (!article || !article.id) return;
+
+            try {
+                setLoadingComments(true);
+                setErrorComments(null);
+
+                const res = await api.get(`/api/comments?article=${article.id}`);
+
+                setComments(res.data);
+            } catch (err) {
+                toast.error("Erreur lors du chargement des commentaires.");
+                setErrorArticle("Erreur lors du chargement des commentaires.");
+            } finally {
+                setLoadingComments(false);
+            }
+        };
+
+        if (article) fetchComments();
+    }, [article]);
+
+    const [editingCommentId, setEditingCommentId] = useState<number | null>(null);
+    const [editingContent, setEditingContent] = useState<string>("");
+    const [savingEdit, setSavingEdit] = useState(false);
+
+    const editComment = (comment: any) => {
+        if (comment.user.id !== 1) return;
+        setEditingCommentId(comment.id);
+        setEditingContent(comment.content);
+    };
+
+    const cancelEdit = () => {
+        setEditingCommentId(null);
+        setEditingContent("");
+    };
+
+    const saveEdit = async () => {
+        if (!editingCommentId) return;
+
+        if (editingContent.trim() == "") {
+            setCommentToDelete(editingCommentId);
+            return;
+        }
+
+        try {
+            setSavingEdit(true);
+            await api.patch(`/api/comments/${editingCommentId}`, {
+                content: editingContent,
+            });
+
+            toast.success("Commentaire modifié avec succès.");
+            setComments((prev) => prev.map((comment) => comment.id == editingCommentId ? { ...comment, content: editingContent, edited_at: new Date().toISOString() } : comment));
+
+            setEditingCommentId(null);
+            setEditingContent("");
+        } catch (err) {
+            toast.error("Erreur lors de la modification.");
+        } finally {
+            setSavingEdit(false);
+        }
+    };
+
+    const [commentToDelete, setCommentToDelete] = useState<any | null>(null);
+    const [deleting, setDeleting] = useState(false);
+
+    const deleteComment = async () => {
+        if (!commentToDelete) return;
+
+        try {
+            setDeleting(true);
+
+            await api.delete(`/api/comments/${commentToDelete}`);
+
+            setComments(prev => prev.filter(c => c.id != commentToDelete));
+            toast.success("Commentaire supprimé.");
+
+            setCommentToDelete(null);
+        } catch (err) {
+            toast.error("Erreur lors de la suppression.");
+        } finally {
+            setDeleting(false);
+        }
+    };
 
     return (
         <>
@@ -49,15 +145,15 @@ export default function ArticlePage() {
             <main className="w-full max-w-[1500px] mx-auto p-4 max-md:p-2">
                 <Spacing size="sm" />
                 <Section className="px-0 space-y-4 max-w-5xl">
-                    {error && (
+                    {errorArticle && (
                         <Alert variant="destructive" className="mb-5 border-destructive/20 bg-destructive/5 text-destructive">
                             <AlertCircleIcon className="h-4 w-4" />
                             <AlertTitle>Une erreur est survenue.</AlertTitle>
-                            <AlertDescription>{error}</AlertDescription>
+                            <AlertDescription>{errorArticle}</AlertDescription>
                         </Alert>
                     )}
 
-                    {loading ? (
+                    {loadingArticle ? (
                         <>
                             <div className="flex flex-wrap justify-between items-center gap-3">
                                 <div className="flex items-center gap-2">
@@ -119,6 +215,137 @@ export default function ArticlePage() {
                         </>
                     )}
                 </Section>
+
+                <Spacing size="sm" />
+
+                <Section className="px-0 space-y-4 max-w-5xl">
+                    <h3 className="text-xl font-semibold">
+                        Commentaires ({comments.length})
+                    </h3>
+
+                    {errorComments && (
+                        <Alert variant="destructive" className="mb-5 border-destructive/20 bg-destructive/5 text-destructive">
+                            <AlertCircleIcon className="h-4 w-4" />
+                            <AlertTitle>Une erreur est survenue.</AlertTitle>
+                            <AlertDescription>{errorComments}</AlertDescription>
+                        </Alert>
+                    )}
+
+                    {loadingComments ? (
+                        <>
+                            {[1, 2, 3, 4, 5].map((_, i) => (
+                                <div key={i} className="flex gap-3 items-start">
+                                    <Skeleton className="w-10 h-10 border-4 rounded-full bg-muted" />
+                                    <div className="space-y-1 w-full">
+                                        <div className="flex items-center space-x-2">
+                                            <Skeleton className="w-36 h-5 bg-muted" />
+                                            <Skeleton className="h-5 w-24 bg-muted" />
+                                        </div>
+                                        <Skeleton className="w-full h-4 bg-muted" />
+                                        <Skeleton className="w-11/12 h-4 bg-muted" />
+                                    </div>
+                                </div>
+                            ))}
+                        </>
+                    ) : (
+                        comments.length === 0 ? (
+                            <p className="text-muted-foreground">Aucun commentaire pour le moment. Ecrivez le premier commentaire sur cet article.</p>
+                        ) : (
+                            comments.map((comment: any) => (
+                                <div key={comment.id} className="flex gap-3 items-start">
+                                    <Avatar className="w-10 h-10 border-4">
+                                        <AvatarImage src={`/assets/profile/${comment.user?.picture ?? "Ander.png"}`} />
+                                    </Avatar>
+                                    <div className="w-full space-y-1">
+                                        <div className="flex justify-between items-center space-x-2">
+                                            <div className="flex items-center space-x-2">
+                                                <p>{comment.user?.username}</p>
+                                                <p className="text-sm text-muted-foreground">{new Date(comment.created_at).toLocaleDateString("fr-FR")}</p>
+                                                {comment.edited_at && (<p className="text-xs text-muted-foreground">(modifié)</p>)}
+                                            </div>
+
+                                            <DropdownMenu>
+                                                <DropdownMenuTrigger asChild>
+                                                    <Button variant="ghost"><EllipsisVertical className="text-muted-foreground" /></Button>
+                                                </DropdownMenuTrigger>
+                                                <DropdownMenuContent>
+                                                    {/* {comment.user.id == session.user.id && ( */}
+                                                    {comment.user.id == 1 && (
+                                                        <>
+                                                            <DropdownMenuItem onClick={() => editComment(comment)}>
+                                                                <Pencil />
+                                                                <span>Modifier</span>
+                                                            </DropdownMenuItem>
+                                                            <DropdownMenuItem onClick={() => setCommentToDelete(comment.id)}>
+                                                                <Trash2 />
+                                                                <span>Supprimer</span>
+                                                            </DropdownMenuItem>
+                                                        </>
+                                                    )}
+                                                    <DropdownMenuItem>
+                                                        <Flag />
+                                                        <span>Signaler</span>
+                                                    </DropdownMenuItem>
+                                                </DropdownMenuContent>
+                                            </DropdownMenu>
+                                        </div>
+                                        {editingCommentId == comment.id ? (
+                                            <div className="space-y-2">
+                                                <Textarea value={editingContent} onChange={(e) => setEditingContent(e.target.value)} className="min-h-max" disabled={savingEdit} />
+                                                <div className="flex gap-2">
+                                                    <Button onClick={() => saveEdit()} size="sm" disabled={savingEdit}>
+                                                        {savingEdit ? (
+                                                            <>
+                                                                <LoaderCircleIcon className="animate-spin h-6 w-6 text-primary-foreground" />
+                                                                <span>Envoi</span>
+                                                            </>
+                                                        ) : (
+                                                            <>
+                                                                <Save className="h-6 w-6 text-primary-foreground" />
+                                                                <span>Enregistrer</span>
+                                                            </>
+                                                        )}
+                                                    </Button>
+                                                    <Button variant="outline" onClick={() => cancelEdit()} size="sm" disabled={savingEdit}>Annuler</Button>
+                                                </div>
+                                            </div>
+                                        ) : (
+                                            <p className="max-sm:text-sm">{comment.content}</p>
+                                        )}
+                                    </div>
+                                </div>
+                            ))
+                        )
+                    )}
+                </Section>
+
+                <AlertDialog open={!!commentToDelete}
+                    onOpenChange={(open) => {
+                        if (!deleting && !open) {
+                            setCommentToDelete(null);
+                        }
+                    }}
+                >
+                    <AlertDialogContent>
+                        <AlertDialogHeader>
+                            <AlertDialogTitle>Supprimer ce commentaire ?</AlertDialogTitle>
+                            <AlertDialogDescription>
+                                Cette action est irréversible.
+                                Le commentaire sera définitivement supprimé.
+                            </AlertDialogDescription>
+                        </AlertDialogHeader>
+                        <AlertDialogFooter>
+                            <AlertDialogCancel disabled={deleting}>Annuler</AlertDialogCancel>
+                            <AlertDialogAction onClick={deleteComment} disabled={deleting}>
+                                {deleting ? (
+                                    <LoaderCircleIcon className="animate-spin h-6 w-6 text-primary-foreground" />
+                                ) : null}
+                                <span>Supprimer</span>
+                            </AlertDialogAction>
+                        </AlertDialogFooter>
+                    </AlertDialogContent>
+                </AlertDialog>
+
                 <Spacing size="lg" />
             </main>
             <Footer />
