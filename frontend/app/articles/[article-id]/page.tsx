@@ -12,17 +12,19 @@ import Image from "next/image";
 import CategoryBadge from "@/components/CategoryBadge";
 import { cn } from "@/lib/utils";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
-import { AlertCircleIcon, EllipsisVertical, Flag, LoaderCircleIcon, Pencil, Save, Trash2 } from "lucide-react";
+import { AlertCircleIcon, EllipsisVertical, Flag, LoaderCircleIcon, Pencil, Save, Smile, Trash2 } from "lucide-react";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Avatar, AvatarImage } from "@/components/ui/avatar";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
-import { Button } from "@/components/ui/button";
+import { Button, buttonVariants } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader } from "@/components/ui/alert-dialog";
 import { AlertDialogTitle } from "@radix-ui/react-alert-dialog";
+import { useSession } from "next-auth/react";
 
 export default function ArticlePage() {
+    const { data: session } = useSession();
     const params = useParams();
     const articleId = params["article-id"];
 
@@ -64,7 +66,15 @@ export default function ArticlePage() {
 
                 const res = await api.get(`/api/comments?article=${article.id}`);
 
-                setComments(res.data);
+                setComments(
+                    res.data.sort((a: any, b: any) => {
+                        const isAUser = a.user.id == 2;
+                        const isBUser = b.user.id == 2;
+                        if (isAUser && !isBUser) return -1;
+                        if (!isAUser && isBUser) return 1;
+                        return new Date(b.created_at).getTime() - new Date(a.created_at).getTime();
+                    })
+                );
             } catch (err) {
                 toast.error("Erreur lors du chargement des commentaires.");
                 setErrorArticle("Erreur lors du chargement des commentaires.");
@@ -75,6 +85,45 @@ export default function ArticlePage() {
 
         if (article) fetchComments();
     }, [article]);
+
+    const [newCommentContent, setNewCommentContent] = useState("");
+    const [addingComment, setAddingComment] = useState(false);
+
+    const addComment = async () => {
+        const content = newCommentContent.trim();
+        if (!content || !article?.id) return;
+
+        try {
+            setAddingComment(true);
+
+            const res = await api.post("/api/comments", {
+                content,
+                article: { id: article.id }
+            });
+
+            const createdComment = res.data;
+
+            setComments((prev) =>
+                [
+                    createdComment,
+                    ...prev,
+                ].sort((a, b) => {
+                    const isAUser = a.user.id == 2;
+                    const isBUser = b.user.id == 2;
+                    if (isAUser && !isBUser) return -1;
+                    if (!isAUser && isBUser) return 1;
+                    return new Date(b.created_at).getTime() - new Date(a.created_at).getTime();
+                })
+            );
+
+            setNewCommentContent("");
+            toast.success("Commentaire ajouté !");
+        } catch (err) {
+            toast.error("Erreur lors de l'ajout du commentaire.");
+        } finally {
+            setAddingComment(false);
+        }
+    };
 
     const [editingCommentId, setEditingCommentId] = useState<number | null>(null);
     const [editingContent, setEditingContent] = useState<string>("");
@@ -96,6 +145,7 @@ export default function ArticlePage() {
 
         if (editingContent.trim() == "") {
             setCommentToDelete(editingCommentId);
+            setIsDialogOpen(true);
             return;
         }
 
@@ -119,6 +169,7 @@ export default function ArticlePage() {
 
     const [commentToDelete, setCommentToDelete] = useState<any | null>(null);
     const [deleting, setDeleting] = useState(false);
+    const [isDialogOpen, setIsDialogOpen] = useState(false);
 
     const deleteComment = async () => {
         if (!commentToDelete) return;
@@ -132,6 +183,7 @@ export default function ArticlePage() {
             toast.success("Commentaire supprimé.");
 
             setCommentToDelete(null);
+            setIsDialogOpen(false);
         } catch (err) {
             toast.error("Erreur lors de la suppression.");
         } finally {
@@ -218,10 +270,28 @@ export default function ArticlePage() {
 
                 <Spacing size="sm" />
 
+                {/* peut-être un tri ? */}
                 <Section className="px-0 space-y-4 max-w-5xl">
-                    <h3 className="text-xl font-semibold">
-                        Commentaires ({comments.length})
-                    </h3>
+                    <div className="flex justify-between items-center space-x-2">
+                        <h3 className="text-xl font-semibold">Commentaires ({comments.length})</h3>
+                        <Button size={"sm"} className="ml-auto" onClick={addComment} disabled={addingComment || newCommentContent.trim() == ""}>
+                            {addingComment ? (
+                                <>
+                                    <LoaderCircleIcon className="animate-spin h-6 w-6 text-primary-foreground" />
+                                    <span>Ajout</span>
+                                </>
+                            ) : (
+                                <span>Ajouter</span>
+                            )}
+                        </Button>
+                    </div>
+
+                    <div className="flex gap-3 items-start">
+                        <Avatar className="w-10 h-10 border-4">
+                            <AvatarImage src={`/assets/profile/Ander.png`} />
+                        </Avatar>
+                        <Textarea value={newCommentContent} onChange={(e) => setNewCommentContent(e.target.value)} className="min-h-max" placeholder="Ecrivez un commentaire..." disabled={addingComment} />
+                    </div>
 
                     {errorComments && (
                         <Alert variant="destructive" className="mb-5 border-destructive/20 bg-destructive/5 text-destructive">
@@ -276,7 +346,10 @@ export default function ArticlePage() {
                                                                 <Pencil />
                                                                 <span>Modifier</span>
                                                             </DropdownMenuItem>
-                                                            <DropdownMenuItem onClick={() => setCommentToDelete(comment.id)}>
+                                                            <DropdownMenuItem onClick={() => {
+                                                                setCommentToDelete(comment.id);
+                                                                setIsDialogOpen(true);
+                                                            }}>
                                                                 <Trash2 />
                                                                 <span>Supprimer</span>
                                                             </DropdownMenuItem>
@@ -291,7 +364,7 @@ export default function ArticlePage() {
                                         </div>
                                         {editingCommentId == comment.id ? (
                                             <div className="space-y-2">
-                                                <Textarea value={editingContent} onChange={(e) => setEditingContent(e.target.value)} className="min-h-max" disabled={savingEdit} />
+                                                <Textarea value={editingContent} onChange={(e) => setEditingContent(e.target.value)} className="min-h-max" placeholder="Contenu de votre commentaire..." disabled={savingEdit} />
                                                 <div className="flex gap-2">
                                                     <Button onClick={() => saveEdit()} size="sm" disabled={savingEdit}>
                                                         {savingEdit ? (
@@ -319,13 +392,12 @@ export default function ArticlePage() {
                     )}
                 </Section>
 
-                <AlertDialog open={!!commentToDelete}
-                    onOpenChange={(open) => {
-                        if (!deleting && !open) {
-                            setCommentToDelete(null);
-                        }
-                    }}
-                >
+                <AlertDialog open={isDialogOpen} onOpenChange={(open) => {
+                    if (!deleting) {
+                        setIsDialogOpen(open);
+                        if (!open) setCommentToDelete(null);
+                    }
+                }}>
                     <AlertDialogContent>
                         <AlertDialogHeader>
                             <AlertDialogTitle>Supprimer ce commentaire ?</AlertDialogTitle>
@@ -336,7 +408,13 @@ export default function ArticlePage() {
                         </AlertDialogHeader>
                         <AlertDialogFooter>
                             <AlertDialogCancel disabled={deleting}>Annuler</AlertDialogCancel>
-                            <AlertDialogAction onClick={deleteComment} disabled={deleting}>
+                            <AlertDialogAction className={buttonVariants({ variant: "destructive" })}
+                                onClick={async (event) => {
+                                    event.preventDefault();
+                                    await deleteComment();
+                                }}
+                                disabled={deleting}
+                            >
                                 {deleting ? (
                                     <LoaderCircleIcon className="animate-spin h-6 w-6 text-primary-foreground" />
                                 ) : null}
@@ -347,7 +425,7 @@ export default function ArticlePage() {
                 </AlertDialog>
 
                 <Spacing size="lg" />
-            </main>
+            </main >
             <Footer />
         </>
     );
