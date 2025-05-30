@@ -22,6 +22,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader } from "@/components/ui/alert-dialog";
 import { AlertDialogTitle } from "@radix-ui/react-alert-dialog";
 import { useSession } from "next-auth/react";
+import ScrollProgressBar from "@/components/ui/scroll-progress-bar";
 
 export default function ArticlePage() {
     const { data: session } = useSession();
@@ -196,7 +197,9 @@ export default function ArticlePage() {
             <Header />
             <main className="w-full max-w-[1500px] mx-auto p-4 max-md:p-2">
                 <Spacing size="sm" />
-                <Section className="px-0 space-y-4 max-w-5xl">
+                <Section className="relative px-0 space-y-4 max-w-5xl">
+                    <ScrollProgressBar type="bar" color="#86919d" strokeSize={2} />
+                    
                     {errorArticle && (
                         <Alert variant="destructive" className="mb-5 border-destructive/20 bg-destructive/5 text-destructive">
                             <AlertCircleIcon className="h-4 w-4" />
