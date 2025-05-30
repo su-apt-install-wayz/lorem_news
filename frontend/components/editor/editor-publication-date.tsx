@@ -22,7 +22,7 @@ export function CardDateSelector({ value, onChange, clearDate, setToday, require
                     <span>Date de publication</span>
                     {required && <span className="text-destructive">{" "}*</span>}
                 </CardTitle>
-                <CardDescription>Sélectionnez une date de publication de l'article.</CardDescription>
+                <CardDescription>Sélectionnez une date de publication de l&apos;article.</CardDescription>
             </CardHeader>
             <CardContent>
                 <Popover>
@@ -38,7 +38,7 @@ export function CardDateSelector({ value, onChange, clearDate, setToday, require
                         <Calendar mode="single" selected={value ?? undefined} onSelect={onChange} initialFocus locale={fr} />
                         <div className="flex justify-between items-center p-2">
                             <Button variant="ghost" onClick={clearDate} className="text-destructive">Effacer</Button>
-                            <Button variant="ghost" onClick={setToday} className="text-secondary">Aujourd'hui</Button>
+                            <Button variant="ghost" onClick={setToday} className="text-secondary">Aujourd&apos;hui</Button>
                         </div>
                     </PopoverContent>
                 </Popover>

@@ -4,7 +4,7 @@ import HubLayout from "@/components/hub/hub-layout";
 import TextEditor from "@/components/hub/text-editor"
 import { Section } from "@/components/Section";
 import { Input } from "@/components/ui/input";
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { CheckCircleIcon, EyeIcon, InfoIcon, LoaderCircleIcon, XIcon } from "lucide-react";
 import { Label } from "@/components/ui/label";
@@ -39,7 +39,7 @@ const articleSchema = z.object({
                 message: "Ce titre est déjà utilisé.",
             });
         }
-    } catch (error) {
+    } catch {
         ctx.addIssue({
             path: ["title"],
             code: z.ZodIssueCode.custom,
@@ -97,7 +97,7 @@ export default function ArticleEditorCreate() {
                     ),
                 }
             );
-        } catch (error) {
+        } catch {
             toast(
                 <div className="flex gap-2">
                     <InfoIcon className="text-red-500 w-5 h-5" />
@@ -170,17 +170,9 @@ export default function ArticleEditorCreate() {
         >
             <Section className="w-full flex gap-4 max-lg:flex-col">
                 <Section className="w-full space-y-6 p-0">
-                    {/* <div className="space-y-2">
-                        <Label htmlFor="article-title" className="ml-1">
-                            <span>Titre de l'article</span>
-                            <span className="text-muted-foreground text-xs">({title.length}/50)</span>
-                        </Label>
-                        <Input id="article-title" {...register("title")} placeholder="Titre de l'article" className="bg-card shadow-none" maxLength={50} />
-                    </div> */}
-
                     <div className="space-y-2 relative">
                         <Label htmlFor="article-title" className="ml-1">
-                            <span>Titre de l'article</span>
+                            <span>Titre de l&apos;article</span>
                             <span className="text-muted-foreground text-xs">({title.length}/50)</span>
                         </Label>
                         <div className="relative">
@@ -224,7 +216,7 @@ export default function ArticleEditorCreate() {
 
                     <div className="space-y-2">
                         <Label htmlFor="article-description" className="ml-1">
-                            <span>Description de l'article</span>
+                            <span>Description de l&apos;article</span>
                             <span className="text-muted-foreground text-xs">({description.length}/100)</span>
                         </Label>
                         <Input id="article-description" {...register("description")} placeholder="Description de l'article" className="bg-card shadow-none" maxLength={100} />
@@ -232,7 +224,7 @@ export default function ArticleEditorCreate() {
 
                     <div className="space-y-2">
                         <div className="flex flex-wrap justify-between space-x-2 space-y-2">
-                            <Label className="ml-1">Contenu de l'article</Label>
+                            <Label className="ml-1">Contenu de l&apos;article</Label>
                             <div className="flex justify-end items-center space-x-2 ml-auto">
                                 <Controller
                                     name="status"
@@ -248,7 +240,7 @@ export default function ArticleEditorCreate() {
                                         <Tooltip>
                                             <TooltipTrigger><InfoIcon className="w-3.5 h-3.5 text-primary/50" /></TooltipTrigger>
                                             <TooltipContent>
-                                                <p>Cochez si vous avez terminé d'écrire votre article.</p>
+                                                <p>Cochez si vous avez terminé d&apos;écrire votre article.</p>
                                             </TooltipContent>
                                         </Tooltip>
                                     </TooltipProvider>

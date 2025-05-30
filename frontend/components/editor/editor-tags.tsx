@@ -25,8 +25,8 @@ export function CardTagInput({ tags, onAddTag, onRemoveTag }: CardTagInputProps)
     return (
         <Card className="w-full rounded-md shadow-none">
             <CardHeader>
-                <CardTitle>Tags de l'article</CardTitle>
-                <CardDescription>Ajoutez des tags à l'article.</CardDescription>
+                <CardTitle>Tags de l&apos;article</CardTitle>
+                <CardDescription>Ajoutez des tags à l&apos;article.</CardDescription>
             </CardHeader>
             <CardContent className="space-y-3">
                 <div className="flex gap-2 items-center">

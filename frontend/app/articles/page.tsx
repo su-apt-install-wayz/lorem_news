@@ -7,7 +7,6 @@ import { Footer } from "@/components/Footer";
 import { Header } from "@/components/Header";
 import { Section } from "@/components/Section";
 import { Spacing } from "@/components/Spacing";
-import Image from "next/image";
 import api from "@/lib/api";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { AlertCircleIcon } from "lucide-react";
@@ -26,7 +25,7 @@ export default function ArticlesPage() {
                 const response = await api.get("/api/articles");
                 setArticles(response.data);
                 setLoading(false);
-            } catch (err) {
+            } catch {
                 setError("Impossible de récupérer les articles. Veuillez réessayer plus tard.");
             }
         };
