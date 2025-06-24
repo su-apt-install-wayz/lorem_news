@@ -36,9 +36,8 @@ use Symfony\Component\String\Slugger\SluggerInterface;
         new Delete(security: "is_granted('ROLE_ADMIN') or is_granted('ROLE_LEADER')")
     ]
 )]
-#[ApiFilter(SearchFilter::class, properties: ['title' => 'partial'])]
-#[ApiFilter(SearchFilter::class, properties: ['category' => 'exact'])]
-#[ApiFilter(ArticleSearchQueryFilter::class, strategy: 'ipartial')]
+#[ApiFilter(SearchFilter::class, properties: ['title' => 'partial', 'category' => 'exact'])]
+#[ApiFilter(ArticleSearchQueryFilter::class)]
 #[ApiFilter(ArticleSearchSluggerFilter::class)]
 class Article
 {
