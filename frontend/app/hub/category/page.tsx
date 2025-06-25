@@ -1,13 +1,13 @@
 "use client";
 
-import { DataTable } from "@/app/hub/users/data-table-user"
+import { DataTable } from "@/app/hub/category/data-table-category"
 import HubLayout from "@/components/hub/hub-layout"
 import api from "@/lib/api";
 import { useEffect, useState } from "react";
-import { Users } from "@/components/Listes_interfaces";
+import { Category } from "@/components/Listes_interfaces";
 
 export default function Page() {
-    const [users, setUsers] = useState<Users[]>([]);
+    const [category, setCategory] = useState<Category[]>([]);
     const [error, setError] = useState<string | null>(null);
     const [loading, setLoading] = useState(true);
     let content;
@@ -17,11 +17,11 @@ export default function Page() {
         const fetchArticles = async () => {
             setLoading(true);
             try {
-                const response = await api.get("/api/users");
-                setUsers(response.data);
+                const response = await api.get("/api/categories");
+                setCategory(response.data);
             } catch (err) {
                 console.error(err);
-                setError("Impossible de récupérer les utilisateurs");
+                setError("Impossible de récupérer les categories");
             } finally {
                 setLoading(false);
             }
@@ -38,7 +38,7 @@ export default function Page() {
                     <div className="animate-spin rounded-full h-6 w-6 border-t-2 border-b-2 border-primary"/>
                   </div>;
     } else {
-        content = <DataTable data={users} />;
+        content = <DataTable data={category} />;
     }
 
     return (

@@ -4,3 +4,9 @@ export interface Users {
     email: string;
     roles: string;
 }
+
+export interface Category {
+    id: number;
+    name: string;
+    color: string;
+}

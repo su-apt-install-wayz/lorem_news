@@ -38,7 +38,7 @@ const data = {
         },
         {
             title: "Catégories",
-            url: "#",
+            url: "/hub/category",
             icon: IconCategory,
         }
     ],
