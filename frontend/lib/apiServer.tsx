@@ -1,18 +1,21 @@
-// lib/apiServer.ts
 import axios from "axios";
+import { getToken } from "next-auth/jwt";
 import { cookies } from "next/headers";
 
 export async function createApiServer() {
-    const cookieStore = await cookies(); // pas besoin de await
-    const token = cookieStore.get("authjs.session-token")?.value;
-console.log("Token from cookies:", token);
+    const cookieHeader = (await cookies()).toString();
+
+    const token = await getToken({
+        req: { headers: { cookie: cookieHeader } },
+        secret: process.env.NEXTAUTH_SECRET!,
+    });
 
     const api = axios.create({
         baseURL: "http://localhost:8080",
         headers: {
             Accept: "application/json",
             "Content-Type": "application/json",
-            ...(token && { Authorization: `Bearer ${token}` }),
+            ...(token && token.accessToken ? { Authorization: `Bearer ${token.accessToken}` } : {}),
         },
     });
 
