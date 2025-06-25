@@ -22,8 +22,8 @@ use Symfony\Component\Serializer\Annotation\Groups;
         new Get(normalizationContext: ['groups' => ['comment:read']]),
         new GetCollection(normalizationContext: ['groups' => ['comment:list']]),
         new Post(normalizationContext: ['groups' => ['comment:read']], denormalizationContext: ['groups' => ['comment:write']]),
-        new Patch(normalizationContext: ['groups' => ['comment:read']], denormalizationContext: ['groups' => ['comment:patch']], security: "object == user"),
-        new Delete(security: "(object == user) or is_granted('ROLE_ADMIN')")
+        new Patch(normalizationContext: ['groups' => ['comment:read']], denormalizationContext: ['groups' => ['comment:patch']], security: "object.getUser() == user"),
+        new Delete(security: "(object.getUser() == user) or is_granted('ROLE_ADMIN')")
     ]
 )]
 #[ApiFilter(SearchFilter::class, properties: ['article' => 'exact'])]

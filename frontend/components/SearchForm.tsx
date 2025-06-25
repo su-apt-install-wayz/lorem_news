@@ -1,87 +1,75 @@
-import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { z } from "zod";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
-import { Select, SelectContent, SelectGroup, SelectItem, SelectLabel, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Search } from 'lucide-react';
-import { toast } from "sonner";
+"use client"
+
+import { useForm } from "react-hook-form"
+import { zodResolver } from "@hookform/resolvers/zod"
+import { z } from "zod"
+import { useRouter } from "next/navigation"
+import { useEffect, useState } from "react"
+import { Button } from "@/components/ui/button"
+import { Input } from "@/components/ui/input"
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form"
+import { Command, CommandEmpty, CommandInput, CommandItem, CommandList } from "@/components/ui/command"
+import { Search } from "lucide-react"
+import { cn } from "@/lib/utils"
+import api from "@/lib/api"
 
 const FormSchema = z.object({
-    category: z.string(),
-    search: z.string(),
-});
+    search: z.string().min(1),
+})
 
 interface SearchFormProps {
-    variant: "desktop" | "mobile";
-    className?: string;
+    variant: "desktop" | "mobile"
+    className?: string
 }
 
 export const SearchForm = ({ variant, className }: SearchFormProps) => {
+    const router = useRouter()
     const form = useForm<z.infer<typeof FormSchema>>({
         resolver: zodResolver(FormSchema),
-        defaultValues: {
-            category: "all",
-            search: "",
-        },
-    });
+        defaultValues: { search: "" },
+    })
 
-    function onSubmit(data: z.infer<typeof FormSchema>) {
-        toast("Recherche soumise :", {
-            description: (
-                <pre className="mt-2 w-[340px] rounded-md bg-slate-950 p-4">
-                    <code className="text-white">{JSON.stringify(data, null, 2)}</code>
-                </pre>
-            ),
-        });
+    const [suggestions, setSuggestions] = useState<string[]>([])
+    const searchValue = form.watch("search")
+
+    useEffect(() => {
+        if (!searchValue || searchValue.length < 2) return setSuggestions([])
+
+        const timeout = setTimeout(() => {
+            api.get("/api/articles", { params: { searchQuery: searchValue } })
+                .then((res) => setSuggestions(res.data))
+                .catch(() => setSuggestions([]))
+        }, 300)
+
+        return () => clearTimeout(timeout)
+    }, [searchValue])
+
+    const onSubmit = (data: z.infer<typeof FormSchema>) => {
+        router.push(`/search?q=${encodeURIComponent(data.search)}`)
+    }
+
+    const handleSuggestionClick = (value: string) => {
+        form.setValue("search", value)
+        router.push(`/search?q=${encodeURIComponent(value)}`)
     }
 
     return (
         <Form {...form}>
-            <form onSubmit={form.handleSubmit(onSubmit)} className={`w-full ${className}`}>
+            <form onSubmit={form.handleSubmit(onSubmit)} className={cn("relative w-full", className)} autoComplete="off">
                 <div className={variant === "desktop" ? "flex rounded-sm overflow-hidden" : "flex flex-col gap-4"}>
-                    <FormField
-                        control={form.control}
-                        name="category"
-                        render={({ field }) => (
-                            <FormItem className={variant === "mobile" ? "flex flex-col gap-2" : ""}>
-                                {variant === "mobile" && <FormLabel className="ml-1">Catégorie</FormLabel>}
-                                <Select onValueChange={field.onChange} defaultValue={field.value}>
-                                    <FormControl>
-                                        <SelectTrigger className={variant === "desktop" ? "h-10 rounded-r-none" : "w-full h-10"}>
-                                            <SelectValue placeholder="All" />
-                                        </SelectTrigger>
-                                    </FormControl>
-                                    <SelectContent className="z-99">
-                                        <SelectGroup>
-                                            <SelectLabel>Catégories</SelectLabel>
-                                            <SelectItem className="cursor-pointer" value="all">All</SelectItem>
-                                            <SelectItem className="cursor-pointer" value="apple">Apple</SelectItem>
-                                            <SelectItem className="cursor-pointer" value="banana">Banana</SelectItem>
-                                            <SelectItem className="cursor-pointer" value="blueberry">Blueberry</SelectItem>
-                                            <SelectItem className="cursor-pointer" value="grapes">Grapes</SelectItem>
-                                            <SelectItem className="cursor-pointer" value="pineapple">Pineapple</SelectItem>
-                                        </SelectGroup>
-                                    </SelectContent>
-                                </Select>
-                                <FormMessage />
-                            </FormItem>
-                        )}
-                    />
-
-                    <FormField
-                        control={form.control}
-                        name="search"
+                    <FormField control={form.control} name="search"
                         render={({ field }) => (
                             <FormItem className={variant === "mobile" ? "flex flex-col gap-2" : "w-full"}>
                                 {variant === "mobile" && <FormLabel className="ml-1">Recherche</FormLabel>}
                                 <FormControl>
-                                    <Input 
-                                        type="text" 
-                                        placeholder="Que recherchez-vous ?" 
-                                        {...field} 
-                                        className={variant === "desktop" ? "w-full h-10 bg-accent text-accent-foreground rounded-none shadow-none" : "h-10"}
+                                    <Input
+                                        {...field}
+                                        placeholder="Que recherchez-vous ?"
+                                        className={cn(
+                                            variant === "desktop"
+                                                ? "w-full h-10 bg-accent text-accent-foreground rounded-l-sm rounded-r-none shadow-none"
+                                                : "h-10"
+                                        )}
                                     />
                                 </FormControl>
                                 <FormMessage />
@@ -89,12 +77,26 @@ export const SearchForm = ({ variant, className }: SearchFormProps) => {
                         )}
                     />
 
-                    <Button className={variant === "desktop" ? "cursor-pointer w-10 h-10 rounded-l-none" : "cursor-pointer ml-auto w-max"}  type="submit">
+                    <Button type="submit" className={variant === "desktop" ? "cursor-pointer w-10 h-10 rounded-l-none" : "cursor-pointer ml-auto w-max"}>
                         <Search />
                         {variant === "mobile" && <span>Rechercher</span>}
                     </Button>
                 </div>
+
+                {suggestions.length > 0 && (
+                    <Command className="absolute top-full mt-1 z-50 w-full rounded-md border bg-background shadow-xl">
+                        <CommandInput value={searchValue} disabled />
+                        <CommandList>
+                            <CommandEmpty>Aucun résultat</CommandEmpty>
+                            {suggestions.map((s, idx) => (
+                                <CommandItem key={idx} onSelect={() => handleSuggestionClick(s)} className="cursor-pointer">
+                                    {s}
+                                </CommandItem>
+                            ))}
+                        </CommandList>
+                    </Command>
+                )}
             </form>
         </Form>
-    );
-};
+    )
+}

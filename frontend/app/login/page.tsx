@@ -83,7 +83,7 @@ export default function LoginPage() {
                                 <FormItem>
                                     <FormLabel className="ml-1">Adresse email</FormLabel>
                                     <FormControl>
-                                        <Input type="email" placeholder="Saisissez votre adresse email" {...field} className="h-11" disabled={isSubmitting} />
+                                        <Input type="email" placeholder="Saisissez votre adresse email" {...field} className="h-11 bg-input border-muted" disabled={isSubmitting} />
                                     </FormControl>
                                     <FormMessage className="ml-3">{errors.email?.message}</FormMessage>
                                 </FormItem>
@@ -98,7 +98,7 @@ export default function LoginPage() {
                                 <FormItem className="mb-1">
                                     <FormLabel className="ml-1">Mot de passe</FormLabel>
                                     <FormControl>
-                                        <Input type="password" placeholder="••••••••••••" {...field} className="h-11" disabled={isSubmitting} />
+                                        <Input type="password" placeholder="••••••••••••" {...field} className="h-11 bg-input border-muted" disabled={isSubmitting} />
                                     </FormControl>
                                     <FormMessage className="ml-3">{errors.password?.message}</FormMessage>
                                 </FormItem>

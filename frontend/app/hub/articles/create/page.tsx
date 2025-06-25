@@ -1,7 +1,7 @@
 "use client";
 
 import HubLayout from "@/components/hub/hub-layout";
-import TextEditor from "@/components/hub/text-editor"
+import TextEditor from "@/components/editor/text-editor"
 import { Section } from "@/components/Section";
 import { Input } from "@/components/ui/input";
 import React, { useState } from "react";
