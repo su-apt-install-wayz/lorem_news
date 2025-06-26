@@ -1,10 +1,10 @@
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Avatar, AvatarImage } from "@/components/ui/avatar";
 import { Skeleton } from "@/components/ui/skeleton";
-import { Button } from "@/components/ui/button";
 import { User } from "@/components/users/UsersList";
 import { Badge } from "@/components/ui/badge";
-import { SelectableLabelCheckbox } from "./SelectableLabelCheckbox";
+import { SelectableLabelCheckbox } from "@/components/users/SelectableLabelCheckbox";
+import { EditUserDialog } from "@/components/users/EditUserDialog";
 
 interface UserCardProps {
     user: User;
@@ -83,7 +83,7 @@ export function UserCard({ user, selected, onToggle }: UserCardProps) {
             )}
 
             <CardFooter className="p-0">
-                <Button className="w-full">Modifier</Button>
+                <EditUserDialog user={user} />
             </CardFooter>
         </Card>
     );
