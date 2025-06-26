@@ -2,13 +2,10 @@ import { HubHeader } from "@/components/hub/hub-header";
 import { HubContent } from "@/components/hub/hub-content";
 import { Button } from "@/components/ui/button";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
-import { UserRoundPlus } from "lucide-react";
+import { UserRoundPlus, UserRoundX } from "lucide-react";
 import UsersList from "@/components/users/UsersList";
-import { getUsers } from "./getUsers";
 
-export default async function HubUsersPage() {
-    const users = await getUsers();
-
+export default function Loading() {
     return (
         <>
             <HubHeader title={"Liste des utilisateurs"} actions={
@@ -23,9 +20,9 @@ export default async function HubUsersPage() {
                     </Tooltip>
                 </TooltipProvider>
             } />
-
+            
             <HubContent>
-                <UsersList users={users} />
+                <UsersList users={[]} loading={true} usersPerPage={8} />
             </HubContent>
         </>
     );

@@ -1,6 +1,6 @@
 "use client";
 
-import ArticlesList, { Article } from "@/components/ArticlesList";
+import ArticlesList, { Article } from "@/components/articles/ArticlesList";
 import { Footer } from "@/components/Footer";
 import { Header } from "@/components/Header";
 import { Section } from "@/components/Section";

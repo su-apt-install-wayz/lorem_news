@@ -91,8 +91,8 @@ const ArticlesList: React.FC<ArticlesListProps> = ({ articles, className, filter
                                 />
                             </PaginationItem>
                             {Array.from({ length: totalPages }).map((_, index) => (
-                                <PaginationItem key={index} className={currentPage === index + 1 ? "bg-primary text-white rounded" : ""}>
-                                    <PaginationLink href="#" onClick={() => paginate(index + 1)}>
+                                <PaginationItem key={index}>
+                                    <PaginationLink href="#" onClick={() => paginate(index + 1)} isActive={currentPage === index + 1}>
                                         {index + 1}
                                     </PaginationLink>
                                 </PaginationItem>
