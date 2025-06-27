@@ -98,8 +98,8 @@ export const Header = () => {
                                     </DropdownMenuLabel>
                                     <DropdownMenuSeparator />
                                     <DropdownMenuGroup>
-                                        <DropdownMenuItem>Paramètres</DropdownMenuItem>
-                                        <DropdownMenuItem onClick={() => router.push('/hub')}>Hub Lorem News</DropdownMenuItem>
+                                        <DropdownMenuItem><Link href={"/settings"}>Paramètres</Link></DropdownMenuItem>
+                                        <DropdownMenuItem><Link href={"/hub"}>Hub Lorem News</Link></DropdownMenuItem>
                                     </DropdownMenuGroup>
                                     <DropdownMenuSeparator />
                                     <DropdownMenuItem onClick={() => signOut()}>Se déconnecter</DropdownMenuItem>
