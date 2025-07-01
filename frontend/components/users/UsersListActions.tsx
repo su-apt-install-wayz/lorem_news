@@ -65,12 +65,14 @@ export default function UsersListActions({ users, deleteSelectedUsers }: { users
                             <span className={hasSelection ? "" : "cursor-not-allowed opacity-50"}>
                                 <Button size="sm" variant="destructive" disabled={!hasSelection} onClick={() => setOpenAlert(true)}>
                                     <UserRoundX />
-                                    <span className="max-md:hidden ml-2">Supprimer la sélection</span>
+                                    <span className="max-md:hidden ml-2">
+                                        {hasSelection ? `Supprimer la sélection (${selectedIds.length})` : "Supprimer la sélection"}
+                                    </span>
                                 </Button>
                             </span>
                         </TooltipTrigger>
                         <TooltipContent>
-                            <p>{hasSelection ? "Supprimer la sélection" : "Aucun utilisateur sélectionné"}</p>
+                            <p>{hasSelection ? `Supprimer la sélection (${selectedIds.length})` : "Aucun utilisateur sélectionné"}</p>
                         </TooltipContent>
                     </Tooltip>
                 </TooltipProvider>
