@@ -30,9 +30,10 @@ const roleMap: Record<string, string> = {
 interface EditUserDialogProps {
     user: User;
     updateUser: (id: number, payload: { email: string; username: string; roles: string[] }) => Promise<boolean>;
+    onOptimisticUpdate: (updated: User) => void;
 }
 
-export function EditUserDialog({ user, updateUser }: EditUserDialogProps) {
+export function EditUserDialog({ user, updateUser, onOptimisticUpdate }: EditUserDialogProps) {
     const [open, setOpen] = useState(false);
     const [isPending, startTransition] = useTransition();
     const [email, setEmail] = useState(user.email);
@@ -48,6 +49,9 @@ export function EditUserDialog({ user, updateUser }: EditUserDialogProps) {
 
     const handleSubmit = () => {
         startTransition(async () => {
+            const optimisticUser: User = { ...user, email, username, roles };
+            onOptimisticUpdate(optimisticUser);
+
             const success = await updateUser(user.id, { email, username, roles });
 
             if (success) {
@@ -57,8 +61,8 @@ export function EditUserDialog({ user, updateUser }: EditUserDialogProps) {
                 toast.error("Erreur lors de la mise à jour.");
             }
         });
-    };
 
+    };
 
     return (
         <Dialog open={open} onOpenChange={setOpen}>
@@ -69,7 +73,7 @@ export function EditUserDialog({ user, updateUser }: EditUserDialogProps) {
                 <DialogHeader>
                     <DialogTitle>Modifier l'utilisateur</DialogTitle>
                     <DialogDescription>
-                        Mettez à jour les informations de <span className="font-semibold">{username}</span>.
+                        Mettez à jour les informations de <span className="font-semibold">{user.username}</span>.
                     </DialogDescription>
                 </DialogHeader>
 

@@ -4,6 +4,7 @@ import { UserCard } from "./UserCard";
 import { User } from "./UsersList";
 import { useSelection } from "./SelectionProviderClient";
 import { useSession } from "next-auth/react";
+import { useOptimistic } from "react";
 
 export default function SelectableUserCard({ user, updateUser }: { user: User; updateUser: (id: number, payload: { email: string; username: string; roles: string[] }) => Promise<boolean>; }) {
     const { data: session } = useSession();
@@ -14,15 +15,18 @@ export default function SelectableUserCard({ user, updateUser }: { user: User; u
     const isSelf = user.id === currentUserId;
     const isSelected = selectedIds.includes(user.id);
 
+    const [optimisticUser, setOptimisticUser] = useOptimistic(user);
+
     return (
         <UserCard
-            user={user}
+            user={optimisticUser}
             selected={isSelected}
             disabled={isSelf}
             onToggle={(id, checked) => {
                 if (!isSelf) toggle(id, checked);
             }}
             updateUser={updateUser}
+            onOptimisticUpdate={setOptimisticUser}
         />
     );
 }
