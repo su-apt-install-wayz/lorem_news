@@ -9,6 +9,7 @@ import { EditUserDialog } from "@/components/users/EditUserDialog";
 interface UserCardProps {
     user: User;
     selected: boolean;
+    disabled?: boolean;
     onToggle: (userId: number, checked: boolean) => void;
 }
 
@@ -46,7 +47,7 @@ export function UserCardSkeleton() {
     );
 }
 
-export function UserCard({ user, selected, onToggle }: UserCardProps) {
+export function UserCard({ user, selected, disabled, onToggle }: UserCardProps) {
     return (
         <Card className="p-4">
             <div className="flex items-center text-muted-foreground">
@@ -54,6 +55,7 @@ export function UserCard({ user, selected, onToggle }: UserCardProps) {
                     labelUnchecked="Sélectionner"
                     labelChecked="Désélectionner"
                     checked={selected}
+                    disabled={disabled}
                     onChange={(checked) => onToggle(user.id, checked)}
                 />
             </div>

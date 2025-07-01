@@ -1,0 +1,27 @@
+"use client";
+
+import { UserCard } from "./UserCard";
+import { User } from "./UsersList";
+import { useSelection } from "./SelectionProviderClient";
+import { useSession } from "next-auth/react";
+
+export default function SelectableUserCard({ user }: { user: User }) {
+    const { data: session } = useSession();
+    // const currentUserId = session?.user?.id;
+    const currentUserId = 1;
+
+    const { selectedIds, toggle } = useSelection();
+    const isSelf = user.id === currentUserId;
+    const isSelected = selectedIds.includes(user.id);
+
+    return (
+        <UserCard
+            user={user}
+            selected={isSelected}
+            disabled={isSelf}
+            onToggle={(id, checked) => {
+                if (!isSelf) toggle(id, checked);
+            }}
+        />
+    );
+}

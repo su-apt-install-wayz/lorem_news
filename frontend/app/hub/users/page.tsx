@@ -3,11 +3,29 @@ import { HubContent } from "@/components/hub/hub-content";
 import { Button } from "@/components/ui/button";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { UserRoundPlus } from "lucide-react";
+import { deleteUsers, getUsers } from "./actions";
 import UsersList from "@/components/users/UsersList";
-import { getUsers } from "./getUsers";
+import { revalidatePath } from "next/cache";
+import { Suspense } from "react";
 
-export default async function HubUsersPage() {
+export async function handleDeleteUsers(ids: number[]): Promise<number[]> {
+    "use server";
+    const failed = await deleteUsers(ids);
+    revalidatePath("/hub/users");
+    return failed;
+}
+
+//fonction pour modifier le user
+//fonction pour supprimer la selection des users (avec ajout de alert dialog supplémentaire si user select est admin)
+
+export default async function HubUsersPage(props: { searchParams: { page?: string } }) {
+    const searchParams = await props.searchParams;
+    const page = Number(searchParams.page ?? 1);
+
     const users = await getUsers();
+    const itemsPerPage = 8;
+    const totalPages = Math.ceil(users.length / itemsPerPage);
+    const paginatedUsers = users.slice((page - 1) * itemsPerPage, page * itemsPerPage);
 
     return (
         <>
@@ -25,7 +43,7 @@ export default async function HubUsersPage() {
             } />
 
             <HubContent>
-                <UsersList users={users} />
+                <UsersList users={paginatedUsers} currentPage={page} totalPages={totalPages} deleteSelectedUsers={handleDeleteUsers} />
             </HubContent>
         </>
     );

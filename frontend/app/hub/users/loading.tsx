@@ -3,7 +3,7 @@ import { HubContent } from "@/components/hub/hub-content";
 import { Button } from "@/components/ui/button";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { UserRoundPlus, UserRoundX } from "lucide-react";
-import UsersList from "@/components/users/UsersList";
+import { UsersListLoading } from "@/components/users/UsersList";
 
 export default function Loading() {
     return (
@@ -22,7 +22,7 @@ export default function Loading() {
             } />
             
             <HubContent>
-                <UsersList users={[]} loading={true} usersPerPage={8} />
+                <UsersListLoading />
             </HubContent>
         </>
     );

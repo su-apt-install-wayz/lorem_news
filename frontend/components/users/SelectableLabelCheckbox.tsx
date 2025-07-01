@@ -9,6 +9,7 @@ interface Props {
     labelChecked: string;
     onChange?: (checked: boolean) => void;
     checked?: boolean;
+    disabled?:boolean;
     defaultChecked?: boolean;
     id?: string;
 }
@@ -17,6 +18,7 @@ export function SelectableLabelCheckbox({
     labelUnchecked,
     labelChecked,
     checked,
+    disabled,
     defaultChecked = false,
     id,
     onChange,
@@ -30,6 +32,7 @@ export function SelectableLabelCheckbox({
                 id={checkboxId}
                 className="bg-accent border-muted w-5 h-5 cursor-pointer"
                 checked={checked}
+                disabled={disabled}
                 defaultChecked={isControlled ? undefined : defaultChecked}
                 onCheckedChange={onChange}
             />
