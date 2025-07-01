@@ -11,6 +11,7 @@ interface UserCardProps {
     selected: boolean;
     disabled?: boolean;
     onToggle: (userId: number, checked: boolean) => void;
+    updateUser: (id: number, payload: { email: string; username: string; roles: string[] }) => Promise<boolean>;
 }
 
 const roleMap: Record<string, string> = {
@@ -47,7 +48,7 @@ export function UserCardSkeleton() {
     );
 }
 
-export function UserCard({ user, selected, disabled, onToggle }: UserCardProps) {
+export function UserCard({ user, selected, disabled, onToggle, updateUser }: UserCardProps) {
     return (
         <Card className="p-4">
             <div className="flex items-center text-muted-foreground">
@@ -85,7 +86,7 @@ export function UserCard({ user, selected, disabled, onToggle }: UserCardProps) 
             )}
 
             <CardFooter className="p-0">
-                <EditUserDialog user={user} />
+                <EditUserDialog user={user} updateUser={updateUser} />
             </CardFooter>
         </Card>
     );

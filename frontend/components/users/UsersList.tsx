@@ -17,7 +17,7 @@ export interface User {
     created_at?: string;
 }
 
-export default async function UsersList({ users, currentPage, totalPages, deleteSelectedUsers }: { users: User[]; currentPage: number; totalPages: number; deleteSelectedUsers: (ids: number[]) => Promise<number[]>; }) {
+export default async function UsersList({ users, currentPage, totalPages, updateUser, deleteSelectedUsers }: { users: User[]; currentPage: number; totalPages: number; updateUser: (id: number, payload: { email: string; username: string; roles: string[] }) => Promise<boolean>; deleteSelectedUsers: (ids: number[]) => Promise<number[]>; }) {
     return (
         <SelectionProviderClient users={users}>
             <UsersListActions users={users} deleteSelectedUsers={deleteSelectedUsers} />
@@ -25,7 +25,7 @@ export default async function UsersList({ users, currentPage, totalPages, delete
             <ul className="grid grid-cols-[repeat(auto-fill,minmax(290px,1fr))] gap-4">
                 {users.map((user) => (
                     <li key={user.id}>
-                        <SelectableUserCard user={user} />
+                        <SelectableUserCard user={user} updateUser={updateUser} />
                     </li>
                 ))}
             </ul>

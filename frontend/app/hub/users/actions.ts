@@ -13,6 +13,18 @@ export async function getUsers() {
     }
 }
 
+
+export async function updateUser(id: number, payload: { email: string; username: string; roles: string[] }) {
+    try {
+        const api = await createApiServer();
+        await api.patch(`/api/users/${id}`, payload);
+        return true;
+    } catch (e) {
+        console.error(`❌ Erreur mise à jour user ${id}`, e);
+        return false;
+    }
+}
+
 export async function deleteUsers(userIds: number[]): Promise<number[]> {
     const api = await createApiServer();
     const currentUserId = 1;

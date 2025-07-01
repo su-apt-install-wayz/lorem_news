@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useTransition } from "react";
 import {
     Dialog,
     DialogTrigger,
@@ -29,11 +29,12 @@ const roleMap: Record<string, string> = {
 
 interface EditUserDialogProps {
     user: User;
+    updateUser: (id: number, payload: { email: string; username: string; roles: string[] }) => Promise<boolean>;
 }
 
-export function EditUserDialog({ user }: EditUserDialogProps) {
+export function EditUserDialog({ user, updateUser }: EditUserDialogProps) {
     const [open, setOpen] = useState(false);
-    const [loading, setLoading] = useState(false);
+    const [isPending, startTransition] = useTransition();
     const [email, setEmail] = useState(user.email);
     const [username, setUsername] = useState(user.username);
     const [roles, setRoles] = useState<string[]>(user.roles);
@@ -45,19 +46,19 @@ export function EditUserDialog({ user }: EditUserDialogProps) {
         );
     };
 
-    const handleSubmit = async () => {
-        setLoading(true);
-        try {
-            await api.patch(`/api/users/${user.id}`, { email, username, roles });
-            toast.success("Utilisateur mis à jour.");
-            setOpen(false);
-        } catch (e) {
-            console.error("Erreur lors de la mise à jour", e);
-            toast.error("Une erreur est survenue.");
-        } finally {
-            setLoading(false);
-        }
+    const handleSubmit = () => {
+        startTransition(async () => {
+            const success = await updateUser(user.id, { email, username, roles });
+
+            if (success) {
+                toast.success("Utilisateur mis à jour.");
+                setOpen(false);
+            } else {
+                toast.error("Erreur lors de la mise à jour.");
+            }
+        });
     };
+
 
     return (
         <Dialog open={open} onOpenChange={setOpen}>
@@ -80,7 +81,7 @@ export function EditUserDialog({ user }: EditUserDialogProps) {
                             value={username}
                             onChange={(e) => setUsername(e.target.value)}
                             className="bg-input border-muted"
-                            disabled={loading}
+                            disabled={isPending}
                         />
                     </div>
 
@@ -91,7 +92,7 @@ export function EditUserDialog({ user }: EditUserDialogProps) {
                             value={email}
                             onChange={(e) => setEmail(e.target.value)}
                             className="bg-input border-muted"
-                            disabled={loading}
+                            disabled={isPending}
                         />
                     </div>
 
@@ -102,7 +103,7 @@ export function EditUserDialog({ user }: EditUserDialogProps) {
                                 <button
                                     key={key}
                                     type="button"
-                                    disabled={key === "ROLE_USER" || loading}
+                                    disabled={key === "ROLE_USER" || isPending}
                                     onClick={() => toggleRole(key)}
                                     className={cn(
                                         "text-xs px-2 py-0.5 rounded-full border",
@@ -124,8 +125,8 @@ export function EditUserDialog({ user }: EditUserDialogProps) {
                     <DialogClose asChild>
                         <Button variant="outline">Annuler</Button>
                     </DialogClose>
-                    <Button onClick={handleSubmit} disabled={loading}>
-                        {loading ? <LoaderCircleIcon className="animate-spin h-6 w-6 text-primary-foreground" /> : "Sauvegarder"}
+                    <Button onClick={handleSubmit} disabled={isPending}>
+                        {isPending ? <LoaderCircleIcon className="animate-spin h-6 w-6 text-primary-foreground" /> : "Sauvegarder"}
                     </Button>
                 </DialogFooter>
             </DialogContent>
