@@ -38,7 +38,7 @@ export default async function UsersList({ users, currentPage, totalPages, update
 }
 
 export function UsersListLoading(props: { className?: string }) {
-    const usersPerPage = 8;
+    const usersPerPage = 10;
 
     return (
         <div className={cn("space-y-2", props.className)}>

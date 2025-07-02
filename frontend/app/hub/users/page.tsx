@@ -31,7 +31,7 @@ export default async function HubUsersPage(props: { searchParams: { page?: strin
     const page = Number(searchParams.page ?? 1);
 
     const users = await getUsers();
-    const itemsPerPage = 8;
+    const itemsPerPage = 10;
     const totalPages = Math.ceil(users.length / itemsPerPage);
     const paginatedUsers = users.slice((page - 1) * itemsPerPage, page * itemsPerPage);
 

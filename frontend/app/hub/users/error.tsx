@@ -5,7 +5,7 @@ import { HubContent } from "@/components/hub/hub-content";
 import { Button } from "@/components/ui/button";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { AlertCircleIcon, UserRoundPlus, UserRoundX } from "lucide-react";
-import UsersList from "@/components/users/UsersList";
+import { UsersListLoading } from "@/components/users/UsersList";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 
 export default function Error() {
@@ -42,7 +42,7 @@ export default function Error() {
                     <AlertDescription>Impossible de récupérer les utilisateurs. Veuillez réessayer plus tard.</AlertDescription>
                 </Alert>
 
-                <UsersList users={[]} loading={true} usersPerPage={8} />
+                <UsersListLoading />
             </HubContent>
         </>
     );

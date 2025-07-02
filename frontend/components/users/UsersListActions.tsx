@@ -28,6 +28,15 @@ export default function UsersListActions({ users, deleteSelectedUsers }: { users
     const filteredSelectedIds = selectedIds.filter((id) => id !== currentUserId);
     const hasSelection = filteredSelectedIds.length > 0;
 
+    const adminIds = users
+        .filter((u) => filteredSelectedIds.includes(u.id) && u.roles.includes("ROLE_ADMIN"))
+        .map((u) => u.id);
+
+    const hasAdminSelected = adminIds.length > 0;
+    const [confirmInput, setConfirmInput] = useState("");
+
+    const canDelete = !isDeleting && (!hasAdminSelected || confirmInput === "SUPPRIMER");
+
     const handleDelete = () => {
         startDelete(async () => {
             try {
@@ -77,7 +86,12 @@ export default function UsersListActions({ users, deleteSelectedUsers }: { users
                     </Tooltip>
                 </TooltipProvider>
 
-                <AlertDialog open={openAlert} onOpenChange={setOpenAlert}>
+                <AlertDialog open={openAlert}
+                    onOpenChange={(open) => {
+                        setOpenAlert(open);
+                        if (!open) setConfirmInput("");
+                    }}
+                >
                     <AlertDialogContent>
                         <AlertDialogHeader>
                             <AlertDialogTitle>Confirmer la suppression</AlertDialogTitle>
@@ -86,10 +100,34 @@ export default function UsersListActions({ users, deleteSelectedUsers }: { users
                                     ? "Cette action supprimera l'utilisateur sélectionné. Voulez-vous continuer ?"
                                     : `Cette action supprimera les ${filteredSelectedIds.length} utilisateurs sélectionnés. Voulez-vous continuer ?`}
                             </AlertDialogDescription>
+
+                            {hasAdminSelected && (
+                                <div className="mt-4 space-y-2">
+                                    <p className="text-sm text-destructive font-semibold">
+                                        <span>⚠️</span>
+                                        {" "}
+                                        {adminIds.length === 1
+                                            ? "Attention : vous avez sélectionné un administrateur."
+                                            : "Attention : vous avez sélectionné plusieurs administrateurs."
+                                        }
+                                    </p>
+                                    <p className="text-sm text-muted-foreground">
+                                        Pour confirmer cette suppression, tapez <span className="font-mono font-bold">SUPPRIMER</span> ci-dessous.
+                                    </p>
+                                    <input
+                                        type="text"
+                                        value={confirmInput}
+                                        onChange={(e) => setConfirmInput(e.target.value)}
+                                        placeholder="SUPPRIMER"
+                                        className="w-full px-3 py-2 border rounded text-sm border-muted bg-input"
+                                        disabled={isDeleting}
+                                    />
+                                </div>
+                            )}
                         </AlertDialogHeader>
                         <AlertDialogFooter>
                             <AlertDialogCancel disabled={isDeleting}>Annuler</AlertDialogCancel>
-                            <Button onClick={handleDelete} disabled={isDeleting}>
+                            <Button onClick={handleDelete} disabled={isDeleting || !canDelete}>
                                 {isDeleting ? (
                                     <span className="animate-spin w-4 h-4 border-2 border-t-transparent rounded-full" />
                                 ) : (
