@@ -32,7 +32,7 @@ export default async function UsersList({ users, currentPage, totalPages, update
 
             <Spacing size={"xs"} />
 
-            <PaginationClient currentPage={currentPage} totalPages={totalPages} />
+            {users.length > 10 && <PaginationClient currentPage={currentPage} totalPages={totalPages} />}
         </SelectionProviderClient>
     );
 }
