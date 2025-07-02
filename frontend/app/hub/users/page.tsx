@@ -23,9 +23,6 @@ export async function handleDeleteUsers(ids: number[]): Promise<number[]> {
     return res;
 }
 
-//fonction pour modifier le user
-//fonction pour supprimer la selection des users (avec ajout de alert dialog supplémentaire si user select est admin)
-
 export default async function HubUsersPage(props: { searchParams: { page?: string } }) {
     const searchParams = await props.searchParams;
     const page = Number(searchParams.page ?? 1);
@@ -37,18 +34,7 @@ export default async function HubUsersPage(props: { searchParams: { page?: strin
 
     return (
         <>
-            <HubHeader title={"Liste des utilisateurs"} actions={
-                <TooltipProvider>
-                    <Tooltip>
-                        <TooltipTrigger asChild>
-                            <Button size={"sm"}><span><UserRoundPlus /></span><span className="max-md:hidden">Créer utilisateur</span></Button>
-                        </TooltipTrigger>
-                        <TooltipContent>
-                            <p>Créer un utilisateur</p>
-                        </TooltipContent>
-                    </Tooltip>
-                </TooltipProvider>
-            } />
+            <HubHeader title={"Liste des utilisateurs"} />
 
             <HubContent>
                 <UsersList users={paginatedUsers} currentPage={page} totalPages={totalPages} updateUser={handleUpdateUser} deleteSelectedUsers={handleDeleteUsers} />
