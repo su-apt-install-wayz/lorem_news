@@ -2,7 +2,7 @@ import { HubHeader } from "@/components/hub/hub-header";
 import { HubContent } from "@/components/hub/hub-content";
 import { Button } from "@/components/ui/button";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
-import { UserRoundPlus, UserRoundX } from "lucide-react";
+import { UserRoundPlus } from "lucide-react";
 import { UsersListLoading } from "@/components/users/UsersList";
 
 export default function Loading() {
