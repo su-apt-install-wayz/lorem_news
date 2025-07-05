@@ -118,8 +118,8 @@ export default function LoginPage() {
             <div className="w-1/2 flex justify-center items-center bg-primary rounded-md p-12 max-lg:p-6 relative max-md:hidden bg-cover bg-center" style={{ backgroundImage: "url('/assets/ffflux.svg')" }}>
                 <div className="w-full bg-primary/20 text-primary-foreground space-y-4 p-4 py-8 rounded-md">
                     <h1 className="mb-14 text-6xl font-bold">Lorem News</h1>
-                    <p className="text-4xl font-semibold">La dose quotidienne d'actualités</p>
-                    <p className="text-md font-light">Rejoignez vous-aussi nos lecteurs passionnés qui font confiance à <span className="font-semibold">Lorem News</span> pour rester informés. Découvrez des articles captivants sur l'économie, la technologie, la culture, la santé, et bien plus encore. <span className="font-semibold">Lorem News</span>, c'est votre dose quotidienne d'actualités fiable et de qualité.</p>
+                    <p className="text-4xl font-semibold">La dose quotidienne d&apos;actualités</p>
+                    <p className="text-md font-light">Rejoignez vous-aussi nos lecteurs passionnés qui font confiance à <span className="font-semibold">Lorem News</span> pour rester informés. Découvrez des articles captivants sur l&apos;économie, la technologie, la culture, la santé, et bien plus encore. <span className="font-semibold">Lorem News</span>, c&apos;est votre dose quotidienne d&apos;actualités fiable et de qualité.</p>
 
                     <div className="mt-12 flex items-center space-x-6">
                         <div className="flex -space-x-4">

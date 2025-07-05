@@ -1,8 +1,6 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { Footer } from "@/components/Footer";
-import { Header } from "@/components/Header";
 import { Section } from "@/components/Section";
 import { Spacing } from "@/components/Spacing";
 import api from "@/lib/api";
@@ -10,9 +8,8 @@ import { useParams } from "next/navigation";
 import { toast } from "sonner";
 import Image from "next/image";
 import CategoryBadge from "@/components/CategoryBadge";
-import { cn } from "@/lib/utils";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
-import { AlertCircleIcon, EllipsisVertical, Flag, LoaderCircleIcon, Pencil, Save, Smile, Trash2 } from "lucide-react";
+import { AlertCircleIcon, EllipsisVertical, Flag, LoaderCircleIcon, Pencil, Save, Trash2 } from "lucide-react";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Avatar, AvatarImage } from "@/components/ui/avatar";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
@@ -21,11 +18,9 @@ import { Button, buttonVariants } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader } from "@/components/ui/alert-dialog";
 import { AlertDialogTitle } from "@radix-ui/react-alert-dialog";
-import { useSession } from "next-auth/react";
 import ScrollProgressBar from "@/components/ui/scroll-progress-bar";
 
 export default function ArticlePage() {
-    const { data: session } = useSession();
     const params = useParams();
     const articleId = params["article-id"];
 

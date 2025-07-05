@@ -88,7 +88,7 @@ export function ImageDropzone({ onImageChange }: ImageDropzoneProps) {
                                         }} className="absolute top-3 right-3 text-destructive"><XIcon /></Button>
                                     </TooltipTrigger>
                                     <TooltipContent>
-                                        <p>Retirer l'image</p>
+                                        <p>Retirer l&apos;image</p>
                                     </TooltipContent>
                                 </Tooltip>
                             </TooltipProvider>

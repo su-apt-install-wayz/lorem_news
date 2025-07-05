@@ -12,7 +12,7 @@ export function ImageCard({ setValue }: ImageCardProps) {
     return (
         <Card className="w-full min-w-xs max-w-lg max-lg:max-w-none rounded-md shadow-none">
             <CardHeader>
-                <CardTitle>Image de l'article</CardTitle>
+                <CardTitle>Image de l&apos;article</CardTitle>
                 <CardDescription>Sélectionnez une image de présentation.</CardDescription>
             </CardHeader>
             <CardContent>

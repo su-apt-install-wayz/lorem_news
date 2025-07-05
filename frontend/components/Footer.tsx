@@ -2,7 +2,6 @@
 
 import Image from 'next/image';
 import Logo from '@/public/assets/logo2.png';
-import Link from 'next/link';
 import { Section } from '@/components/Section';
 import { Spacing } from '@/components/Spacing';
 

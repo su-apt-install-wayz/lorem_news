@@ -1,8 +1,8 @@
 "use client";
 
 import { HubSidebar } from "@/components/hub/hub-sidebar";
-import { SiteHeader } from "@/components/hub/site-header";
 import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar";
+import { HubHeader } from "./hub-header";
 
 interface HubLayoutProps {
     title: string;
@@ -26,7 +26,7 @@ export default function HubLayout({
         >
             <HubSidebar />
             <SidebarInset>
-                <SiteHeader title={title} actions={actions} />
+                <HubHeader title={title} actions={actions} />
                 <div className="flex flex-1 flex-col">
                     <div className="@container/main flex flex-1 flex-col gap-2">
                         <div className="flex flex-col gap-4 py-4 md:gap-6 md:py-6">

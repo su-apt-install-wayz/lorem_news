@@ -311,7 +311,7 @@ const TextEditor: React.FC<{ defaultContent?: string, onContentChange?: (value: 
                                     <DialogContent className="sm:max-w-[425px]">
                                         <DialogHeader>
                                             <DialogTitle>Ajouter un lien</DialogTitle>
-                                            <DialogDescription>Ajoutez un lien en entrant l'URL.</DialogDescription>
+                                            <DialogDescription>Ajoutez un lien en entrant l&apos;URL.</DialogDescription>
                                         </DialogHeader>
                                         <div className="grid gap-4 py-4">
                                             <div className="space-y-2">
@@ -544,11 +544,11 @@ const TextEditor: React.FC<{ defaultContent?: string, onContentChange?: (value: 
                                 <DialogContent className="sm:max-w-[425px]">
                                     <DialogHeader>
                                         <DialogTitle>Ajouter une image</DialogTitle>
-                                        <DialogDescription>Ajoutez une image en entrant l'URL.</DialogDescription>
+                                        <DialogDescription>Ajoutez une image en entrant l&apos;URL.</DialogDescription>
                                     </DialogHeader>
                                     <div className="grid gap-4 py-4">
                                         <div className="space-y-2">
-                                            <Label htmlFor="image" className="text-muted-foreground ml-1">URL de l'image</Label>
+                                            <Label htmlFor="image" className="text-muted-foreground ml-1">URL de l&apos;image</Label>
                                             <Input id="image" value={imageUrl} onChange={(e) => setImageUrl(e.target.value)} placeholder="Entrez l'url ici" />
                                         </div>
                                     </div>

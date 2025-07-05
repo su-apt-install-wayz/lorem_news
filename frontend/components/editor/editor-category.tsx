@@ -31,7 +31,7 @@ export function CardCategorySelector({ value, onChange }: CardCategorySelectorPr
         try {
             const response = await api.get("/api/categories");
             setCategories(response.data);
-        } catch (err) {
+        } catch {
             setError("Impossible de récupérer les catégories. Veuillez réessayer plus tard.");
         } finally {
             setLoading(false);
@@ -51,7 +51,7 @@ export function CardCategorySelector({ value, onChange }: CardCategorySelectorPr
                         <Button size={"sm"} variant={"ghost"} onClick={fetchCategories}><RotateCcwIcon /></Button>
                     )}
                 </CardTitle>
-                <CardDescription>Sélectionnez la catégorie de l'article.</CardDescription>
+                <CardDescription>Sélectionnez la catégorie de l&apos;article.</CardDescription>
             </CardHeader>
             <CardContent>
                 {error ? (

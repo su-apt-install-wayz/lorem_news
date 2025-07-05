@@ -21,9 +21,8 @@ import { AlertDialog, AlertDialogTrigger, AlertDialogContent, AlertDialogHeader,
 
 export const schema = z.object({
   id: z.number(),
-  username: z.string(),
-  email: z.string(),
-  roles: z.string(),
+  name: z.string(),
+  color: z.string(),
 })
 
 const columns: ColumnDef<z.infer<typeof schema>>[] = [
@@ -54,34 +53,23 @@ const columns: ColumnDef<z.infer<typeof schema>>[] = [
     enableHiding: false,
   },
   {
-    accessorKey: "username",
+    accessorKey: "name",
     header: "Nom",
     cell: ({ row }) => (
       <div className="w-32 overflow-hidden text-ellipsis whitespace-nowrap">
         <Label className="text-foreground w-fit px-0 text-left">
-          {row.original.username}
+          {row.original.name}
         </Label>
       </div>
     ),
   },
   {
-    accessorKey: "email",
-    header: "Email",
+    accessorKey: "color",
+    header: "Couleur",
     cell: ({ row }) => (
       <div className="w-32">
         <Label className="text-foreground w-fit px-0 text-left">
-          {row.original.email}
-        </Label>
-      </div>
-    ),
-  },
-  {
-    accessorKey: "roles",
-    header: "Roles",
-    cell: ({ row }) => (
-      <div className="w-32">
-        <Label className="text-foreground w-fit px-0 text-left">
-          {Array.isArray(row.original.roles) ? row.original.roles.join(", ") : row.original.roles}
+          {row.original.color}
         </Label>
       </div>
     ),
@@ -137,9 +125,9 @@ export function DataTable({ data: initialData }: { data: z.infer<typeof schema>[
               </AlertDialogTrigger>
               <AlertDialogContent>
                 <AlertDialogHeader>
-                  <AlertDialogTitle>Supprimer les utilisateurs ?</AlertDialogTitle>
+                  <AlertDialogTitle>Supprimer les categories ?</AlertDialogTitle>
                   <AlertDialogDescription>
-                    Cette action est irréversible. Les utilisateurs sélectionnés seront définitivement supprimés.
+                    Cette action est irréversible. Les categories sélectionnés seront définitivement supprimés.
                   </AlertDialogDescription>
                 </AlertDialogHeader>
                 <AlertDialogFooter>
@@ -354,7 +342,7 @@ function ActionsCell({ item }: { item: z.infer<typeof schema> }) {
               <MultiRoleSelector
                 selectedRoles={roles}
                 setSelectedRoles={setSelectedRoles}
-                availableRoles={["ROLE_ADMIN", "ROLE_EDITOR", "ROLE_USER", "ROLE_LEADER"]}
+                availableRoles={["ROLE_ADMIN", "ROLE_MEMBER", "ROLE_USER", "ROLE_LEADER"]}
               />
             </div>
           </div>
