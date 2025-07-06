@@ -23,12 +23,12 @@ const data = {
         },
         {
             title: "Projets",
-            url: "#",
+            url: "/hub/articles",
             icon: IconFolder,
         },
         {
             title: "Equipes", // si admin = Equipes sinon Mon équipe
-            url: "#",
+            url: "/hub/teams",
             icon: IconUsers,
         },
         {
@@ -38,7 +38,7 @@ const data = {
         },
         {
             title: "Catégories",
-            url: "/hub/category",
+            url: "/hub/categories",
             icon: IconCategory,
         }
     ],

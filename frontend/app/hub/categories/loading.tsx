@@ -1,14 +1,14 @@
 import { HubHeader } from "@/components/hub/hub-header";
 import { HubContent } from "@/components/hub/hub-content";
-import { UsersListLoading } from "@/components/hub/users/UsersList";
+import { CategoriesListLoading } from "@/components/hub/categories/CategoriesList";
 
 export default function Loading() {
     return (
         <>
-            <HubHeader title={"Liste des utilisateurs"} />
-            
+            <HubHeader title={"Liste des catégories"} />
+
             <HubContent>
-                <UsersListLoading />
+                <CategoriesListLoading />
             </HubContent>
         </>
     );

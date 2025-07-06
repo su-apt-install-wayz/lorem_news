@@ -13,7 +13,6 @@ export async function getUsers() {
     }
 }
 
-
 export async function updateUser(id: number, payload: { email: string; username: string; roles: string[] }) {
     try {
         const api = await createApiServer();
@@ -45,4 +44,3 @@ export async function deleteUsers(userIds: number[]): Promise<number[]> {
 
     return failed;
 }
-

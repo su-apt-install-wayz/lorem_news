@@ -1,15 +1,15 @@
 "use client";
 
-import { SelectableLabelCheckbox } from "./SelectableLabelCheckbox";
-import { useSelection } from "./SelectionProviderClient";
+import { SelectableLabelCheckbox } from "../SelectableLabelCheckbox";
+import { useSelection } from "../SelectionProviderClient";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
 import { User } from "./UsersList";
 import { useState, useTransition } from "react";
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "../ui/tooltip";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "../../ui/tooltip";
 import { Filter, UserRoundX } from "lucide-react";
-import { AlertDialog, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from "../ui/alert-dialog";
-import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle, SheetTrigger } from "../ui/sheet";
+import { AlertDialog, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from "../../ui/alert-dialog";
+import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle, SheetTrigger } from "../../ui/sheet";
 import { useSession } from "next-auth/react";
 
 export default function UsersListActions({ users, deleteSelectedUsers }: { users: User[]; deleteSelectedUsers: (ids: number[]) => Promise<number[]>; }) {

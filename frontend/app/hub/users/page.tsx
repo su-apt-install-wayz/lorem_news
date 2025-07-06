@@ -1,7 +1,7 @@
 import { HubHeader } from "@/components/hub/hub-header";
 import { HubContent } from "@/components/hub/hub-content";
 import { deleteUsers, getUsers, updateUser } from "./actions";
-import UsersList from "@/components/users/UsersList";
+import UsersList from "@/components/hub/users/UsersList";
 import { revalidatePath } from "next/cache";
 
 export async function handleUpdateUser(id: number, payload: { email: string; username: string; roles: string[] }) {

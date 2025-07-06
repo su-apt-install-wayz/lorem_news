@@ -1,12 +1,12 @@
 import React, { } from "react";
 import { UserCardSkeleton } from "./UserCard";
-import { SelectionProviderClient } from "./SelectionProviderClient";
+import { SelectionProviderClient } from "../SelectionProviderClient";
 import SelectableUserCard from "./SelectableUserCard";
 import UsersListActions from "./UsersListActions";
-import PaginationClient from "./PaginationClient";
-import { Skeleton } from "../ui/skeleton";
+import PaginationClient from "../PaginationClient";
+import { Skeleton } from "../../ui/skeleton";
 import { cn } from "@/lib/utils";
-import { Spacing } from "../Spacing";
+import { Spacing } from "../../Spacing";
 
 export interface User {
     id: number;
@@ -19,7 +19,7 @@ export interface User {
 
 export default async function UsersList({ users, currentPage, totalPages, updateUser, deleteSelectedUsers }: { users: User[]; currentPage: number; totalPages: number; updateUser: (id: number, payload: { email: string; username: string; roles: string[] }) => Promise<boolean>; deleteSelectedUsers: (ids: number[]) => Promise<number[]>; }) {
     return (
-        <SelectionProviderClient users={users}>
+        <SelectionProviderClient>
             <UsersListActions users={users} deleteSelectedUsers={deleteSelectedUsers} />
 
             <ul className="grid grid-cols-[repeat(auto-fill,minmax(290px,1fr))] gap-4">

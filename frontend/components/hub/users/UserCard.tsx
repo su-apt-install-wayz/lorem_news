@@ -1,10 +1,10 @@
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Avatar, AvatarImage } from "@/components/ui/avatar";
 import { Skeleton } from "@/components/ui/skeleton";
-import { User } from "@/components/users/UsersList";
+import { User } from "@/components/hub/users/UsersList";
 import { Badge } from "@/components/ui/badge";
-import { SelectableLabelCheckbox } from "@/components/users/SelectableLabelCheckbox";
-import { EditUserDialog } from "@/components/users/EditUserDialog";
+import { SelectableLabelCheckbox } from "@/components/hub/SelectableLabelCheckbox";
+import { EditUserDialog } from "@/components/hub/users/EditUserDialog";
 
 interface UserCardProps {
     user: User;
