@@ -26,7 +26,7 @@ export function UserCardSkeleton() {
     return (
         <Card className="p-4">
             <div className="flex items-center text-muted-foreground">
-                <Skeleton className="w-24 h-4 rounded bg-muted" />
+                <Skeleton className="w-24 h-5 rounded bg-muted" />
             </div>
 
             <div className="flex justify-center">

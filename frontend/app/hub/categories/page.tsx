@@ -3,6 +3,9 @@ import { HubContent } from "@/components/hub/hub-content";
 import { deleteCategories, getCategories, updateCategory } from "./actions";
 import CategoriesList from "@/components/hub/categories/CategoriesList";
 import { revalidatePath } from "next/cache";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
+import { Button } from "@/components/ui/button";
+import { IconCategoryPlus } from "@tabler/icons-react";
 
 export async function handleUpdateCategory(id: number, payload: { name: string; color: string }) {
     "use server";
@@ -31,7 +34,21 @@ export default async function HubCategoriesPage(props: { searchParams: { page?: 
 
     return (
         <>
-            <HubHeader title={"Liste des catégories"} />
+            <HubHeader title={"Liste des catégories"} actions={
+                <TooltipProvider>
+                    <Tooltip>
+                        <TooltipTrigger asChild>
+                                <Button size="sm">
+                                    <IconCategoryPlus />
+                                    <span className="max-md:hidden ml-2">Créer une catégorie</span>
+                                </Button>
+                        </TooltipTrigger>
+                        <TooltipContent>
+                            <p>Créer une catégorie</p>
+                        </TooltipContent>
+                    </Tooltip>
+                </TooltipProvider>
+            } />
 
             <HubContent>
                 <CategoriesList categories={paginatedCategories} currentPage={page} totalPages={totalPages} updateCategory={handleUpdateCategory} deleteSelectedCategories={handleDeleteCategories} />

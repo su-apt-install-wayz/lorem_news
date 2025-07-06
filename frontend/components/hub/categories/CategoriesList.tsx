@@ -44,8 +44,8 @@ export function CategoriesListLoading(props: { className?: string }) {
                 <Skeleton className="w-28 h-5 rounded bg-muted" />
 
                 <div className="flex items-center gap-2">
-                    <Skeleton className="w-44 h-9 rounded bg-muted" />
-                    <Skeleton className="w-24 h-9 rounded bg-muted" />
+                    <Skeleton className="w-44 h-8 rounded bg-muted" />
+                    <Skeleton className="w-24 h-8 rounded bg-muted" />
                 </div>
             </div>
 

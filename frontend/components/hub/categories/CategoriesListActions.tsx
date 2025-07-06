@@ -9,7 +9,8 @@ import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/comp
 import { AlertDialog, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from "@/components/ui/alert-dialog";
 import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
 import { Category } from "./CategoriesList";
-import { Filter, FolderMinus } from "lucide-react";
+import { Filter } from "lucide-react";
+import { IconCategoryMinus } from "@tabler/icons-react";
 
 export default function CategoriesListActions({ categories, deleteSelectedCategories }: { categories: Category[]; deleteSelectedCategories: (ids: number[]) => Promise<number[]>; }) {
     const { selectedIds, toggleAll, isPageFullySelected, clearSelection } = useSelection();
@@ -59,7 +60,7 @@ export default function CategoriesListActions({ categories, deleteSelectedCatego
                                     disabled={!hasSelection}
                                     onClick={() => setOpenAlert(true)}
                                 >
-                                    <FolderMinus />
+                                    <IconCategoryMinus />
                                     <span className="max-md:hidden ml-2">Supprimer la sélection</span>
                                     {hasSelection ? <span> ({selectedIds.length})</span> : ""}
                                 </Button>
