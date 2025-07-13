@@ -9,20 +9,20 @@ import { IconCategoryPlus } from "@tabler/icons-react";
 
 export async function handleCreateCategory(payload: { name: string; color: string; }) {
     "use server";
-    const success = await createCategory(payload);
-    if (success) {
+    const res = await createCategory(payload);
+    if (res.success) {
         revalidatePath("/hub/categories");
     }
-    return success;
+    return res;
 }
 
 export async function handleUpdateCategory(id: number, payload: { name: string; color: string; }) {
     "use server";
-    const success = await updateCategory(id, payload);
-    if (success) {
+    const res = await updateCategory(id, payload);
+    if (res.success) {
         revalidatePath("/hub/categories");
     }
-    return success;
+    return res;
 }
 
 export async function handleDeleteCategories(ids: number[]): Promise<number[]> {

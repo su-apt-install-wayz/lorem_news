@@ -11,7 +11,7 @@ import { ColorPicker } from "@/components/ui/color-picker";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 
 interface Props {
-    createCategory: (payload: { name: string; color: `#${string}` }) => Promise<boolean>;
+    createCategory: (payload: { name: string; color: `#${string}` }) => Promise<{ success: boolean; message?: string }>;
 }
 
 export function CreateCategoryDialog({ createCategory, children }: PropsWithChildren<Props>) {
@@ -24,14 +24,14 @@ export function CreateCategoryDialog({ createCategory, children }: PropsWithChil
         if (!name.trim()) return toast.error("Le nom est requis.");
 
         startTransition(async () => {
-            const success = await createCategory({ name, color });
-            if (success) {
+            const res = await createCategory({ name, color });
+            if (res.success) {
                 toast.success("Catégorie créée.");
                 setName("");
                 setColor("#000000");
                 setOpen(false);
             } else {
-                toast.error("Erreur lors de la création.");
+                toast.error(res.message);
             }
         });
     };

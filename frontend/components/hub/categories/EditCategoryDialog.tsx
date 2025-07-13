@@ -12,7 +12,7 @@ import { ColorPicker } from "@/components/ui/color-picker";
 
 interface EditCategoryDialogProps {
     category: Category;
-    updateCategory: (id: number, payload: { name: string; color: `#${string}` }) => Promise<boolean>;
+    updateCategory: (id: number, payload: { name: string; color: `#${string}` }) => Promise<{ success: boolean; message?: string }>;
     onOptimisticUpdate: (updated: Category) => void;
 }
 
@@ -27,13 +27,13 @@ export function EditCategoryDialog({ category, updateCategory, onOptimisticUpdat
             const optimisticCategory: Category = { ...category, name, color };
             onOptimisticUpdate(optimisticCategory);
 
-            const success = await updateCategory(category.id, { name, color });
+            const res = await updateCategory(category.id, { name, color });
 
-            if (success) {
+            if (res.success) {
                 toast.success("Catégorie mise à jour.");
                 setOpen(false);
             } else {
-                toast.error("Erreur lors de la mise à jour.");
+                toast.error(res.message);
             }
         });
 

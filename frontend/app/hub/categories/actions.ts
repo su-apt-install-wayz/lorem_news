@@ -17,10 +17,22 @@ export async function createCategory(payload: { name: string; color: string }) {
     try {
         const api = await createApiServer();
         await api.post("/api/categories", payload);
-        return true;
-    } catch (e) {
+        return { success: true };
+    } catch (e: any) {
         console.error("❌ Erreur création catégorie", e);
-        return false;
+
+        if (e.response?.status === 422) {
+            const violations = e.response.data?.violations;
+            const nameError = violations?.find((v: any) => v.propertyPath === "name");
+
+            if (nameError) {
+                return { success: false, message: "Ce nom de catégorie existe déjà." };
+            }
+
+            return { success: false, message: "Erreur de validation lors de la création." };
+        }
+
+        return { success: false, message: "Une erreur est survenue lors de la création." };
     }
 }
 
@@ -28,10 +40,22 @@ export async function updateCategory(id: number, payload: { name: string; color:
     try {
         const api = await createApiServer();
         await api.patch(`/api/categories/${id}`, payload);
-        return true;
-    } catch (e) {
-        console.error(`❌ Erreur mise à jour category ${id}`, e);
-        return false;
+        return { success: true };
+    } catch (e: any) {
+        console.error("❌ Erreur mise à jour  catégorie", e);
+
+        if (e.response?.status === 422) {
+            const violations = e.response.data?.violations;
+            const nameError = violations?.find((v: any) => v.propertyPath === "name");
+
+            if (nameError) {
+                return { success: false, message: "Ce nom de catégorie existe déjà." };
+            }
+
+            return { success: false, message: "Erreur de validation lors de la modification." };
+        }
+
+        return { success: false, message: "Une erreur est survenue lors de la modification." };
     }
 }
 

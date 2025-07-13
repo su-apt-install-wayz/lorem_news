@@ -15,7 +15,7 @@ export interface Category {
     articleCount?: number;
 }
 
-export default async function CategoriesList({ categories, currentPage, totalPages, updateCategory, deleteSelectedCategories }: { categories: Category[]; currentPage: number; totalPages: number; updateCategory: (id: number, payload: { name: string; color: string }) => Promise<boolean>; deleteSelectedCategories: (ids: number[]) => Promise<number[]>; }) {
+export default async function CategoriesList({ categories, currentPage, totalPages, updateCategory, deleteSelectedCategories }: { categories: Category[]; currentPage: number; totalPages: number; updateCategory: (id: number, payload: { name: string; color: string }) => Promise<{ success: boolean; message?: string }>; deleteSelectedCategories: (ids: number[]) => Promise<number[]>; }) {
     return (
         <SelectionProviderClient>
             <CategoriesListActions categories={categories} deleteSelectedCategories={deleteSelectedCategories} />

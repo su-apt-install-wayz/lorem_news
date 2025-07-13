@@ -12,15 +12,17 @@ use App\Repository\CategoryRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Serializer\Annotation\Groups;
 
 #[ORM\Entity(repositoryClass: CategoryRepository::class)]
+#[UniqueEntity( fields: ['name'], message: 'A category with this name already exists.', errorPath: 'name', groups: ['category:write'])]
 #[ApiResource(
     operations: [
         new GetCollection(normalizationContext: ['groups' => ['category:list']]),
         new Get(normalizationContext: ['groups' => ['category:read']]),
-        new Post(normalizationContext: ['groups' => ['category:read']], denormalizationContext: ['groups' => ['category:write']], security: "is_granted('ROLE_ADMIN') or is_granted('ROLE_LEADER')"),
-        new Patch(normalizationContext: ['groups' => ['category:read']], denormalizationContext: ['groups' => ['category:write']], security: "is_granted('ROLE_ADMIN') or is_granted('ROLE_LEADER')"),
+        new Post(normalizationContext: ['groups' => ['category:read']], denormalizationContext: ['groups' => ['category:write']], validationContext: ['groups' => ['category:write']], security: "is_granted('ROLE_ADMIN') or is_granted('ROLE_LEADER')"),
+        new Patch(normalizationContext: ['groups' => ['category:read']], denormalizationContext: ['groups' => ['category:write']], validationContext: ['groups' => ['category:write']], security: "is_granted('ROLE_ADMIN') or is_granted('ROLE_LEADER')"),
         new Delete(security: "(is_granted('ROLE_ADMIN') or is_granted('ROLE_LEADER')) and object.getArticles()|length == 0", securityMessage: 'You cannot delete a category that has articles associated with it.'),
     ]
 )]

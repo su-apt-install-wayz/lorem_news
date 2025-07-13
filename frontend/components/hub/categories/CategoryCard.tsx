@@ -14,7 +14,7 @@ interface CategoryCardProps {
     selected: boolean;
     disabled?: boolean;
     onToggle: (id: number, checked: boolean) => void;
-    updateCategory: (id: number, payload: { name: string; color: string }) => Promise<boolean>;
+    updateCategory: (id: number, payload: { name: string; color: string }) => Promise<{ success: boolean; message?: string }>;
     onOptimisticUpdate: (category: Category) => void;
 }
 
