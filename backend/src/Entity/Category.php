@@ -17,11 +17,11 @@ use Symfony\Component\Serializer\Annotation\Groups;
 #[ORM\Entity(repositoryClass: CategoryRepository::class)]
 #[ApiResource(
     operations: [
-        new Get(normalizationContext: ['groups' => ['category:read']]),
         new GetCollection(normalizationContext: ['groups' => ['category:list']]),
+        new Get(normalizationContext: ['groups' => ['category:read']]),
         new Post(normalizationContext: ['groups' => ['category:read']], denormalizationContext: ['groups' => ['category:write']], security: "is_granted('ROLE_ADMIN') or is_granted('ROLE_LEADER')"),
         new Patch(normalizationContext: ['groups' => ['category:read']], denormalizationContext: ['groups' => ['category:write']], security: "is_granted('ROLE_ADMIN') or is_granted('ROLE_LEADER')"),
-        new Delete(security: "is_granted('ROLE_ADMIN') or is_granted('ROLE_LEADER')")
+        new Delete(security: "(is_granted('ROLE_ADMIN') or is_granted('ROLE_LEADER')) and object.getArticles()|length == 0", securityMessage: 'You cannot delete a category that has articles associated with it.'),
     ]
 )]
 class Category
@@ -34,7 +34,7 @@ class Category
 
     #[ORM\Column(length: 150, unique: true)]
     #[Groups(['category:list', 'category:read', 'category:write', 'article:list', 'article:read'])]
-    private ?string $name = null;
+    private ?string $name = null; // peut-être un slug du nom de la catégorie
 
     #[ORM\Column(length: 10, nullable: true)]
     #[Groups(['category:list', 'category:read', 'category:write', 'article:list', 'article:read'])]
@@ -60,8 +60,7 @@ class Category
 
     public function setName(string $name): static
     {
-        $this->name = $name;
-
+        $this->name = ucfirst(strtolower($name));
         return $this;
     }
 
@@ -83,6 +82,12 @@ class Category
     public function getArticles(): Collection
     {
         return $this->articles;
+    }
+
+    #[Groups(['category:list', 'category:read'])]
+    public function getArticleCount(): int
+    {
+        return $this->articles->count();
     }
 
     public function addArticle(Article $article): static

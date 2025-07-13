@@ -13,6 +13,17 @@ export async function getCategories() {
     }
 }
 
+export async function createCategory(payload: { name: string; color: string }) {
+    try {
+        const api = await createApiServer();
+        await api.post("/api/categories", payload);
+        return true;
+    } catch (e) {
+        console.error("❌ Erreur création catégorie", e);
+        return false;
+    }
+}
+
 export async function updateCategory(id: number, payload: { name: string; color: string; }) {
     try {
         const api = await createApiServer();

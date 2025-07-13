@@ -24,7 +24,9 @@ export default function PaginationClient({
     const paginate = (page: number) => {
         if (page < 1 || page > totalPages) return;
         startTransition(() => {
-            router.push(`?page=${page}`);
+            const params = new URLSearchParams(window.location.search);
+            params.set("page", String(page));
+            router.push(`?${params.toString()}`);
         });
     };
 
@@ -62,7 +64,7 @@ export default function PaginationClient({
                     </PaginationItem>
                 </PaginationContent>
             </Pagination>
-            
+
             {isPending && <span className="text-muted-foreground text-sm text-center ml-2">Chargement...</span>}
         </>
     );

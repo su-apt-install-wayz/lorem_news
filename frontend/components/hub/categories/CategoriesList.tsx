@@ -30,7 +30,7 @@ export default async function CategoriesList({ categories, currentPage, totalPag
 
             <Spacing size="xs" />
 
-            {categories.length > 10 && (<PaginationClient currentPage={currentPage} totalPages={totalPages} />)}
+            {totalPages > 1 && (<PaginationClient currentPage={currentPage} totalPages={totalPages} />)}
         </SelectionProviderClient>
     );
 }
@@ -44,8 +44,8 @@ export function CategoriesListLoading(props: { className?: string }) {
                 <Skeleton className="w-28 h-5 rounded bg-muted" />
 
                 <div className="flex items-center gap-2">
+                    <Skeleton className="w-60 h-8 rounded bg-muted" />
                     <Skeleton className="w-44 h-8 rounded bg-muted" />
-                    <Skeleton className="w-24 h-8 rounded bg-muted" />
                 </div>
             </div>
 

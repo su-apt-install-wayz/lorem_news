@@ -4,7 +4,7 @@ import { deleteUsers, getUsers, updateUser } from "./actions";
 import UsersList from "@/components/hub/users/UsersList";
 import { revalidatePath } from "next/cache";
 
-export async function handleUpdateUser(id: number, payload: { email: string; username: string; roles: string[] }) {
+export async function handleUpdateUser(id: number, payload: { email: string; username: string; roles: string[]; }) {
     "use server";
     const success = await updateUser(id, payload);
     if (success) {
@@ -20,7 +20,7 @@ export async function handleDeleteUsers(ids: number[]): Promise<number[]> {
     return res;
 }
 
-export default async function HubUsersPage(props: { searchParams: { page?: string } }) {
+export default async function HubUsersPage(props: { searchParams: { page?: string; } }) {
     const searchParams = await props.searchParams;
     const page = Number(searchParams.page ?? 1);
 
