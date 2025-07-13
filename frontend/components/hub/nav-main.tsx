@@ -9,6 +9,16 @@ import { Button } from "../ui/button"
 import { cn } from "@/lib/utils"
 import { LoaderCircleIcon } from "lucide-react"
 import { useState } from "react"
+import { CreateCategoryDialog } from "./categories/CreateCategoryDialog"
+
+export async function handleCreateCategory(payload: { name: string; color: string }) {
+    // "use server";
+    // const success = await createCategory(payload);
+    // if (success) {
+    //     // revalidatePath("/hub/categories");
+    // }
+    return true;
+}
 
 export function NavMain({ items }: {
     items: {
@@ -61,13 +71,15 @@ export function NavMain({ items }: {
                                         <span>T</span>
                                     </kbd>
                                 </Button>
-                                <Button variant={"ghost"} className="justify-between" onClick={() => router.push("/creation/contact")}>
-                                    <span>Créer une catégorie</span>
-                                    <kbd className="text-xs text-muted-foreground space-x-0.5">
-                                        <span>⌘</span>
-                                        <span>C</span>
-                                    </kbd>
-                                </Button>
+                                <CreateCategoryDialog createCategory={handleCreateCategory}>
+                                    <Button variant={"ghost"} className="justify-between">
+                                        <span>Créer une catégorie</span>
+                                        <kbd className="text-xs text-muted-foreground space-x-0.5">
+                                            <span>⌘</span>
+                                            <span>C</span>
+                                        </kbd>
+                                    </Button>
+                                </CreateCategoryDialog>
                             </PopoverContent>
                         </Popover>
                     </SidebarMenuItem>

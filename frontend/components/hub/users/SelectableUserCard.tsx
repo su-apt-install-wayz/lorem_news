@@ -2,7 +2,7 @@
 
 import { UserCard } from "./UserCard";
 import { User } from "./UsersList";
-import { useSelection } from "./SelectionProviderClient";
+import { useSelection } from "../SelectionProviderClient";
 import { useSession } from "next-auth/react";
 import { useOptimistic } from "react";
 

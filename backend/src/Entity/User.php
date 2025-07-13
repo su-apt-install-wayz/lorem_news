@@ -14,17 +14,19 @@ use ApiPlatform\Metadata\GetCollection;
 use ApiPlatform\Metadata\Post;
 use ApiPlatform\Metadata\Patch;
 use ApiPlatform\Metadata\Delete;
+use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Serializer\Annotation\Groups;
 
 #[ORM\Entity(repositoryClass: UserRepository::class)]
 #[ORM\HasLifecycleCallbacks]
 #[ORM\Table(name: '`user`')]
+#[UniqueEntity(fields: ['email'], message: 'This email is already in use.', errorPath: 'email', groups: ['user:write'])]
 #[ApiResource(
     operations: [
         new Get(normalizationContext: ['groups' => ['user:read']]),
         new GetCollection(normalizationContext: ['groups' => ['user:list']]),
-        new Post(normalizationContext: ['groups' => ['user:read']], denormalizationContext: ['groups' => ['user:write']]),
-        new Patch(normalizationContext: ['groups' => ['user:read']], denormalizationContext: ['groups' => ['user:write']], security: "(object == user) or is_granted('ROLE_ADMIN')"),
+        new Post(normalizationContext: ['groups' => ['user:read']], denormalizationContext: ['groups' => ['user:write']], validationContext: ['groups' => ['user:write']]),
+        new Patch(normalizationContext: ['groups' => ['user:read']], denormalizationContext: ['groups' => ['user:write']], validationContext: ['groups' => ['user:write']], security: "(object == user) or is_granted('ROLE_ADMIN')"),
         new Delete(security: "(object == user) or is_granted('ROLE_ADMIN')")
     ]
 )]

@@ -7,7 +7,6 @@ import { NavUser } from "@/components/hub/nav-user"
 import { Sidebar, SidebarContent, SidebarFooter, SidebarHeader, SidebarMenu, SidebarMenuButton, SidebarMenuItem } from "@/components/ui/sidebar"
 import { NavBottom } from "@/components/hub/nav-bottom"
 import { WrapText } from "lucide-react"
-import { NavProjects } from "@/components/hub/nav-projects"
 
 const data = {
     user: {
@@ -18,17 +17,17 @@ const data = {
     navMain: [
         {
             title: "Dashboard",
-            url: "/hub/dashboard",
+            url: "/hub",
             icon: IconDashboard,
         },
         {
             title: "Projets",
-            url: "#",
+            url: "/hub/articles",
             icon: IconFolder,
         },
         {
             title: "Equipes", // si admin = Equipes sinon Mon équipe
-            url: "#",
+            url: "/hub/teams",
             icon: IconUsers,
         },
         {
@@ -38,7 +37,7 @@ const data = {
         },
         {
             title: "Catégories",
-            url: "/hub/category",
+            url: "/hub/categories",
             icon: IconCategory,
         }
     ],
@@ -106,7 +105,7 @@ export function HubSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
             </SidebarHeader>
             <SidebarContent>
                 <NavMain items={data.navMain} />
-                <NavProjects items={data.navProjects} />
+                {/* <NavProjects items={data.navProjects} /> */}
                 <NavBottom items={data.navBottom} className="mt-auto" />
             </SidebarContent>
             <SidebarFooter>

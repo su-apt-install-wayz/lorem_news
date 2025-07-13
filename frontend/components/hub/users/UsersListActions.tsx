@@ -1,15 +1,15 @@
 "use client";
 
-import { SelectableLabelCheckbox } from "./SelectableLabelCheckbox";
-import { useSelection } from "./SelectionProviderClient";
+import { SelectableLabelCheckbox } from "../SelectableLabelCheckbox";
+import { useSelection } from "../SelectionProviderClient";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
 import { User } from "./UsersList";
 import { useState, useTransition } from "react";
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "../ui/tooltip";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "../../ui/tooltip";
 import { Filter, UserRoundX } from "lucide-react";
-import { AlertDialog, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from "../ui/alert-dialog";
-import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle, SheetTrigger } from "../ui/sheet";
+import { AlertDialog, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from "../../ui/alert-dialog";
+import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle, SheetTrigger } from "../../ui/sheet";
 import { useSession } from "next-auth/react";
 
 export default function UsersListActions({ users, deleteSelectedUsers }: { users: User[]; deleteSelectedUsers: (ids: number[]) => Promise<number[]>; }) {
@@ -59,15 +59,30 @@ export default function UsersListActions({ users, deleteSelectedUsers }: { users
 
 
     return (
-        <div className="flex justify-between items-center gap-4 px-1">
-            <SelectableLabelCheckbox
-                labelUnchecked="Tout sélectionner"
-                labelChecked="Tout désélectionner"
-                checked={isPageFullySelected(selectableIds)}
-                onChange={() => toggleAll(selectableIds)}
-            />
+        <div className="flex flex-wrap-reverse justify-between items-center gap-4 px-1">
+            <div className="flex gap-2 items-center">
+                <SelectableLabelCheckbox
+                    labelUnchecked="Tout sélectionner"
+                    labelChecked="Tout désélectionner"
+                    checked={selectableIds.length > 0 && isPageFullySelected(selectableIds)}
+                    onChange={() => toggleAll(selectableIds)}
+                />
 
-            <div className="flex items-center gap-2">
+                {hasSelection && (
+                    <TooltipProvider>
+                        <Tooltip>
+                            <TooltipTrigger asChild>
+                                <Button size="sm" variant="link" className="text-xs text-destructive underline-offset-2 cursor-pointer" onClick={clearSelection}>Tout désélectionner</Button>
+                            </TooltipTrigger>
+                            <TooltipContent>
+                                <p>Désélection globale</p>
+                            </TooltipContent>
+                        </Tooltip>
+                    </TooltipProvider>
+                )}
+            </div>
+
+            <div className="ml-auto flex items-center gap-2">
                 <TooltipProvider>
                     <Tooltip>
                         <TooltipTrigger asChild>

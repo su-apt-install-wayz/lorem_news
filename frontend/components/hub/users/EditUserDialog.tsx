@@ -1,21 +1,11 @@
 "use client";
 
 import { useState, useTransition } from "react";
-import {
-    Dialog,
-    DialogTrigger,
-    DialogContent,
-    DialogHeader,
-    DialogTitle,
-    DialogDescription,
-    DialogFooter,
-    DialogClose,
-} from "@/components/ui/dialog";
+import { Dialog, DialogTrigger, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter, DialogClose } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { cn } from "@/lib/utils";
-import api from "@/lib/api";
 import { User } from "./UsersList";
 import { toast } from "sonner";
 import { LoaderCircleIcon } from "lucide-react";
@@ -67,7 +57,7 @@ export function EditUserDialog({ user, updateUser, onOptimisticUpdate }: EditUse
     return (
         <Dialog open={open} onOpenChange={setOpen}>
             <DialogTrigger asChild>
-                <Button className="w-full">Modifier</Button>
+                <Button className="w-full cursor-pointer">Modifier</Button>
             </DialogTrigger>
             <DialogContent className="sm:max-w-[425px]">
                 <DialogHeader>

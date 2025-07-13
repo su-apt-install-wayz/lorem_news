@@ -1,7 +1,6 @@
 "use client";
 
 import { createContext, useContext, useState } from "react";
-import { User } from "./UsersList";
 
 type Context = {
     selectedIds: number[];
@@ -13,7 +12,7 @@ type Context = {
 
 const SelectionContext = createContext<Context | null>(null);
 
-export function SelectionProviderClient({ children, users }: { children: React.ReactNode; users: User[] }) {
+export function SelectionProviderClient({ children}: { children: React.ReactNode; }) {
     const [selectedIds, setSelectedIds] = useState<number[]>([]);
 
     const toggle = (id: number, checked: boolean) => {
