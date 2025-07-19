@@ -61,7 +61,7 @@ export function EditUserDialog({ user, updateUser, onOptimisticUpdate }: EditUse
             </DialogTrigger>
             <DialogContent className="sm:max-w-[425px]">
                 <DialogHeader>
-                    <DialogTitle>Modifier l'utilisateur</DialogTitle>
+                    <DialogTitle>Modifier l&apos;utilisateur</DialogTitle>
                     <DialogDescription>
                         Mettez à jour les informations de <span className="font-semibold">{user.username}</span>.
                     </DialogDescription>
