@@ -1,0 +1,60 @@
+"use server";
+
+import { createApiServer } from "@/lib/apiServer";
+
+export async function getTeams(): Promise<any[]> {
+    try {
+        const api = await createApiServer();
+        const res = await api.get("/teams");
+        return res.data ?? [];
+    } catch (e) {
+        console.error("Erreur getTeams:", e);
+        return [];
+    }
+}
+
+export async function createTeam(payload: { name: string; leaderId: number }): Promise<{ success: boolean; message?: string }> {
+    try {
+        const api = await createApiServer();
+        await api.post("/teams", {
+            name: payload.name,
+            leader: `/users/${payload.leaderId}`,
+        });
+        return { success: true };
+    } catch (e) {
+        console.error("Erreur createTeam:", e);
+        return { success: false, message: "Création impossible" };
+    }
+}
+
+export async function updateTeam(id: number, payload: { name: string; leaderId: number }): Promise<{ success: boolean; message?: string }> {
+    try {
+        const api = await createApiServer();
+        await api.patch(`/teams/${id}`, {
+            name: payload.name,
+            leader: `/users/${payload.leaderId}`,
+        });
+        return { success: true };
+    } catch (e) {
+        console.error("Erreur updateTeam:", e);
+        return { success: false, message: "Modification impossible" };
+    }
+}
+
+export async function deleteTeams(ids: number[]): Promise<number[]> {
+    const api = await createApiServer();
+    const failed: number[] = [];
+
+    await Promise.all(
+        ids.map(async (id) => {
+            try {
+                await api.delete(`/teams/${id}`);
+            } catch (e) {
+                console.error(`Erreur deleteTeam ${id}:`, e);
+                failed.push(id);
+            }
+        })
+    );
+
+    return failed;
+}

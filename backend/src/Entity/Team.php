@@ -20,8 +20,8 @@ use Symfony\Component\Serializer\Annotation\Groups;
     operations: [
         new Get(normalizationContext: ['groups' => ['team:read']]),
         new GetCollection(normalizationContext: ['groups' => ['team:list']]),
-        new Post(normalizationContext: ['groups' => ['team:read']], denormalizationContext: ['groups' => ['team:write']], security: "is_granted('ROLE_LEADER')"),
-        new Patch(normalizationContext: ['groups' => ['team:read']], denormalizationContext: ['groups' => ['team:write']], security: "(object.getLeader() == user) and is_granted('ROLE_LEADER')"),
+        new Post(normalizationContext: ['groups' => ['team:read']], denormalizationContext: ['groups' => ['team:write']], security: "is_granted('ROLE_LEADER') or is granted('ROLE_ADMIN')"),
+        new Patch(normalizationContext: ['groups' => ['team:read']], denormalizationContext: ['groups' => ['team:write']], security: "((object.getLeader() == user) and is_granted('ROLE_LEADER')) or is_granted('ROLE_ADMIN')"),
         new Delete(security: "((object.getLeader() == user) and is_granted('ROLE_LEADER')) or is_granted('ROLE_ADMIN')")
     ]
 )]
