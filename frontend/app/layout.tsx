@@ -5,31 +5,31 @@ import SessionProviderWrapper from "@/components/SessionProviderWrapper";
 import { Toaster } from "@/components/ui/sonner";
 
 const geistSans = Geist({
-  variable: "--font-geist-sans",
-  subsets: ["latin"],
+    variable: "--font-geist-sans",
+    subsets: ["latin"],
 });
 
 const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
-  subsets: ["latin"],
+    variable: "--font-geist-mono",
+    subsets: ["latin"],
 });
 
 export const metadata: Metadata = {
-  title: "Lorem News • Dose quotidienne d'actualités",
-  description: "Lorem News est un site d'actualités qui vous propose un large choix d'articles sur l'actualité.",
+    title: "Lorem News • Dose quotidienne d'actualités",
+    description: "Lorem News est un site d'actualités qui vous propose un large choix d'articles sur l'actualité.",
+    keywords: ["actualités", "news", "lorem news", "articles", "informations", "blog"],
+    authors: [{ name: "Lorem News", url: "https://lorem-news.com" }],
 };
 
-export default function RootLayout({
-  children,
-}: Readonly<{
-  children: React.ReactNode;
-}>) {
-  return (
-    <html lang="fr">
-      <body className={`${geistSans.variable} ${geistMono.variable} antialiased h-full min-h-screen`}>
-        <SessionProviderWrapper>{children}</SessionProviderWrapper>
-        <Toaster />
-      </body>
-    </html>
-  );
+export default function RootLayout({ children }: Readonly<{ children: React.ReactNode; }>) {
+    return (
+        <html lang="fr">
+            <body className={`${geistSans.variable} ${geistMono.variable} antialiased h-full min-h-screen`}>
+                <SessionProviderWrapper>
+                    {children}
+                </SessionProviderWrapper>
+                <Toaster />
+            </body>
+        </html>
+    );
 }

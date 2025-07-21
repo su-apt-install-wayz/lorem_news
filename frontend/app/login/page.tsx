@@ -12,12 +12,12 @@ import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Separator } from "@/components/ui/separator";
+import { LoaderCircleIcon } from "lucide-react";
 
 // Schéma de validation
 const loginSchema = z.object({
     email: z.string().min(1, "L'email est requis").email("Email invalide"),
-    password: z.string()
-        .min(6, "Le mot de passe doit contenir au moins 8 caractères"),
+    password: z.string().min(6, "Le mot de passe doit contenir au moins 8 caractères"),
 });
 
 type LoginFormValues = z.infer<typeof loginSchema>;
@@ -25,10 +25,14 @@ type LoginFormValues = z.infer<typeof loginSchema>;
 export default function LoginPage() {
     const router = useRouter();
     const form = useForm<LoginFormValues>({
-        resolver: zodResolver(loginSchema),
+        resolver: zodResolver(loginSchema), 
+        defaultValues: {
+            email: "",
+            password: "",
+        },
     });
 
-    const { handleSubmit, control, setError, formState: { errors } } = form;
+    const { handleSubmit, control, setError, formState: { errors, isSubmitting } } = form;
 
     const onSubmit = async (data: LoginFormValues) => {
         const result = await signIn("credentials", {
@@ -79,7 +83,7 @@ export default function LoginPage() {
                                 <FormItem>
                                     <FormLabel className="ml-1">Adresse email</FormLabel>
                                     <FormControl>
-                                        <Input type="email" placeholder="Saisissez votre adresse email" {...field} className="h-11" />
+                                        <Input type="email" placeholder="Saisissez votre adresse email" {...field} className="h-11 bg-input border-muted" disabled={isSubmitting} />
                                     </FormControl>
                                     <FormMessage className="ml-3">{errors.email?.message}</FormMessage>
                                 </FormItem>
@@ -94,7 +98,7 @@ export default function LoginPage() {
                                 <FormItem className="mb-1">
                                     <FormLabel className="ml-1">Mot de passe</FormLabel>
                                     <FormControl>
-                                        <Input type="password" placeholder="••••••••••••" {...field} className="h-11" />
+                                        <Input type="password" placeholder="••••••••••••" {...field} className="h-11 bg-input border-muted" disabled={isSubmitting} />
                                     </FormControl>
                                     <FormMessage className="ml-3">{errors.password?.message}</FormMessage>
                                 </FormItem>
@@ -102,18 +106,20 @@ export default function LoginPage() {
                         />
 
                         <div className="mx-1 flex flex-wrap gap-3 justify-between">
-                            <Button variant="link" className="text-secondary text-xs p-0 cursor-pointer ml-auto">Mot de passe oublié ?</Button>
+                            <Button variant={"link"} className="text-secondary text-xs p-0 cursor-pointer ml-auto" disabled={isSubmitting}>Mot de passe oublié ?</Button>
                         </div>
 
-                        <Button variant="default" type="submit" className="w-full h-11 cursor-pointer">Se connecter</Button>
+                        <Button type="submit" className="w-full h-11 cursor-pointer" disabled={isSubmitting}>
+                            {isSubmitting ? <LoaderCircleIcon className="animate-spin h-6 w-6 text-primary-foreground" /> : "Se connecter"}
+                        </Button>
                     </form>
                 </Form>
             </div>
             <div className="w-1/2 flex justify-center items-center bg-primary rounded-md p-12 max-lg:p-6 relative max-md:hidden bg-cover bg-center" style={{ backgroundImage: "url('/assets/ffflux.svg')" }}>
                 <div className="w-full bg-primary/20 text-primary-foreground space-y-4 p-4 py-8 rounded-md">
                     <h1 className="mb-14 text-6xl font-bold">Lorem News</h1>
-                    <p className="text-4xl font-semibold">La dose quotidienne d'actualités</p>
-                    <p className="text-md font-light">Rejoignez vous-aussi nos lecteurs passionnés qui font confiance à <span className="font-semibold">Lorem News</span> pour rester informés. Découvrez des articles captivants sur l'économie, la technologie, la culture, la santé, et bien plus encore. <span className="font-semibold">Lorem News</span>, c'est votre dose quotidienne d'actualités fiable et de qualité.</p>
+                    <p className="text-4xl font-semibold">La dose quotidienne d&apos;actualités</p>
+                    <p className="text-md font-light">Rejoignez vous-aussi nos lecteurs passionnés qui font confiance à <span className="font-semibold">Lorem News</span> pour rester informés. Découvrez des articles captivants sur l&apos;économie, la technologie, la culture, la santé, et bien plus encore. <span className="font-semibold">Lorem News</span>, c&apos;est votre dose quotidienne d&apos;actualités fiable et de qualité.</p>
 
                     <div className="mt-12 flex items-center space-x-6">
                         <div className="flex -space-x-4">

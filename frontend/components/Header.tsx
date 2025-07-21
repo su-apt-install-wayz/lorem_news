@@ -2,10 +2,9 @@
 
 import Image from 'next/image';
 import Logo1 from '@/public/assets/logo1.png';
-import Avatar from '@/public/assets/profile/Ander.png';
 import { Section } from './Section';
 import { Button } from "@/components/ui/button";
-import { DropdownMenu, DropdownMenuContent, DropdownMenuGroup, DropdownMenuItem, DropdownMenuLabel, DropdownMenuPortal, DropdownMenuSeparator, DropdownMenuShortcut, DropdownMenuSub, DropdownMenuSubContent, DropdownMenuSubTrigger, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
+import { DropdownMenu, DropdownMenuContent, DropdownMenuGroup, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
 import { Separator } from '@/components/ui/separator';
 import { SearchForm } from '@/components/SearchForm';
 import { NavigationMenu, NavigationMenuContent, NavigationMenuItem, NavigationMenuLink, NavigationMenuList, NavigationMenuTrigger, navigationMenuTriggerStyle } from "@/components/ui/navigation-menu"
@@ -14,6 +13,8 @@ import Link from 'next/link';
 import { cn } from '@/lib/utils';
 import { signOut, useSession, signIn } from 'next-auth/react';
 import { Drawer, DrawerContent, DrawerDescription, DrawerHeader, DrawerTitle, DrawerTrigger } from "@/components/ui/drawer";
+import { useRouter } from 'next/navigation';
+import { Avatar , AvatarImage } from '@/components/ui/avatar';
 
 const components: { title: string; href: string; }[] = [
     {
@@ -48,6 +49,7 @@ const components: { title: string; href: string; }[] = [
 
 export const Header = () => {
     const { data: session } = useSession();
+    const router = useRouter();
 
     return (
         <header className="sticky top-0 w-full flex flex-col justify-end items-center bg-background border-b shadow-sm z-99">
@@ -60,7 +62,7 @@ export const Header = () => {
                     <div className="flex gap-3 items-center">
                         <Drawer>
                             <DrawerTrigger asChild>
-                                <Button className="hidden max-sm:flex cursor-pointer w-10 h-10" variant="ghost" size="icon">
+                                <Button className="hidden max-sm:flex cursor-pointer w-10 h-10" variant={"ghost"} size="icon">
                                     <svg aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
                                         <path stroke="currentColor" strokeLinecap="round" strokeWidth="2" d="m21 21-3.5-3.5M17 10a7 7 0 1 1-14 0 7 7 0 0 1 14 0Z" />
                                     </svg>
@@ -80,51 +82,31 @@ export const Header = () => {
                         </Drawer>
 
                         {session ? (
-                        <DropdownMenu>
-                            <DropdownMenuTrigger asChild>
-                                <Button className="cursor-pointer rounded-full w-12 h-12 max-sm:w-10 max-sm:h-10 border" variant="link" size="icon">
-                                    <Image className='rounded-full' src={Avatar} alt="Avatar" />
-                                </Button>
-                            </DropdownMenuTrigger>
-                            <DropdownMenuContent className="w-56 z-99">
-                                <DropdownMenuLabel className='flex flex-col'>
-                                    <span>Toto Dupont</span>
-                                    <span className="font-semibold truncate">toto@mail.com</span>
-                                </DropdownMenuLabel>
-                                <DropdownMenuSeparator />
-                                <DropdownMenuGroup>
-                                    <DropdownMenuItem>
-                                        Profil
-                                    </DropdownMenuItem>
-                                    <DropdownMenuItem>
-                                        Paramètres
-                                    </DropdownMenuItem>
-                                    <DropdownMenuItem>
-                                        Admin
-                                    </DropdownMenuItem>
-                                    <DropdownMenuItem>Team</DropdownMenuItem>
-                                    <DropdownMenuSub>
-                                        <DropdownMenuSubTrigger>Invite users</DropdownMenuSubTrigger>
-                                        <DropdownMenuPortal>
-                                            <DropdownMenuSubContent>
-                                                <DropdownMenuItem>Email</DropdownMenuItem>
-                                                <DropdownMenuItem>Message</DropdownMenuItem>
-                                                <DropdownMenuSeparator />
-                                                <DropdownMenuItem>More...</DropdownMenuItem>
-                                            </DropdownMenuSubContent>
-                                        </DropdownMenuPortal>
-                                    </DropdownMenuSub>
-                                    <DropdownMenuItem>
-                                        New Team
-                                        <DropdownMenuShortcut>⌘+T</DropdownMenuShortcut>
-                                    </DropdownMenuItem>
-                                </DropdownMenuGroup>
-                                <DropdownMenuSeparator />
-                                <DropdownMenuItem onClick={() => signOut()}>Se déconnecter</DropdownMenuItem>
-                            </DropdownMenuContent>
-                        </DropdownMenu>
+                            <DropdownMenu>
+                                <DropdownMenuTrigger asChild>
+                                    <Button className="cursor-pointer rounded-full w-10 h-10 border-4 focus-visible:ring-0 focus-visible:border-border" variant={"link"} size="icon">
+                                        <Avatar>
+                                            <AvatarImage src={`/assets/profile/Ander.png`} /> {/* Replace with session.user.image if available */}
+                                            <span className="sr-only">Ouvrir le menu utilisateur</span>
+                                        </Avatar>
+                                    </Button>
+                                </DropdownMenuTrigger>
+                                <DropdownMenuContent className="w-56 z-99">
+                                    <DropdownMenuLabel className='flex flex-col'>
+                                        <span>Toto Dupont</span>
+                                        <span className="font-semibold truncate">toto@mail.com</span>
+                                    </DropdownMenuLabel>
+                                    <DropdownMenuSeparator />
+                                    <DropdownMenuGroup>
+                                        <DropdownMenuItem>Paramètres</DropdownMenuItem>
+                                        <DropdownMenuItem onClick={() => router.push('/hub')}>Hub Lorem News</DropdownMenuItem>
+                                    </DropdownMenuGroup>
+                                    <DropdownMenuSeparator />
+                                    <DropdownMenuItem onClick={() => signOut()}>Se déconnecter</DropdownMenuItem>
+                                </DropdownMenuContent>
+                            </DropdownMenu>
                         ) : (
-                            <Button onClick={() => signIn()} variant="default" className="rounded-xs cursor-pointer" asChild>
+                            <Button onClick={() => signIn()} variant={"default"} className="rounded-xs cursor-pointer" asChild>
                                 <Link href="/login">Se connecter</Link>
                             </Button>
                         )}

@@ -9,9 +9,11 @@ use ApiPlatform\Metadata\ApiResource;
 use ApiPlatform\Metadata\Delete;
 use ApiPlatform\Metadata\Get;
 use ApiPlatform\Metadata\GetCollection;
+use ApiPlatform\Metadata\Link;
 use ApiPlatform\Metadata\Patch;
 use ApiPlatform\Metadata\Post;
 use App\Filter\ArticleSearchQueryFilter;
+use App\Filter\ArticleSearchSluggerFilter;
 use App\Repository\ArticleRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
@@ -26,16 +28,17 @@ use Symfony\Component\String\Slugger\SluggerInterface;
 #[UniqueEntity('slug')]
 #[ApiResource(
     operations: [
-        new Get(normalizationContext: ['groups' => ['article:read']]),
+        new Get(normalizationContext: ['groups' => ['article:read']], security: "is_granted('PUBLIC_ACCESS')"),
+        new Get(uriTemplate: '/articles/slug/{slug}', uriVariables: ['slug' => new Link(fromClass: Article::class, identifiers: ['slug'])], normalizationContext: ['groups' => ['article:read']], security: "is_granted('PUBLIC_ACCESS')"),
         new GetCollection(normalizationContext: ['groups' => ['article:list']]),
         new Post(normalizationContext: ['groups' => ['article:read']], denormalizationContext: ['groups' => ['article:write']]),
         new Patch(normalizationContext: ['groups' => ['article:read']], denormalizationContext: ['groups' => ['article:write']], security: "(object.getUser() == user) or is_granted('ROLE_LEADER')"),
         new Delete(security: "is_granted('ROLE_ADMIN') or is_granted('ROLE_LEADER')")
     ]
 )]
-#[ApiFilter(SearchFilter::class, properties: ['title' => 'partial'])]
-#[ApiFilter(SearchFilter::class, properties: ['category' => 'exact'])]
-#[ApiFilter(ArticleSearchQueryFilter::class, strategy: 'ipartial')]
+#[ApiFilter(SearchFilter::class, properties: ['title' => 'partial', 'category' => 'exact'])]
+#[ApiFilter(ArticleSearchQueryFilter::class)]
+#[ApiFilter(ArticleSearchSluggerFilter::class)]
 class Article
 {
     #[ORM\Id]
@@ -44,9 +47,13 @@ class Article
     #[Groups(['article:list', 'article:read', 'comment:list', 'comment:read', 'comment:write'])]
     private ?int $id = null;
 
-    #[ORM\Column(length: 255)]
+    #[ORM\Column(length: 50)]
     #[Groups(['article:list', 'article:read', 'article:write'])]
     private ?string $title = null;
+
+    #[ORM\Column(length: 100)]
+    #[Groups(['article:list', 'article:read', 'article:write'])]
+    private ?string $description = null;
 
     #[ORM\Column(type: Types::TEXT, nullable: true)]
     #[Groups(['article:list', 'article:read', 'article:write'])]
@@ -80,19 +87,21 @@ class Article
     private ?User $user = null;
 
     #[ORM\Column(length: 1, options: ["default" => "0"])]
+    #[Groups(['article:list', 'article:read', 'article:write'])]
     private ?string $status = "0";
 
     #[ORM\ManyToOne(inversedBy: 'articles')]
-    #[ORM\JoinColumn(nullable: false)]
+    #[ORM\JoinColumn(nullable: true)]
     #[Groups(['article:list', 'article:read', 'article:write'])]
     private ?Category $category = null;
 
     #[ORM\OneToMany(mappedBy: 'article', targetEntity: Comment::class, orphanRemoval: true)]
     private Collection $comments;
 
-    #[ORM\Column(type: Types::TEXT, nullable: true)]
+    #[ORM\Column(nullable: true)]
     #[Groups(['article:list', 'article:read', 'article:write'])]
-    private ?string $tags = null;
+    private ?array $tags = null;
+
 
     public function __construct()
     {
@@ -123,6 +132,18 @@ class Article
     public function setTitle(string $title): static
     {
         $this->title = $title;
+
+        return $this;
+    }
+
+    public function getDescription(): ?string
+    {
+        return $this->description;
+    }
+
+    public function setDescription(string $description): static
+    {
+        $this->description = $description;
 
         return $this;
     }
@@ -270,12 +291,12 @@ class Article
         return $this;
     }
 
-    public function getTags(): ?string
+    public function getTags(): ?array
     {
         return $this->tags;
     }
 
-    public function setTags(?string $tags): static
+    public function setTags(?array $tags): static
     {
         $this->tags = $tags;
 
