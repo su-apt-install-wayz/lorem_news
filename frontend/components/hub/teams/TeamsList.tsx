@@ -4,11 +4,23 @@ import PaginationClient from "../PaginationClient";
 import { Spacing } from "@/components/Spacing";
 import SelectableTeamCard from "./SelectableTeamCard";
 
+export interface TeamMember {
+    id: number;
+    username: string;
+    email: string;
+}
+
+export interface TeamLeader {
+    id: number;
+    username: string;
+    email: string;
+}
+
 export interface Team {
     id: number;
     name: string;
-    leader?: { fullName: string };
-    members?: { id: number; fullName: string }[];
+    leader: TeamLeader;
+    members: TeamMember[];
 }
 
 export default function TeamsList({ teams, currentPage, totalPages, updateTeam, deleteSelectedTeams }: { teams: Team[]; currentPage: number; totalPages: number; updateTeam: (id: number, payload: { name: string; leaderId: number }) => Promise<{ success: boolean; message?: string }>; deleteSelectedTeams: (ids: number[]) => Promise<number[]>; }) {

@@ -13,6 +13,7 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Serializer\Annotation\Groups;
+use Symfony\Component\Serializer\Annotation\SerializedName;
 
 #[ORM\Entity(repositoryClass: TeamRepository::class)]
 #[ORM\HasLifecycleCallbacks]
@@ -84,6 +85,18 @@ class Team
     public function getTeamMembers(): Collection
     {
         return $this->teamMembers;
+    }
+
+    #[Groups(['team:list', 'team:read'])]
+    #[SerializedName('members')]
+    public function getMembers(): array
+    {
+        $leaderId = $this->leader?->getId();
+
+        return array_values(array_filter(
+            $this->teamMembers->map(fn($tm) => $tm->getUser())->toArray(),
+            fn($user) => $user->getId() !== $leaderId
+        ));
     }
 
     public function addTeamMember(TeamMembers $teamMember): static

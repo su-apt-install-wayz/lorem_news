@@ -1,4 +1,3 @@
-// app/components/hub/teams/EditTeamDialog.tsx
 "use client";
 
 import { useState, useTransition } from "react";
@@ -14,16 +13,9 @@ import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
 import { Label } from "@/components/ui/label";
 import { Pencil } from "lucide-react";
+import { Team } from "./TeamsList";
 
-export function EditTeamDialog({
-    team,
-    updateTeam,
-    onOptimisticUpdate,
-}: {
-    team: Team;
-    updateTeam: (id: number, payload: { name: string; leaderId: number }) => Promise<{ success: boolean; message?: string }>;
-    onOptimisticUpdate: (team: Team) => void;
-}) {
+export function EditTeamDialog({ team, updateTeam, onOptimisticUpdate }: { team: Team; updateTeam: (id: number, payload: { name: string; leaderId: number }) => Promise<{ success: boolean; message?: string }>; onOptimisticUpdate: (team: Team) => void; }) {
     const [open, setOpen] = useState(false);
     const [name, setName] = useState(team.name);
     const [leaderId, setLeaderId] = useState(team.leader?.id ?? 0);
@@ -47,9 +39,7 @@ export function EditTeamDialog({
     return (
         <Dialog open={open} onOpenChange={setOpen}>
             <DialogTrigger asChild>
-                <Button variant="outline" size="sm">
-                    <Pencil className="w-4 h-4 mr-2" /> Modifier
-                </Button>
+                <Button className="w-full cursor-pointer">Modifier</Button>
             </DialogTrigger>
             <DialogContent>
                 <DialogHeader>

@@ -5,7 +5,7 @@ import { createApiServer } from "@/lib/apiServer";
 export async function getTeams(): Promise<any[]> {
     try {
         const api = await createApiServer();
-        const res = await api.get("/teams");
+        const res = await api.get("/api/teams");
         return res.data ?? [];
     } catch (e) {
         console.error("Erreur getTeams:", e);
@@ -16,7 +16,7 @@ export async function getTeams(): Promise<any[]> {
 export async function createTeam(payload: { name: string; leaderId: number }): Promise<{ success: boolean; message?: string }> {
     try {
         const api = await createApiServer();
-        await api.post("/teams", {
+        await api.post("/api/teams", {
             name: payload.name,
             leader: `/users/${payload.leaderId}`,
         });
@@ -30,7 +30,7 @@ export async function createTeam(payload: { name: string; leaderId: number }): P
 export async function updateTeam(id: number, payload: { name: string; leaderId: number }): Promise<{ success: boolean; message?: string }> {
     try {
         const api = await createApiServer();
-        await api.patch(`/teams/${id}`, {
+        await api.patch(`/api/teams/${id}`, {
             name: payload.name,
             leader: `/users/${payload.leaderId}`,
         });
@@ -48,7 +48,7 @@ export async function deleteTeams(ids: number[]): Promise<number[]> {
     await Promise.all(
         ids.map(async (id) => {
             try {
-                await api.delete(`/teams/${id}`);
+                await api.delete(`/api/teams/${id}`);
             } catch (e) {
                 console.error(`Erreur deleteTeam ${id}:`, e);
                 failed.push(id);
