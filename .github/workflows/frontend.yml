@@ -1,4 +1,4 @@
-name: CI/CD Pipeline for Frontend
+name: CI/CD Pipeline for frontend
 
 on:
   push:
@@ -9,7 +9,7 @@ on:
     types: [opened, synchronize, reopened]
 
 jobs:
-  build-and-analyze:
+  build_and_analyze:
     name: Build, Lint, UnitTest, SonarQube
     runs-on: ubuntu-latest
 
