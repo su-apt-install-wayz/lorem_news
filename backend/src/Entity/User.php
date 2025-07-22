@@ -6,6 +6,7 @@ use ApiPlatform\Metadata\ApiResource;
 use App\Repository\UserRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
+use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
@@ -53,6 +54,10 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column]
     #[Groups(['user:write'])]
     private ?string $password = null;
+
+    #[ORM\Column(type: Types::TEXT)]
+    #[Groups(['article:list', 'article:read', 'user:list', 'user:read', 'user:write', 'comment:list', 'comment:read', 'team:list', 'team:read'])]
+    private ?string $picture = null;
 
     // changer ça si on peut supprimer un user avec des articles
     #[ORM\OneToMany(mappedBy: 'user', targetEntity: Article::class)]
@@ -138,6 +143,18 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function setPassword(string $password): static
     {
         $this->password = $password;
+
+        return $this;
+    }
+
+    public function getPicture(): ?string
+    {
+        return $this->picture;
+    }
+
+    public function setPicture(string $picture): static
+    {
+        $this->picture = $picture;
 
         return $this;
     }

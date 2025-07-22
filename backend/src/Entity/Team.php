@@ -31,6 +31,7 @@ class Team
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
+    #[Groups(['team:list', 'team:read'])]
     private ?int $id = null;
 
     #[ORM\Column(length: 100)]

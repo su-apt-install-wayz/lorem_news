@@ -8,12 +8,14 @@ export interface TeamMember {
     id: number;
     username: string;
     email: string;
+    picture: string;
 }
 
 export interface TeamLeader {
     id: number;
     username: string;
     email: string;
+    picture: string;
 }
 
 export interface Team {
