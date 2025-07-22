@@ -12,7 +12,6 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
 import { Label } from "@/components/ui/label";
-import { Pencil } from "lucide-react";
 import { Team } from "./TeamsList";
 
 export function EditTeamDialog({ team, updateTeam, onOptimisticUpdate }: { team: Team; updateTeam: (id: number, payload: { name: string; leaderId: number }) => Promise<{ success: boolean; message?: string }>; onOptimisticUpdate: (team: Team) => void; }) {
@@ -25,10 +24,12 @@ export function EditTeamDialog({ team, updateTeam, onOptimisticUpdate }: { team:
         if (!name || !leaderId) return toast.error("Nom ou leader manquant");
 
         startTransition(async () => {
+            onOptimisticUpdate({ ...team, name, leader: { ...team.leader, id: leaderId } });
+
             const res = await updateTeam(team.id, { name, leaderId });
+
             if (res.success) {
                 toast.success("Équipe mise à jour");
-                onOptimisticUpdate({ ...team, name, leader: { ...team.leader, id: leaderId } });
                 setOpen(false);
             } else {
                 toast.error(res.message ?? "Erreur inconnue");
