@@ -3,16 +3,25 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Team } from "./TeamsList";
 import { Eye } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 
 export default function ViewTeamModal({ team }: { team: Team }) {
     return (
         <Dialog>
-            <DialogTrigger asChild>
-                <Button variant={"ghost"} size={"icon"} className="cursor-pointer">
-                    <Eye />
-                </Button>
-            </DialogTrigger>
+            <TooltipProvider>
+                <Tooltip>
+                    <TooltipTrigger asChild>
+                        <DialogTrigger asChild>
+                            <Button variant={"ghost"} size={"icon"} className="cursor-pointer">
+                                <Eye />
+                            </Button>
+                        </DialogTrigger>
+                    </TooltipTrigger>
+                    <TooltipContent>
+                        <p>Voir tous les membres</p>
+                    </TooltipContent>
+                </Tooltip>
+            </TooltipProvider>
 
             <DialogContent className="max-w-md">
                 <DialogHeader>

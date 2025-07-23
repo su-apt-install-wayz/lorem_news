@@ -37,7 +37,7 @@ export default async function HubTeamsPage(props: { searchParams: { page?: strin
     const teams = await getTeams();
     const itemsPerPage = 10;
 
-    const filtered = search ? teams.filter((t: any) => t.name.toLowerCase().includes(search)) : teams;
+    const filtered = search ? teams.filter((t: { name: string; }) => t.name.toLowerCase().includes(search)) : teams;
     const totalPages = Math.ceil(filtered.length / itemsPerPage);
     const paginated = filtered.slice((page - 1) * itemsPerPage, page * itemsPerPage);
 
