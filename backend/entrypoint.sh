@@ -4,7 +4,9 @@
 if [ ! -d "vendor" ]; then
     composer install --no-interaction --optimize-autoloader
     php bin/console doctrine:migrations:migrate --no-interaction
-    #php bin/console doctrine:migrations:migrate --env=test # a tester (créer la base de test avant)
+
+    php bin/console doctrine:database:create --env=test --if-not-exists
+    php bin/console doctrine:migrations:migrate --env=test -n
 fi
 
 # Exécuter génération clés JWT si répertoire n'existe pas
