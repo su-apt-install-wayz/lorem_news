@@ -10,8 +10,8 @@ class UserApiTest extends WebTestCase {
     public function testCreateUser(): void {
         $client = static::createClient();
         $data = [
-            "username" => "test_user",
-            "email" => "test@example.com",
+            "username" => "test_user1",
+            "email" => "test1@example.com",
             "roles" => ["ROLE_ADMIN"],
             "password" => "root"
         ];
@@ -36,6 +36,45 @@ class UserApiTest extends WebTestCase {
         $this->assertResponseIsSuccessful();
         $data = json_decode($client->getResponse()->getContent(), true);
         return $data['token'];
+    }
+
+    // Patch
+    public function testPatchUser(): void {
+        $client = static::createClient();
+        $token = $this->logIn($client);
+
+        $client->request('POST', '/api/users', [], [], [
+            'CONTENT_TYPE' => 'application/json',
+            'HTTP_ACCEPT' => 'application/json',
+            'HTTP_AUTHORIZATION' => 'Bearer ' . $token,
+        ], json_encode([
+            'username' => 'user_patch',
+            'email' => 'userpatch@example.com',
+            'roles' => ['ROLE_USER'],
+            'password' => 'secret'
+        ]));
+
+        $this->assertResponseStatusCodeSame(201);
+        $createdUser = json_decode($client->getResponse()->getContent(), true);
+        $userId = $createdUser['id'];
+        
+        $client->request('PATCH', '/api/users/' . $userId, [], [], [
+            'CONTENT_TYPE' => 'application/merge-patch+json',
+            'HTTP_ACCEPT' => 'application/json',
+            'HTTP_AUTHORIZATION' => 'Bearer ' . $token,
+        ], json_encode([
+            'username' => 'patched_user',
+            'email' => 'patched@example.com',
+            'roles' => ['ROLE_ADMIN'],
+            'password' => 'newpassword'
+        ]));
+
+        $this->assertResponseIsSuccessful();
+        $data = json_decode($client->getResponse()->getContent(), true);
+
+        $this->assertEquals('patched_user', $data['username']);
+        $this->assertEquals('patched@example.com', $data['email']);
+        $this->assertContains('ROLE_ADMIN', $data['roles']);
     }
 
     // Get & Delete
