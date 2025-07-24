@@ -17,6 +17,7 @@ use ApiPlatform\Metadata\Patch;
 use ApiPlatform\Metadata\Delete;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Serializer\Annotation\Groups;
+use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: UserRepository::class)]
 #[ORM\HasLifecycleCallbacks]
@@ -27,7 +28,7 @@ use Symfony\Component\Serializer\Annotation\Groups;
         new Get(normalizationContext: ['groups' => ['user:read']]),
         new GetCollection(normalizationContext: ['groups' => ['user:list']]),
         new Post(normalizationContext: ['groups' => ['user:read']], denormalizationContext: ['groups' => ['user:write']], validationContext: ['groups' => ['user:write']]),
-        new Patch(normalizationContext: ['groups' => ['user:read']], denormalizationContext: ['groups' => ['user:write']], validationContext: ['groups' => ['user:write']], security: "(object == user) or is_granted('ROLE_ADMIN')"),
+        new Patch(normalizationContext: ['groups' => ['user:read']], denormalizationContext: ['groups' => ['user:patch']], validationContext: ['groups' => ['user:write']], security: "(object == user) or is_granted('ROLE_ADMIN')"),
         new Delete(security: "(object == user) or is_granted('ROLE_ADMIN')")
     ]
 )]
@@ -40,23 +41,29 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     private ?int $id = null;
 
     #[ORM\Column(length: 100)]
-    #[Groups(['article:list', 'article:read', 'user:list', 'user:read', 'user:write', 'comment:list', 'comment:read', 'team:list', 'team:read'])]
+    #[Groups(['article:list', 'article:read', 'user:list', 'user:read', 'user:write', 'user:patch', 'comment:list', 'comment:read', 'team:list', 'team:read'])]
     private ?string $username = null;
 
     #[ORM\Column(length: 100, unique: true)]
-    #[Groups(['user:list', 'user:read', 'user:write', 'team:list', 'team:read'])]
+    #[Groups(['user:list', 'user:read', 'user:write', 'user:patch', 'team:list', 'team:read'])]
     private ?string $email = null;
 
     #[ORM\Column]
-    #[Groups(['user:list', 'user:read', 'user:write'])]
+    #[Groups(['user:list', 'user:read', 'user:patch'])]
+    #[Assert\All([
+        new Assert\Choice(
+            choices: ['ROLE_ADMIN', 'ROLE_LEADER', 'ROLE_MEMBER'],
+            message: 'Invalid role "{{ value }}".',
+        )
+    ])]
     private array $roles = [];
 
     #[ORM\Column]
-    #[Groups(['user:write'])]
+    #[Groups(['user:write', 'user:patch',])]
     private ?string $password = null;
 
     #[ORM\Column(type: Types::TEXT)]
-    #[Groups(['article:list', 'article:read', 'user:list', 'user:read', 'user:write', 'comment:list', 'comment:read', 'team:list', 'team:read'])]
+    #[Groups(['article:list', 'article:read', 'user:list', 'user:read', 'user:write', 'user:patch', 'comment:list', 'comment:read', 'team:list', 'team:read'])]
     private ?string $picture = null;
 
     // changer ça si on peut supprimer un user avec des articles
