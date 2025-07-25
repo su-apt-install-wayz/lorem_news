@@ -10,6 +10,7 @@ use ApiPlatform\Metadata\Post;
 use ApiPlatform\Metadata\Get;
 use App\Repository\TeamMembersRepository;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Serializer\Annotation\Groups;
 
 #[ORM\Entity(repositoryClass: TeamMembersRepository::class)]
 #[ORM\HasLifecycleCallbacks]
@@ -17,8 +18,8 @@ use Doctrine\ORM\Mapping as ORM;
     operations: [
         new Get(normalizationContext: ['groups' => ['team_members:read']]),
         new GetCollection(normalizationContext: ['groups' => ['team_members:list']]),
-        new Post(normalizationContext: ['groups' => ['team_members:read']], denormalizationContext: ['groups' => ['team_members:write']], security: "is_granted('ROLE_LEADER')"),
-        new Patch(normalizationContext: ['groups' => ['team_members:read']], denormalizationContext: ['groups' => ['team_members:write']], security: "(object.getLeader() == user) and is_granted('ROLE_LEADER')"),
+        new Post(normalizationContext: ['groups' => ['team_members:read']], denormalizationContext: ['groups' => ['team_members:write']], security: "is_granted('ROLE_LEADER') or is granted('ROLE_ADMIN')"),
+        new Patch(normalizationContext: ['groups' => ['team_members:read']], denormalizationContext: ['groups' => ['team_members:write']], security: "((object.getLeader() == user) and is_granted('ROLE_LEADER')) or is_granted('ROLE_ADMIN')"),
         new Delete(security: "((object.getLeader() == user) and is_granted('ROLE_LEADER')) or is_granted('ROLE_ADMIN')")
     ]
 )]

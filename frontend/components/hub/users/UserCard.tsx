@@ -62,8 +62,6 @@ export function UserCard({ user, selected, disabled, onToggle, updateUser, onOpt
                 />
             </div>
 
-            {/* ajouter la team si dans une team */}
-
             <div className="flex justify-center">
                 <Avatar className="w-15 h-15">
                     <AvatarImage src={user.picture ? `/assets/profile/${user.picture}` : `/assets/profile/Ander.png`} />

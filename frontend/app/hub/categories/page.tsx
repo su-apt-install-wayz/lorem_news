@@ -41,7 +41,6 @@ export default async function HubCategoriesPage(props: { searchParams: { page?: 
     const itemsPerPage = 10;
 
     const filtered = search ? categories.filter((c: { name: string; }) => c.name.toLowerCase().includes(search)) : categories;
-
     const totalPages = Math.ceil(filtered.length / itemsPerPage);
     const paginatedCategories = filtered.slice((page - 1) * itemsPerPage, page * itemsPerPage);
 

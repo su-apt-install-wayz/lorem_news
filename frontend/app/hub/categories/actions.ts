@@ -3,8 +3,8 @@
 import { createApiServer } from "@/lib/apiServer";
 
 export async function getCategories() {
-    const api = await createApiServer();
     try {
+        const api = await createApiServer();
         const response = await api.get("/api/categories");
         return response.data;
     } catch (e) {

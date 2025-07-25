@@ -13,6 +13,7 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Serializer\Annotation\Groups;
+use Symfony\Component\Serializer\Annotation\SerializedName;
 
 #[ORM\Entity(repositoryClass: TeamRepository::class)]
 #[ORM\HasLifecycleCallbacks]
@@ -20,8 +21,8 @@ use Symfony\Component\Serializer\Annotation\Groups;
     operations: [
         new Get(normalizationContext: ['groups' => ['team:read']]),
         new GetCollection(normalizationContext: ['groups' => ['team:list']]),
-        new Post(normalizationContext: ['groups' => ['team:read']], denormalizationContext: ['groups' => ['team:write']], security: "is_granted('ROLE_LEADER')"),
-        new Patch(normalizationContext: ['groups' => ['team:read']], denormalizationContext: ['groups' => ['team:write']], security: "(object.getLeader() == user) and is_granted('ROLE_LEADER')"),
+        new Post(normalizationContext: ['groups' => ['team:read']], denormalizationContext: ['groups' => ['team:write']], security: "is_granted('ROLE_LEADER') or is granted('ROLE_ADMIN')"),
+        new Patch(normalizationContext: ['groups' => ['team:read']], denormalizationContext: ['groups' => ['team:write']], security: "((object.getLeader() == user) and is_granted('ROLE_LEADER')) or is_granted('ROLE_ADMIN')"),
         new Delete(security: "((object.getLeader() == user) and is_granted('ROLE_LEADER')) or is_granted('ROLE_ADMIN')")
     ]
 )]
@@ -30,6 +31,7 @@ class Team
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
+    #[Groups(['team:list', 'team:read'])]
     private ?int $id = null;
 
     #[ORM\Column(length: 100)]
@@ -84,6 +86,18 @@ class Team
     public function getTeamMembers(): Collection
     {
         return $this->teamMembers;
+    }
+
+    #[Groups(['team:list', 'team:read'])]
+    #[SerializedName('members')]
+    public function getMembers(): array
+    {
+        $leaderId = $this->leader?->getId();
+
+        return array_values(array_filter(
+            $this->teamMembers->map(fn($tm) => $tm->getUser())->toArray(),
+            fn($user) => $user->getId() !== $leaderId
+        ));
     }
 
     public function addTeamMember(TeamMembers $teamMember): static
