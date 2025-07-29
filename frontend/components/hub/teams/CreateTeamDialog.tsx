@@ -6,29 +6,24 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
 import { Label } from "@/components/ui/label";
+import { UserCombobox } from "./UserCombobox";
 
-export function CreateTeamDialog({
-    children,
-    createTeam,
-}: {
-    children: React.ReactNode;
-    createTeam: (payload: { name: string; leaderId: number }) => Promise<{ success: boolean; message?: string }>;
-}) {
+export function CreateTeamDialog({ children, createTeam }: { children: React.ReactNode; createTeam: (payload: { name: string; leaderId: number; }) => Promise<{ success: boolean; message?: string }>; }) {
     const [open, setOpen] = useState(false);
     const [name, setName] = useState("");
-    const [leaderId, setLeaderId] = useState<number | null>(null);
+    const [leader, setLeader] = useState<{ id: number; username: string; email: string; picture: string; } | null>(null);
     const [isPending, startTransition] = useTransition();
 
     const handleSubmit = () => {
-        if (!name || !leaderId) return toast.error("Nom ou leader manquant");
+        if (!name || !leader?.id) return toast.error("Nom ou leader manquant");
 
         startTransition(async () => {
-            const res = await createTeam({ name, leaderId });
+            const res = await createTeam({ name, leaderId: leader.id });
             if (res.success) {
                 toast.success("Équipe créée");
                 setOpen(false);
                 setName("");
-                setLeaderId(null);
+                setLeader(null);
             } else {
                 toast.error(res.message ?? "Erreur inconnue");
             }
@@ -46,11 +41,16 @@ export function CreateTeamDialog({
                 <div className="space-y-4 py-2">
                     <div className="space-y-2">
                         <Label htmlFor="team-name">Nom de l'équipe</Label>
-                        <Input id="team-name" value={name} onChange={(e) => setName(e.target.value)} placeholder="Rédaction Paris" />
+                        <Input
+                            id="team-name"
+                            value={name}
+                            onChange={(e) => setName(e.target.value)}
+                            placeholder="Rédaction Paris"
+                        />
                     </div>
                     <div className="space-y-2">
-                        <Label htmlFor="leader-id">ID du leader</Label>
-                        <Input id="leader-id" value={leaderId ?? ""} onChange={(e) => setLeaderId(Number(e.target.value))} type="number" placeholder="123" />
+                        <Label>Leader</Label>
+                        <UserCombobox value={leader} onChange={setLeader} placeholder="Rechercher un leader..." />
                     </div>
                 </div>
 
