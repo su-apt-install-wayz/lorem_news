@@ -1,11 +1,10 @@
-// app/hub/teams/page.tsx
 import { HubHeader } from "@/components/hub/hub-header";
 import { HubContent } from "@/components/hub/hub-content";
 import { revalidatePath } from "next/cache";
 import { CreateTeamDialog } from "@/components/hub/teams/CreateTeamDialog";
 import { Button } from "@/components/ui/button";
 import { IconUsersPlus } from "@tabler/icons-react";
-import { getTeams, createTeam, deleteTeams, updateTeam } from "../actions";
+import { getTeams, createTeam, deleteTeams, updateTeam, searchLeaders, searchWriters } from "../actions";
 import TeamsList from "@/components/hub/teams/TeamsList";
 
 export async function handleCreateTeam(payload: { name: string; leaderId: number }) {
@@ -29,6 +28,18 @@ export async function handleDeleteTeams(ids: number[]): Promise<number[]> {
     return res;
 }
 
+export async function handleSearchLeaders(query: string) {
+    "use server";
+    const res = await searchLeaders(query);
+    return res;
+}
+
+export async function handleSearchWriters(query: string) {
+    "use server";
+    const res = await searchWriters(query);
+    return res;
+}
+
 export default async function HubTeamsPage(props: { searchParams: { page?: string; search?: string } }) {
     const searchParams = await props.searchParams;
     const page = Number(searchParams.page ?? 1);
@@ -43,18 +54,19 @@ export default async function HubTeamsPage(props: { searchParams: { page?: strin
 
     return (
         <>
-            <HubHeader title={"Liste des équipes"} actions={
-                    <CreateTeamDialog createTeam={handleCreateTeam}>
-                        <Button size="sm">
-                            <IconUsersPlus />
-                            <span className="max-md:hidden ml-2">Créer une équipe</span>
-                        </Button>
-                    </CreateTeamDialog>
-                }
+            <HubHeader title={"Liste des équipes"}
+            // actions={
+            //     <CreateTeamDialog createTeam={handleCreateTeam}>
+            //         <Button size="sm">
+            //             <IconUsersPlus />
+            //             <span className="max-md:hidden ml-2">Créer une équipe</span>
+            //         </Button>
+            //     </CreateTeamDialog>
+            // }
             />
 
             <HubContent>
-                <TeamsList teams={paginated} currentPage={page} totalPages={totalPages} updateTeam={handleUpdateTeam} deleteSelectedTeams={handleDeleteTeams} />
+                <TeamsList teams={paginated} currentPage={page} totalPages={totalPages} updateTeam={handleUpdateTeam} deleteSelectedTeams={handleDeleteTeams} searchLeaders={handleSearchLeaders} searchWriters={handleSearchWriters} />
             </HubContent>
         </>
     );

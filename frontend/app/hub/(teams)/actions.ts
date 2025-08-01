@@ -58,3 +58,35 @@ export async function deleteTeams(ids: number[]): Promise<number[]> {
 
     return failed;
 }
+
+export async function searchLeaders(searchQuery: string) {
+    try {
+        const api = await createApiServer();
+        const res = await api.get("/api/users", {
+            params: {
+                searchQuery,
+                roles: ["ROLE_LEADER"],
+            },
+        });
+        return res.data ?? [];
+    } catch (e) {
+        console.error("Erreur searchLeaders:", e);
+        return [];
+    }
+}
+
+export async function searchWriters(searchQuery: string) {
+    try {
+        const api = await createApiServer();
+        const res = await api.get("/api/users", {
+            params: {
+                searchQuery,
+                roles: ["ROLE_MEMBER"],
+            },
+        });
+        return res.data ?? [];
+    } catch (e) {
+        console.error("Erreur searchWriters:", e);
+        return [];
+    }
+}

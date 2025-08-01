@@ -11,8 +11,9 @@ import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/comp
 import { LoaderCircleIcon, XIcon } from "lucide-react";
 import { Team } from "@/components/hub/teams/TeamsList";
 import { UserCombobox } from "./UserCombobox";
+import { User } from "./UserCombobox";
 
-export function EditTeamDialog({ team, updateTeam, onOptimisticUpdate }: { team: Team; updateTeam: (id: number, payload: { name: string; leaderId: number }) => Promise<{ success: boolean; message?: string }>; onOptimisticUpdate: (team: Team) => void; }) {
+export function EditTeamDialog({ team, updateTeam, onOptimisticUpdate, searchLeaders, searchWriters }: { team: Team; updateTeam: (id: number, payload: { name: string; leaderId: number }) => Promise<{ success: boolean; message?: string }>; onOptimisticUpdate: (team: Team) => void; searchLeaders: (query: string) => Promise<User[]>; searchWriters: (query: string) => Promise<User[]>; }) {
     const [open, setOpen] = useState(false);
     const [name, setName] = useState(team.name);
     const [leader, setLeader] = useState(team.leader ?? null);
@@ -70,36 +71,38 @@ export function EditTeamDialog({ team, updateTeam, onOptimisticUpdate }: { team:
                     </div>
 
                     <div className="grid gap-2">
-                        <Label>Leader</Label>
-                        <UserCombobox value={leader} onChange={setLeader} placeholder="Rechercher un leader..." />
+                        <Label>Rédacteur en chef</Label>
+                        <UserCombobox value={leader} onChange={setLeader} placeholder="Rechercher un leader..." fetchUsers={searchLeaders} />
                     </div>
 
                     <div className="grid gap-2">
-                        <Label>Membres</Label>
-                        <UserCombobox value={null} onChange={addMember} placeholder="Ajouter un membre..." />
-                        <div className="flex items-center gap-2 flex-wrap">
+                        <Label>Rédacteurs</Label>
+                        <UserCombobox value={null} onChange={addMember} placeholder="Ajouter un rédacteur..." fetchUsers={searchWriters} />
+                        <div className="mt-2 flex items-center gap-2 flex-wrap">
                             <TooltipProvider>
                                 {members.map((member, index) => (
                                     <Tooltip key={member.id}>
-                                        <TooltipTrigger asChild>
+                                        <TooltipTrigger className="cursor-pointer" asChild>
                                             <div className="relative">
-                                                <Avatar className="w-10 h-10 border-2">
-                                                    <AvatarImage src={`/assets/profile/${member.picture}`} alt={member.username} />
-                                                    <AvatarFallback>{member.username.slice(0, 2).toUpperCase()}</AvatarFallback>
-                                                </Avatar>
-                                                <button onClick={() => removeMember(member.id)} className="absolute -top-1 -right-1 bg-background border border-muted rounded-full p-0.5 text-muted-foreground hover:text-destructive">
-                                                    <XIcon className="w-4 h-4" />
+                                                <div className="w-9 h-9">
+                                                    <Avatar className="w-full h-full rounded-full border-2 border-muted">
+                                                        <AvatarImage src={`/assets/profile/${member.picture}`} alt={member.username} />
+                                                        <AvatarFallback>{member.username.slice(0, 2).toUpperCase()}</AvatarFallback>
+                                                    </Avatar>
+                                                </div>
+                                                <button onClick={() => removeMember(member.id)} className="absolute -top-1 -right-1 bg-background border border-muted rounded-full p-0.5 text-muted-foreground hover:text-destructive cursor-pointer">
+                                                    <XIcon className="w-3 h-3" />
                                                 </button>
                                             </div>
                                         </TooltipTrigger>
                                         <TooltipContent>
                                             <p className="text-sm font-medium">{member.username}</p>
-                                            <p className="text-xs text-muted-foreground">{member.email}</p>
+                                            <p className="text-xs text-muted">{member.email}</p>
                                         </TooltipContent>
                                     </Tooltip>
                                 ))}
                                 {members.length === 0 && (
-                                    <p className="text-sm text-muted-foreground italic">Aucun membre</p>
+                                    <p className="text-sm text-muted">Aucun membre</p>
                                 )}
                             </TooltipProvider>
                         </div>

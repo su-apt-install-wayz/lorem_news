@@ -7,17 +7,15 @@ import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover
 import { Button } from "@/components/ui/button";
 import { Check, ChevronsUpDown } from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { createApiServer } from "@/lib/apiServer";
-import api from "@/lib/api";
 
-interface User {
+export interface User {
     id: number;
     username: string;
     email: string;
     picture: string;
 }
 
-export function UserCombobox({ value, onChange, placeholder = "Sélectionner un utilisateur..." }: { value: User | null; onChange: (user: User) => void; placeholder?: string; }) {
+export function UserCombobox({ value, onChange, placeholder = "Sélectionner un utilisateur...", fetchUsers }: { value: User | null; onChange: (user: User) => void; placeholder?: string; fetchUsers: (query: string) => Promise<User[]>; }) {
     const [open, setOpen] = useState(false);
     const [search, setSearch] = useState("");
     const [users, setUsers] = useState<User[]>([]);
@@ -28,9 +26,8 @@ export function UserCombobox({ value, onChange, placeholder = "Sélectionner un 
 
         startTransition(async () => {
             try {
-                // const api = await createApiServer();
-                const res = await api.get("/api/users", { params: { q: search } });
-                setUsers(res.data ?? []);
+                const results = await fetchUsers(search);
+                setUsers(results);
             } catch (e) {
                 console.error("Erreur chargement users", e);
             }
