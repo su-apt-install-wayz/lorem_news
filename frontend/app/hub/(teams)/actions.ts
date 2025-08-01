@@ -65,7 +65,8 @@ export async function searchLeaders(searchQuery: string) {
         const res = await api.get("/api/users", {
             params: {
                 searchQuery,
-                roles: ["ROLE_LEADER"],
+                roles: "ROLE_LEADER",
+                inTeam: false,
             },
         });
         return res.data ?? [];
@@ -81,7 +82,8 @@ export async function searchWriters(searchQuery: string) {
         const res = await api.get("/api/users", {
             params: {
                 searchQuery,
-                roles: ["ROLE_MEMBER"],
+                roles: "ROLE_MEMBER",
+                inTeam: false,
             },
         });
         return res.data ?? [];
