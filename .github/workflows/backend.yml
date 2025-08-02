@@ -29,7 +29,7 @@ jobs:
           extensions: pdo,pdo_pgsql,intl,ctype,json
 
       - name: Copy env file
-        run: cp .env.ci .env
+        run: cp .env .env
 
       # Étape 3 : Installation des dépendances
       - name: Install dependencies
