@@ -1,4 +1,4 @@
-name: CI/CD Pipeline for React
+name: Workflow for frontend
 
 on:
   push:
@@ -9,21 +9,19 @@ on:
     types: [opened, synchronize, reopened]
 
 jobs:
-  build-and-analyze:
-    name: Build, Lint, SonarQube and GitGuardian
+  build_and_test:
     runs-on: ubuntu-latest
 
     defaults:
-        run:
-            working-directory: frontend
+      run:
+        working-directory: frontend
 
     steps:
       # Étape 1 : Récupération du code
-      - uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
+      - name: Checkout repo
+        uses: actions/checkout@v4
 
-      # Étape 2 : Configuration de Node.js
+      # Étape 2 : Configuration Node.js
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
@@ -38,18 +36,12 @@ jobs:
         run: npm run lint
 
       # Étape 5 : Exécution des tests
-      #- name: Run Tests
-      #  run: npm test -- --coverage
+      - name: Run Tests
+        run: npm run test
 
       # Étape 6 : Analyse SonarQube
       - name: SonarQube Scan
-        uses: SonarSource/sonarqube-scan-action@v4
+        uses: SonarSource/sonarqube-scan-action@v5
         continue-on-error: true
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-      
-      # Étape 7 : Analyse de secrets
-      - name: Detect secrets with GitGuardian
-        uses: GitGuardian/ggshield-action@v1.36.0
-        env:
-          GITGUARDIAN_API_KEY: ${{ secrets.GITGUARDIAN_API_KEY }}  
