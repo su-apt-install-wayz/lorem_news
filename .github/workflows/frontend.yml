@@ -1,4 +1,4 @@
-name: CI/CD Pipeline for frontend
+name: Workflow for frontend
 
 on:
   push:
@@ -9,8 +9,7 @@ on:
     types: [opened, synchronize, reopened]
 
 jobs:
-  build_and_analyze:
-    name: Build, Lint, UnitTest, SonarQube
+  build_and_test:
     runs-on: ubuntu-latest
 
     defaults:
@@ -19,11 +18,10 @@ jobs:
 
     steps:
       # Étape 1 : Récupération du code
-      - uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
+      - name: Checkout repo
+        uses: actions/checkout@v4
 
-      # Étape 2 : Configuration de Node.js
+      # Étape 2 : Configuration Node.js
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
