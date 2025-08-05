@@ -53,7 +53,7 @@ export function TeamCardSkeleton() {
     );
 }
 
-export default function TeamCard({ team, selected, onToggle, updateTeam, onOptimisticUpdate, searchLeaders, searchWriters }: { team: Team; selected: boolean; onToggle: (id: number, checked: boolean) => void; updateTeam: (id: number, payload: { name: string; leaderId: number }) => Promise<{ success: boolean; message?: string }>; onOptimisticUpdate: (team: Team) => void; searchLeaders: (query: string) => Promise<User[]>; searchWriters: (query: string) => Promise<User[]>; }) {
+export default function TeamCard({ team, selected, onToggle, updateTeam, onOptimisticUpdate, searchLeaders, searchWriters }: { team: Team; selected: boolean; onToggle: (id: number, checked: boolean) => void; updateTeam: (id: number, payload: { name: string; leaderId: number; memberIds: number[] }) => Promise<{ success: boolean; message?: string }>; onOptimisticUpdate: (team: Team) => void; searchLeaders: (query: string) => Promise<User[]>; searchWriters: (query: string) => Promise<User[]>; }) {
     return (
         <Card className="p-4">
             <div className="flex justify-between items-center text-muted-foreground">

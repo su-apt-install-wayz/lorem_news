@@ -29,7 +29,7 @@ export interface Team {
     members: TeamMember[];
 }
 
-export default function TeamsList({ teams, currentPage, totalPages, updateTeam, deleteSelectedTeams, searchLeaders, searchWriters }: { teams: Team[]; currentPage: number; totalPages: number; updateTeam: (id: number, payload: { name: string; leaderId: number }) => Promise<{ success: boolean; message?: string }>; deleteSelectedTeams: (ids: number[]) => Promise<number[]>; searchLeaders: (query: string) => Promise<User[]>; searchWriters: (query: string) => Promise<User[]>; }) {
+export default function TeamsList({ teams, currentPage, totalPages, updateTeam, deleteSelectedTeams, searchLeaders, searchWriters }: { teams: Team[]; currentPage: number; totalPages: number; updateTeam: (id: number, payload: { name: string; leaderId: number; memberIds: number[] }) => Promise<{ success: boolean; message?: string }>; deleteSelectedTeams: (ids: number[]) => Promise<number[]>; searchLeaders: (query: string) => Promise<User[]>; searchWriters: (query: string) => Promise<User[]>; }) {
     return (
         <SelectionProviderClient>
             <TeamsListActions teams={teams} deleteSelectedTeams={deleteSelectedTeams} />

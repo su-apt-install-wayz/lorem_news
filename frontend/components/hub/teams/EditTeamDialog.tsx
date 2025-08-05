@@ -13,7 +13,7 @@ import { Team } from "@/components/hub/teams/TeamsList";
 import { UserCombobox } from "./UserCombobox";
 import { User } from "./UserCombobox";
 
-export function EditTeamDialog({ team, updateTeam, onOptimisticUpdate, searchLeaders, searchWriters }: { team: Team; updateTeam: (id: number, payload: { name: string; leaderId: number }) => Promise<{ success: boolean; message?: string }>; onOptimisticUpdate: (team: Team) => void; searchLeaders: (query: string) => Promise<User[]>; searchWriters: (query: string) => Promise<User[]>; }) {
+export function EditTeamDialog({ team, updateTeam, onOptimisticUpdate, searchLeaders, searchWriters }: { team: Team; updateTeam: (id: number, payload: { name: string; leaderId: number; memberIds: number[] }) => Promise<{ success: boolean; message?: string }>; onOptimisticUpdate: (team: Team) => void; searchLeaders: (query: string) => Promise<User[]>; searchWriters: (query: string) => Promise<User[]>; }) {
     const [open, setOpen] = useState(false);
     const [name, setName] = useState(team.name);
     const [leader, setLeader] = useState(team.leader ?? null);
@@ -25,7 +25,12 @@ export function EditTeamDialog({ team, updateTeam, onOptimisticUpdate, searchLea
 
         startTransition(async () => {
             onOptimisticUpdate({ ...team, name, leader, members });
-            const res = await updateTeam(team.id, { name, leaderId: leader.id });
+            const res = await updateTeam(team.id, {
+                name,
+                leaderId: leader.id,
+                memberIds: members.map((m) => m.id),
+            });
+            console.log( name, leader.id, members, res);
 
             if (res.success) {
                 toast.success("Équipe mise à jour");

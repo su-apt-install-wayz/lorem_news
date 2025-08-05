@@ -14,7 +14,7 @@ export async function handleCreateTeam(payload: { name: string; leaderId: number
     return res;
 }
 
-export async function handleUpdateTeam(id: number, payload: { name: string; leaderId: number }) {
+export async function handleUpdateTeam(id: number, payload: { name: string; leaderId: number; memberIds: number[] }) {
     "use server";
     const res = await updateTeam(id, payload);
     if (res.success) revalidatePath("/hub/teams");

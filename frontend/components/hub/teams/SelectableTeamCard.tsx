@@ -6,7 +6,7 @@ import TeamCard from "./TeamCard";
 import { Team } from "./TeamsList";
 import { User } from "./UserCombobox";
 
-export default function SelectableTeamCard({ team, updateTeam, searchLeaders, searchWriters }: { team: Team; updateTeam: (id: number, payload: { name: string; leaderId: number }) => Promise<{ success: boolean; message?: string }>; searchLeaders: (query: string) => Promise<User[]>; searchWriters: (query: string) => Promise<User[]>; }) {
+export default function SelectableTeamCard({ team, updateTeam, searchLeaders, searchWriters }: { team: Team; updateTeam: (id: number, payload: { name: string; leaderId: number; memberIds: number[] }) => Promise<{ success: boolean; message?: string }>; searchLeaders: (query: string) => Promise<User[]>; searchWriters: (query: string) => Promise<User[]>; }) {
     const { selectedIds, toggle } = useSelection();
     const isSelected = selectedIds.includes(team.id);
 

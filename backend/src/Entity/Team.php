@@ -14,6 +14,8 @@ use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Serializer\Annotation\SerializedName;
+use Symfony\Component\Serializer\Annotation\Ignore;
+use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: TeamRepository::class)]
 #[ORM\HasLifecycleCallbacks]
@@ -45,6 +47,21 @@ class Team
 
     #[ORM\OneToMany(mappedBy: 'team', targetEntity: TeamMembers::class, orphanRemoval: true)]
     private Collection $teamMembers;
+
+    #[Groups(['team:write'])]
+    #[Assert\All([new Assert\Type("integer")])]
+    private ?array $membersInput = null;
+
+    public function setMembersInput(?array $members): void
+    {
+        $this->membersInput = $members;
+    }
+
+    #[Ignore]
+    public function getMembersInput(): ?array
+    {
+        return $this->membersInput;
+    }
 
     public function __construct()
     {
