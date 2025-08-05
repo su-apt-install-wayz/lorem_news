@@ -1,11 +1,10 @@
-// components/forms/UserCombobox.tsx
 "use client";
 
 import { useEffect, useState, useTransition } from "react";
 import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from "@/components/ui/command";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Button } from "@/components/ui/button";
-import { Check, ChevronsUpDown } from "lucide-react";
+import { Check, ChevronsUpDown, LoaderCircle } from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 
 export interface User {
@@ -15,34 +14,53 @@ export interface User {
     picture: string;
 }
 
-export function UserCombobox({ value, onChange, placeholder = "Sélectionner un utilisateur...", fetchUsers }: { value: User | null; onChange: (user: User) => void; placeholder?: string; fetchUsers: (query: string) => Promise<User[]>; }) {
+export function UserCombobox({
+    value,
+    onChange,
+    placeholder = "Sélectionner un utilisateur...",
+    fetchUsers,
+}: {
+    value: User | null;
+    onChange: (user: User) => void;
+    placeholder?: string;
+    fetchUsers: (query: string) => Promise<User[]>;
+}) {
     const [open, setOpen] = useState(false);
     const [search, setSearch] = useState("");
     const [users, setUsers] = useState<User[]>([]);
     const [isPending, startTransition] = useTransition();
+    const [timeoutId, setTimeoutId] = useState<NodeJS.Timeout | null>(null);
 
-    useEffect(() => {
-        if (!open || !search) return;
+    const triggerSearch = (value: string) => {
+        setSearch(value);
 
-        startTransition(async () => {
-            try {
-                const results = await fetchUsers(search);
-                setUsers(results);
-            } catch (e) {
-                console.error("Erreur chargement users", e);
-            }
-        });
-    }, [search, open]);
+        if (timeoutId) clearTimeout(timeoutId);
+
+        const trimmed = value.trim();
+        if (!trimmed) {
+            setUsers([]);
+            return;
+        }
+
+        const newTimeout = setTimeout(() => {
+            startTransition(async () => {
+                try {
+                    const results = await fetchUsers(value);
+                    console.log("Fetched users:", results);
+                    setUsers(results);
+                } catch (e) {
+                    console.error("Erreur chargement users", e);
+                }
+            });
+        }, 400);
+
+        setTimeoutId(newTimeout);
+    };
 
     return (
         <Popover open={open} onOpenChange={setOpen}>
             <PopoverTrigger asChild>
-                <Button
-                    variant="outline"
-                    role="combobox"
-                    aria-expanded={open}
-                    className="w-full justify-between"
-                >
+                <Button variant="outline" role="combobox" aria-expanded={open} className="w-full justify-between">
                     {value ? (
                         <div className="flex items-center gap-2">
                             <Avatar className="w-5 h-5">
@@ -59,7 +77,19 @@ export function UserCombobox({ value, onChange, placeholder = "Sélectionner un 
             </PopoverTrigger>
             <PopoverContent className="w-[350px] p-0">
                 <Command>
-                    <CommandInput placeholder="Rechercher..." value={search} onValueChange={setSearch} className="h-9" />
+                    <div className="relative">
+                        <CommandInput
+                            placeholder="Rechercher..."
+                            value={search}
+                            onValueChange={triggerSearch}
+                            className="h-9 pr-10"
+                        />
+                        {isPending && (
+                            <div className="absolute inset-y-0 end-0 flex items-center pe-3 text-muted-foreground">
+                                <LoaderCircle className="animate-spin h-4 w-4" strokeWidth={2} role="status" aria-label="Loading..." />
+                            </div>
+                        )}
+                    </div>
                     <CommandList>
                         <CommandEmpty>Aucun utilisateur trouvé.</CommandEmpty>
                         <CommandGroup>

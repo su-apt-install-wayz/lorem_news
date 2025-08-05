@@ -36,7 +36,6 @@ use Symfony\Component\Validator\Constraints as Assert;
     ]
 )]
 #[ApiFilter(UserSearchQueryFilter::class)]
-#[ApiFilter(SearchFilter::class, properties: ['roles' => 'exact'])]
 class User implements UserInterface, PasswordAuthenticatedUserInterface
 {
     #[ORM\Id]
