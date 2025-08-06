@@ -9,13 +9,13 @@ use ApiPlatform\Metadata\Get;
 use ApiPlatform\Metadata\GetCollection;
 use ApiPlatform\Metadata\Patch;
 use ApiPlatform\Metadata\Post;
+use App\Dto\TeamInput;
+use App\State\TeamUpdateProcessor;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Serializer\Annotation\SerializedName;
-use Symfony\Component\Serializer\Annotation\Ignore;
-use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: TeamRepository::class)]
 #[ORM\HasLifecycleCallbacks]
@@ -24,7 +24,7 @@ use Symfony\Component\Validator\Constraints as Assert;
         new Get(normalizationContext: ['groups' => ['team:read']]),
         new GetCollection(normalizationContext: ['groups' => ['team:list']]),
         new Post(normalizationContext: ['groups' => ['team:read']], denormalizationContext: ['groups' => ['team:write']], security: "is_granted('ROLE_LEADER') or is granted('ROLE_ADMIN')"),
-        new Patch(normalizationContext: ['groups' => ['team:read']], denormalizationContext: ['groups' => ['team:write']], security: "((object.getLeader() == user) and is_granted('ROLE_LEADER')) or is_granted('ROLE_ADMIN')"),
+        new Patch(input: TeamInput::class, processor: TeamUpdateProcessor::class, normalizationContext: ['groups' => ['team:read']], denormalizationContext: ['groups' => ['team:write']], security: "((object.getLeader() == user) and is_granted('ROLE_LEADER')) or is_granted('ROLE_ADMIN')"),
         new Delete(security: "((object.getLeader() == user) and is_granted('ROLE_LEADER')) or is_granted('ROLE_ADMIN')")
     ]
 )]
@@ -47,21 +47,6 @@ class Team
 
     #[ORM\OneToMany(mappedBy: 'team', targetEntity: TeamMembers::class, orphanRemoval: true)]
     private Collection $teamMembers;
-
-    #[Groups(['team:write'])]
-    #[Assert\All([new Assert\Type("integer")])]
-    private ?array $membersInput = null;
-
-    public function setMembersInput(?array $members): void
-    {
-        $this->membersInput = $members;
-    }
-
-    #[Ignore]
-    public function getMembersInput(): ?array
-    {
-        return $this->membersInput;
-    }
 
     public function __construct()
     {

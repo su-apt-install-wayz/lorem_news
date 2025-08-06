@@ -30,7 +30,6 @@ export function EditTeamDialog({ team, updateTeam, onOptimisticUpdate, searchLea
                 leaderId: leader.id,
                 memberIds: members.map((m) => m.id),
             });
-            console.log( name, leader.id, members, res);
 
             if (res.success) {
                 toast.success("Équipe mise à jour");

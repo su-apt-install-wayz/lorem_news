@@ -30,6 +30,7 @@ export async function createTeam(payload: { name: string; leaderId: number }): P
 export async function updateTeam(id: number, payload: { name: string; leaderId: number; memberIds: number[] }): Promise<{ success: boolean; message?: string }> {
     try {
         const api = await createApiServer();
+        console.log(payload.memberIds);
         await api.patch(`/api/teams/${id}`, {
             name: payload.name,
             leader: `/api/users/${payload.leaderId}`,
@@ -41,7 +42,6 @@ export async function updateTeam(id: number, payload: { name: string; leaderId: 
         return { success: false, message: "Modification impossible" };
     }
 }
-
 
 export async function deleteTeams(ids: number[]): Promise<number[]> {
     const api = await createApiServer();
