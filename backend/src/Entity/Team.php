@@ -24,7 +24,7 @@ use Symfony\Component\Serializer\Annotation\SerializedName;
     operations: [
         new Get(normalizationContext: ['groups' => ['team:read']]),
         new GetCollection(normalizationContext: ['groups' => ['team:list']]),
-        new Post(input: TeamInput::class, processor: TeamCreateProcessor::class, normalizationContext: ['groups' => ['team:read']], denormalizationContext: ['groups' => ['team:write']], security: "is_granted('ROLE_LEADER') or is granted('ROLE_ADMIN')"),
+        new Post(input: TeamInput::class, processor: TeamCreateProcessor::class, normalizationContext: ['groups' => ['team:read']], denormalizationContext: ['groups' => ['team:write']], security: "is_granted('ROLE_LEADER') or is_granted('ROLE_ADMIN')"),
         new Patch(input: TeamInput::class, processor: TeamUpdateProcessor::class, normalizationContext: ['groups' => ['team:read']], denormalizationContext: ['groups' => ['team:write']], security: "((object.getLeader() == user) and is_granted('ROLE_LEADER')) or is_granted('ROLE_ADMIN')"),
         new Delete(security: "((object.getLeader() == user) and is_granted('ROLE_LEADER')) or is_granted('ROLE_ADMIN')")
     ]
@@ -41,7 +41,7 @@ class Team
     #[Groups(['team:list', 'team:read', 'team:write'])]
     private ?string $name = null;
 
-    #[ORM\OneToOne(inversedBy: 'team', cascade: ['persist', 'remove'])]
+    #[ORM\OneToOne(inversedBy: 'team', cascade: ['persist'])]
     #[ORM\JoinColumn(nullable: false)]
     #[Groups(['team:list', 'team:read'])]
     private ?User $leader = null;

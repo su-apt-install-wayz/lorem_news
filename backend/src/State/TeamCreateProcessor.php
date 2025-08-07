@@ -9,6 +9,7 @@ use App\Entity\Team;
 use App\Entity\TeamMembers;
 use App\Entity\User;
 use Doctrine\ORM\EntityManagerInterface;
+use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 
 final class TeamCreateProcessor implements ProcessorInterface
 {
@@ -26,15 +27,24 @@ final class TeamCreateProcessor implements ProcessorInterface
             $team->setName($data->name);
         }
 
+        // Gestion du leader
         if ($data->leader !== null) {
             $leaderId = (int) basename($data->leader);
-            $leader = $this->em->getReference(User::class, $leaderId);
+            $leader = $this->em->getRepository(User::class)->find($leaderId);
+
+            // Vérifie si ce leader est déjà assigné à une autre équipe
+            $existingTeam = $this->em->getRepository(Team::class)->findOneBy(['leader' => $leader]);
+            if ($existingTeam) {
+                throw new BadRequestHttpException('Ce leader est déjà assigné à une autre équipe.');
+            }
+
             $team->setLeader($leader);
         }
 
         $this->em->persist($team);
-        $this->em->flush(); // flush une première fois pour avoir l'ID du team
+        $this->em->flush();
 
+        // Ajout des membres
         if (is_array($data->membersInput)) {
             $memberIds = array_filter($data->membersInput, fn($id) => $id !== $team->getLeader()?->getId());
 
