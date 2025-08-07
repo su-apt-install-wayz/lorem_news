@@ -13,24 +13,24 @@ export async function getTeams(): Promise<any[]> {
     }
 }
 
-export async function createTeam(payload: { name: string; leaderId: number }): Promise<{ success: boolean; message?: string }> {
+export async function createTeam(payload: { name: string; leaderId: number; memberIds: number[] }): Promise<{ success: boolean; message?: string }> {
     try {
         const api = await createApiServer();
         await api.post("/api/teams", {
             name: payload.name,
-            leader: `/users/${payload.leaderId}`,
+            leader: `/api/users/${payload.leaderId}`,
+            membersInput: payload.memberIds,
         });
         return { success: true };
     } catch (e) {
         console.error("Erreur createTeam:", e);
-        return { success: false, message: "Création impossible" };
+        return { success: false, message: "Une erreur est survenue lors de la création." };
     }
 }
 
 export async function updateTeam(id: number, payload: { name: string; leaderId: number; memberIds: number[] }): Promise<{ success: boolean; message?: string }> {
     try {
         const api = await createApiServer();
-        console.log(payload.memberIds);
         await api.patch(`/api/teams/${id}`, {
             name: payload.name,
             leader: `/api/users/${payload.leaderId}`,
@@ -39,7 +39,7 @@ export async function updateTeam(id: number, payload: { name: string; leaderId: 
         return { success: true };
     } catch (e) {
         console.error("Erreur updateTeam:", e);
-        return { success: false, message: "Modification impossible" };
+        return { success: false, message: "Une erreur est survenue lors de la modification." };
     }
 }
 

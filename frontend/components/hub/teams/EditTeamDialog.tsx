@@ -9,16 +9,39 @@ import { Label } from "@/components/ui/label";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { LoaderCircleIcon, XIcon } from "lucide-react";
-import { Team } from "@/components/hub/teams/TeamsList";
+import { Team, TeamLeader } from "@/components/hub/teams/TeamsList";
 import { UserCombobox } from "./UserCombobox";
 import { User } from "./UserCombobox";
 
 export function EditTeamDialog({ team, updateTeam, onOptimisticUpdate, searchLeaders, searchWriters }: { team: Team; updateTeam: (id: number, payload: { name: string; leaderId: number; memberIds: number[] }) => Promise<{ success: boolean; message?: string }>; onOptimisticUpdate: (team: Team) => void; searchLeaders: (query: string) => Promise<User[]>; searchWriters: (query: string) => Promise<User[]>; }) {
     const [open, setOpen] = useState(false);
     const [name, setName] = useState(team.name);
-    const [leader, setLeader] = useState(team.leader ?? null);
+    const [leader, setLeader] = useState(team.leader);
     const [members, setMembers] = useState(team.members);
     const [isPending, startTransition] = useTransition();
+
+    const [initialName, setInitialName] = useState(team.name);
+    const [initialLeader, setInitialLeader] = useState<TeamLeader>(team.leader);
+    const [initialMembers, setInitialMembers] = useState<User[]>(team.members);
+
+    const resetForm = () => {
+        setName(initialName);
+        setLeader(initialLeader);
+        setMembers(initialMembers);
+    };
+
+    const handleOpenChange = (isOpen: boolean) => {
+        if (isOpen) {
+            // backup
+            setInitialName(team.name);
+            setInitialLeader(team.leader);
+            setInitialMembers(team.members);
+        } else {
+            // restore
+            resetForm();
+        }
+        setOpen(isOpen);
+    };
 
     const handleSubmit = () => {
         if (!name || !leader?.id) return toast.error("Nom ou leader manquant");
@@ -36,6 +59,7 @@ export function EditTeamDialog({ team, updateTeam, onOptimisticUpdate, searchLea
                 setOpen(false);
             } else {
                 toast.error(res.message ?? "Erreur inconnue");
+                resetForm();
             }
         });
     };
@@ -51,7 +75,7 @@ export function EditTeamDialog({ team, updateTeam, onOptimisticUpdate, searchLea
     };
 
     return (
-        <Dialog open={open} onOpenChange={setOpen}>
+        <Dialog open={open} onOpenChange={handleOpenChange}>
             <DialogTrigger asChild>
                 <Button className="w-full cursor-pointer">Modifier</Button>
             </DialogTrigger>

@@ -7,7 +7,7 @@ import { IconUsersPlus } from "@tabler/icons-react";
 import { getTeams, createTeam, deleteTeams, updateTeam, searchLeaders, searchWriters } from "../actions";
 import TeamsList from "@/components/hub/teams/TeamsList";
 
-export async function handleCreateTeam(payload: { name: string; leaderId: number }) {
+export async function handleCreateTeam(payload: { name: string; leaderId: number; memberIds: number[] }) {
     "use server";
     const res = await createTeam(payload);
     if (res.success) revalidatePath("/hub/teams");
@@ -54,15 +54,14 @@ export default async function HubTeamsPage(props: { searchParams: { page?: strin
 
     return (
         <>
-            <HubHeader title={"Liste des équipes"}
-            // actions={
-            //     <CreateTeamDialog createTeam={handleCreateTeam}>
-            //         <Button size="sm">
-            //             <IconUsersPlus />
-            //             <span className="max-md:hidden ml-2">Créer une équipe</span>
-            //         </Button>
-            //     </CreateTeamDialog>
-            // }
+            <HubHeader title={"Liste des équipes"} actions={
+                <CreateTeamDialog createTeam={handleCreateTeam} searchLeaders={handleSearchLeaders} searchWriters={handleSearchWriters}>
+                    <Button size="sm">
+                        <IconUsersPlus />
+                        <span className="max-md:hidden ml-2">Créer une équipe</span>
+                    </Button>
+                </CreateTeamDialog>
+            }
             />
 
             <HubContent>

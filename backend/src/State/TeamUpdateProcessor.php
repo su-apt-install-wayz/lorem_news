@@ -38,26 +38,36 @@ final class TeamUpdateProcessor implements ProcessorInterface
             $team->setLeader($leader);
         }
 
-        // Add members
         if (is_array($data->membersInput)) {
+            // IDs des membres à conserver (ceux reçus depuis le front)
+            $newMemberIds = array_filter($data->membersInput, fn($id) => $id !== $team->getLeader()?->getId());
+
+            // Membres actuels
+            $currentMembers = $team->getTeamMembers();
+
+            foreach ($currentMembers as $member) {
+                $userId = $member->getUser()->getId();
+
+                if (!in_array($userId, $newMemberIds, true)) {
+                    // L'utilisateur n'est plus dans la liste => on le retire
+                    $this->em->remove($member);
+                }
+            }
+
+            // Ajouter les nouveaux membres manquants
             $existingIds = array_map(
                 fn(TeamMembers $tm) => $tm->getUser()->getId(),
                 $team->getTeamMembers()->toArray()
             );
 
-            foreach ($data->membersInput as $userId) {
-                if ($team->getLeader()?->getId() === $userId) {
-                    continue; // skip leader
+            foreach ($newMemberIds as $userId) {
+                if (!in_array($userId, $existingIds, true)) {
+                    $user = $this->em->getReference(User::class, $userId);
+                    $member = new TeamMembers();
+                    $member->setTeam($team);
+                    $member->setUser($user);
+                    $this->em->persist($member);
                 }
-                if (in_array($userId, $existingIds, true)) {
-                    continue; // skip existing member
-                }
-
-                $user = $this->em->getReference(User::class, $userId);
-                $member = new TeamMembers();
-                $member->setTeam($team);
-                $member->setUser($user);
-                $this->em->persist($member);
             }
         }
 

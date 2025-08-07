@@ -10,6 +10,7 @@ use ApiPlatform\Metadata\GetCollection;
 use ApiPlatform\Metadata\Patch;
 use ApiPlatform\Metadata\Post;
 use App\Dto\TeamInput;
+use App\State\TeamCreateProcessor;
 use App\State\TeamUpdateProcessor;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
@@ -23,7 +24,7 @@ use Symfony\Component\Serializer\Annotation\SerializedName;
     operations: [
         new Get(normalizationContext: ['groups' => ['team:read']]),
         new GetCollection(normalizationContext: ['groups' => ['team:list']]),
-        new Post(normalizationContext: ['groups' => ['team:read']], denormalizationContext: ['groups' => ['team:write']], security: "is_granted('ROLE_LEADER') or is granted('ROLE_ADMIN')"),
+        new Post(input: TeamInput::class, processor: TeamCreateProcessor::class, normalizationContext: ['groups' => ['team:read']], denormalizationContext: ['groups' => ['team:write']], security: "is_granted('ROLE_LEADER') or is granted('ROLE_ADMIN')"),
         new Patch(input: TeamInput::class, processor: TeamUpdateProcessor::class, normalizationContext: ['groups' => ['team:read']], denormalizationContext: ['groups' => ['team:write']], security: "((object.getLeader() == user) and is_granted('ROLE_LEADER')) or is_granted('ROLE_ADMIN')"),
         new Delete(security: "((object.getLeader() == user) and is_granted('ROLE_LEADER')) or is_granted('ROLE_ADMIN')")
     ]

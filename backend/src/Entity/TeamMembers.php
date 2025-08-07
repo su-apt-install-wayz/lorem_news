@@ -34,7 +34,7 @@ class TeamMembers
     #[ORM\JoinColumn(nullable: false, onDelete: "CASCADE")]
     private ?Team $team = null;
 
-    #[ORM\OneToOne(cascade: ['persist', 'remove'])]
+    #[ORM\OneToOne]
     #[ORM\JoinColumn(nullable: false, onDelete: "CASCADE")]
     private ?User $user = null;
 
