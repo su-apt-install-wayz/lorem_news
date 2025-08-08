@@ -23,30 +23,38 @@ final class TeamCreateProcessor implements ProcessorInterface
 
         $team = new Team();
 
+        // Nom
         if ($data->name !== null) {
             $team->setName($data->name);
         }
 
-        // Gestion du leader
-        if ($data->leader !== null) {
-            $leaderId = (int) basename($data->leader);
-            $leader = $this->em->getRepository(User::class)->find($leaderId);
-
-            // Vérifie si ce leader est déjà assigné à une autre équipe
-            $existingTeam = $this->em->getRepository(Team::class)->findOneBy(['leader' => $leader]);
-            if ($existingTeam) {
-                throw new BadRequestHttpException('Ce leader est déjà assigné à une autre équipe.');
-            }
-
-            $team->setLeader($leader);
+        // Leader
+        if (!$data->leader) {
+            throw new BadRequestHttpException("Aucun leader fourni.");
         }
 
+        $leaderId = (int) basename($data->leader);
+        $leader = $this->em->getRepository(User::class)->find($leaderId);
+
+        if (!$leader) {
+            throw new BadRequestHttpException("Leader avec l'ID $leaderId introuvable.");
+        }
+
+        $existingTeam = $this->em->getRepository(Team::class)->findOneBy(['leader' => $leader]);
+        if ($existingTeam) {
+            throw new BadRequestHttpException("Ce leader est déjà assigné à une autre équipe.");
+        }
+
+        // Relation principale
+        $team->setLeader($leader); // 👈 Ici, pas d’inversion
+
+        // Flush final
         $this->em->persist($team);
         $this->em->flush();
 
-        // Ajout des membres
+        // Membres
         if (is_array($data->membersInput)) {
-            $memberIds = array_filter($data->membersInput, fn($id) => $id !== $team->getLeader()?->getId());
+            $memberIds = array_filter($data->membersInput, fn($id) => $id !== $leaderId);
 
             foreach ($memberIds as $userId) {
                 $user = $this->em->getReference(User::class, $userId);
