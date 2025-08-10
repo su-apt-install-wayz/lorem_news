@@ -2,6 +2,8 @@
 
 namespace App\Entity;
 
+use ApiPlatform\Doctrine\Orm\Filter\SearchFilter;
+use ApiPlatform\Metadata\ApiFilter;
 use ApiPlatform\Metadata\ApiResource;
 use App\Repository\UserRepository;
 use Doctrine\Common\Collections\ArrayCollection;
@@ -15,6 +17,7 @@ use ApiPlatform\Metadata\GetCollection;
 use ApiPlatform\Metadata\Post;
 use ApiPlatform\Metadata\Patch;
 use ApiPlatform\Metadata\Delete;
+use App\Filter\UserSearchQueryFilter;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Validator\Constraints as Assert;
@@ -32,6 +35,7 @@ use Symfony\Component\Validator\Constraints as Assert;
         new Delete(security: "(object == user) or is_granted('ROLE_ADMIN')")
     ]
 )]
+#[ApiFilter(UserSearchQueryFilter::class)]
 class User implements UserInterface, PasswordAuthenticatedUserInterface
 {
     #[ORM\Id]
@@ -72,9 +76,6 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
     #[ORM\OneToMany(mappedBy: 'user', targetEntity: Comment::class, orphanRemoval: true)]
     private Collection $comments;
-
-    #[ORM\OneToOne(mappedBy: 'leader', cascade: ['persist', 'remove'])]
-    private ?Team $team = null;
 
     public function __construct()
     {
@@ -231,23 +232,6 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
                 $comment->setUser(null);
             }
         }
-
-        return $this;
-    }
-
-    public function getTeam(): ?Team
-    {
-        return $this->team;
-    }
-
-    public function setTeam(Team $team): static
-    {
-        // set the owning side of the relation if necessary
-        if ($team->getLeader() !== $this) {
-            $team->setLeader($this);
-        }
-
-        $this->team = $team;
 
         return $this;
     }

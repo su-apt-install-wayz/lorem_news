@@ -57,7 +57,6 @@ export default function UsersListActions({ users, deleteSelectedUsers }: { users
         });
     };
 
-
     return (
         <div className="flex flex-wrap-reverse justify-between items-center gap-4 px-1">
             <div className="flex gap-2 items-center">

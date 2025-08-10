@@ -13,31 +13,33 @@ export async function getTeams(): Promise<any[]> {
     }
 }
 
-export async function createTeam(payload: { name: string; leaderId: number }): Promise<{ success: boolean; message?: string }> {
+export async function createTeam(payload: { name: string; leaderId: number; memberIds: number[] }): Promise<{ success: boolean; message?: string }> {
     try {
         const api = await createApiServer();
         await api.post("/api/teams", {
             name: payload.name,
-            leader: `/users/${payload.leaderId}`,
+            leader: `/api/users/${payload.leaderId}`,
+            membersInput: payload.memberIds,
         });
         return { success: true };
     } catch (e) {
         console.error("Erreur createTeam:", e);
-        return { success: false, message: "Création impossible" };
+        return { success: false, message: "Une erreur est survenue lors de la création." };
     }
 }
 
-export async function updateTeam(id: number, payload: { name: string; leaderId: number }): Promise<{ success: boolean; message?: string }> {
+export async function updateTeam(id: number, payload: { name: string; leaderId: number; memberIds: number[] }): Promise<{ success: boolean; message?: string }> {
     try {
         const api = await createApiServer();
         await api.patch(`/api/teams/${id}`, {
             name: payload.name,
-            leader: `/users/${payload.leaderId}`,
+            leader: `/api/users/${payload.leaderId}`,
+            membersInput: payload.memberIds,
         });
         return { success: true };
     } catch (e) {
         console.error("Erreur updateTeam:", e);
-        return { success: false, message: "Modification impossible" };
+        return { success: false, message: "Une erreur est survenue lors de la modification." };
     }
 }
 
@@ -57,4 +59,38 @@ export async function deleteTeams(ids: number[]): Promise<number[]> {
     );
 
     return failed;
+}
+
+export async function searchLeaders(searchQuery: string) {
+    try {
+        const api = await createApiServer();
+        const res = await api.get("/api/users", {
+            params: {
+                searchQuery,
+                roles: "ROLE_LEADER",
+                inTeam: false,
+            },
+        });
+        return res.data ?? [];
+    } catch (e) {
+        console.error("Erreur searchLeaders:", e);
+        return [];
+    }
+}
+
+export async function searchWriters(searchQuery: string) {
+    try {
+        const api = await createApiServer();
+        const res = await api.get("/api/users", {
+            params: {
+                searchQuery,
+                roles: "ROLE_MEMBER",
+                inTeam: false,
+            },
+        });
+        return res.data ?? [];
+    } catch (e) {
+        console.error("Erreur searchWriters:", e);
+        return [];
+    }
 }

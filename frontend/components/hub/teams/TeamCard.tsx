@@ -6,6 +6,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import ViewTeamModal from "./ViewTeamModal";
 import { Skeleton } from "@/components/ui/skeleton";
+import { User } from "./UserCombobox";
 
 export function TeamCardSkeleton() {
     return (
@@ -52,7 +53,7 @@ export function TeamCardSkeleton() {
     );
 }
 
-export default function TeamCard({ team, selected, onToggle, updateTeam, onOptimisticUpdate }: { team: Team; selected: boolean; onToggle: (id: number, checked: boolean) => void; updateTeam: (id: number, payload: { name: string; leaderId: number }) => Promise<{ success: boolean; message?: string }>; onOptimisticUpdate: (team: Team) => void; }) {
+export default function TeamCard({ team, selected, onToggle, updateTeam, onOptimisticUpdate, searchLeaders, searchWriters }: { team: Team; selected: boolean; onToggle: (id: number, checked: boolean) => void; updateTeam: (id: number, payload: { name: string; leaderId: number; memberIds: number[] }) => Promise<{ success: boolean; message?: string }>; onOptimisticUpdate: (team: Team) => void; searchLeaders: (query: string) => Promise<User[]>; searchWriters: (query: string) => Promise<User[]>; }) {
     return (
         <Card className="p-4">
             <div className="flex justify-between items-center text-muted-foreground">
@@ -105,18 +106,18 @@ export default function TeamCard({ team, selected, onToggle, updateTeam, onOptim
                                     return (
                                         <>
                                             {visibleMembers.map((member, index) => (
-                                                <Tooltip key={member.id}>
+                                                <Tooltip key={member.user?.id}>
                                                     <TooltipTrigger className="cursor-pointer" asChild>
                                                         <div className="w-9 h-9" style={{ zIndex: index }}>
                                                             <Avatar className="w-full h-full rounded-full border-2">
-                                                                <AvatarImage src={`/assets/profile/${member.picture}`} alt={`Avatar de l'utilisateur ${member.username}`} />
-                                                                <AvatarFallback>{member.username.slice(0, 2).toUpperCase()}</AvatarFallback>
+                                                                <AvatarImage src={`/assets/profile/${member.user?.picture}`} alt={`Avatar de l'utilisateur ${member.user?.username}`} />
+                                                                <AvatarFallback>{(member.user?.username).slice(0, 2).toUpperCase()}</AvatarFallback>
                                                             </Avatar>
                                                         </div>
                                                     </TooltipTrigger>
                                                     <TooltipContent>
-                                                        <p className="text-sm font-medium">{member.username}</p>
-                                                        <p className="text-xs text-muted">{member.email}</p>
+                                                        <p className="text-sm font-medium">{member.user?.username}</p>
+                                                        <p className="text-xs text-muted">{member.user?.email}</p>
                                                     </TooltipContent>
                                                 </Tooltip>
                                             ))}
@@ -140,7 +141,7 @@ export default function TeamCard({ team, selected, onToggle, updateTeam, onOptim
             </CardContent>
 
             <CardFooter className="p-0">
-                <EditTeamDialog team={team} updateTeam={updateTeam} onOptimisticUpdate={onOptimisticUpdate} />
+                <EditTeamDialog team={team} updateTeam={updateTeam} onOptimisticUpdate={onOptimisticUpdate} searchLeaders={searchLeaders} searchWriters={searchWriters} />
             </CardFooter>
         </Card>
     );
