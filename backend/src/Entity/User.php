@@ -77,9 +77,6 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\OneToMany(mappedBy: 'user', targetEntity: Comment::class, orphanRemoval: true)]
     private Collection $comments;
 
-    #[ORM\OneToOne(mappedBy: 'leader', cascade: ['persist', 'remove'])]
-    private ?Team $team = null;
-
     public function __construct()
     {
         $this->articles = new ArrayCollection();
@@ -235,23 +232,6 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
                 $comment->setUser(null);
             }
         }
-
-        return $this;
-    }
-
-    public function getTeam(): ?Team
-    {
-        return $this->team;
-    }
-
-    public function setTeam(Team $team): static
-    {
-        // set the owning side of the relation if necessary
-        if ($team->getLeader() !== $this) {
-            $team->setLeader($this);
-        }
-
-        $this->team = $team;
 
         return $this;
     }

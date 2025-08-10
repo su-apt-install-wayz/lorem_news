@@ -9,10 +9,12 @@ import { TeamCardSkeleton } from "./TeamCard";
 import { User } from "./UserCombobox";
 
 export interface TeamMember {
-    id: number;
-    username: string;
-    email: string;
-    picture: string;
+    user: {
+        id: number;
+        username: string;
+        email: string;
+        picture: string;
+    }
 }
 
 export interface TeamLeader {

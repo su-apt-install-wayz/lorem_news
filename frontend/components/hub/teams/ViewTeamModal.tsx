@@ -51,15 +51,15 @@ export default function ViewTeamModal({ team }: { team: Team }) {
                         <div className="flex flex-col gap-3">
                             {(team.members?.length ?? 0) > 0 ? (
                                 team.members.map((member) => (
-                                    <div key={member.id} className="flex items-center gap-3">
+                                    <div key={member.user?.id} className="flex items-center gap-3">
                                         <Avatar className="w-10 h-10 border-2">
-                                            <AvatarImage src={`/assets/profile/${member.picture}`} alt={member.username} />
-                                            <AvatarFallback>{member.username.slice(0, 2).toUpperCase()}</AvatarFallback>
+                                            <AvatarImage src={`/assets/profile/${member.user?.picture}`} alt={member.user?.username} />
+                                            <AvatarFallback>{member.user?.username.slice(0, 2).toUpperCase()}</AvatarFallback>
                                         </Avatar>
 
                                         <div className="flex flex-col">
-                                            <span className="text-sm font-medium">{member.username}</span>
-                                            <span className="text-xs text-muted-foreground">{member.email}</span>
+                                            <span className="text-sm font-medium">{member.user?.username}</span>
+                                            <span className="text-xs text-muted-foreground">{member.user?.email}</span>
                                         </div>
                                     </div>
                                 ))

@@ -43,7 +43,7 @@ final class TeamUpdateProcessor implements ProcessorInterface
             $newMemberIds = array_filter($data->membersInput, fn($id) => $id !== $team->getLeader()?->getId());
 
             // Membres actuels
-            $currentMembers = $team->getTeamMembers();
+            $currentMembers = $team->getMembers();
 
             foreach ($currentMembers as $member) {
                 $userId = $member->getUser()->getId();
@@ -57,7 +57,7 @@ final class TeamUpdateProcessor implements ProcessorInterface
             // Ajouter les nouveaux membres manquants
             $existingIds = array_map(
                 fn(TeamMembers $tm) => $tm->getUser()->getId(),
-                $team->getTeamMembers()->toArray()
+                $team->getMembers()->toArray()
             );
 
             foreach ($newMemberIds as $userId) {

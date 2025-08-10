@@ -106,18 +106,18 @@ export default function TeamCard({ team, selected, onToggle, updateTeam, onOptim
                                     return (
                                         <>
                                             {visibleMembers.map((member, index) => (
-                                                <Tooltip key={member.id}>
+                                                <Tooltip key={member.user?.id}>
                                                     <TooltipTrigger className="cursor-pointer" asChild>
                                                         <div className="w-9 h-9" style={{ zIndex: index }}>
                                                             <Avatar className="w-full h-full rounded-full border-2">
-                                                                <AvatarImage src={`/assets/profile/${member.picture}`} alt={`Avatar de l'utilisateur ${member.username}`} />
-                                                                <AvatarFallback>{member.username.slice(0, 2).toUpperCase()}</AvatarFallback>
+                                                                <AvatarImage src={`/assets/profile/${member.user?.picture}`} alt={`Avatar de l'utilisateur ${member.user?.username}`} />
+                                                                <AvatarFallback>{(member.user?.username).slice(0, 2).toUpperCase()}</AvatarFallback>
                                                             </Avatar>
                                                         </div>
                                                     </TooltipTrigger>
                                                     <TooltipContent>
-                                                        <p className="text-sm font-medium">{member.username}</p>
-                                                        <p className="text-xs text-muted">{member.email}</p>
+                                                        <p className="text-sm font-medium">{member.user?.username}</p>
+                                                        <p className="text-xs text-muted">{member.user?.email}</p>
                                                     </TooltipContent>
                                                 </Tooltip>
                                             ))}

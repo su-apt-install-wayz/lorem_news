@@ -16,7 +16,6 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Serializer\Annotation\Groups;
-use Symfony\Component\Serializer\Annotation\SerializedName;
 
 #[ORM\Entity(repositoryClass: TeamRepository::class)]
 #[ORM\HasLifecycleCallbacks]
@@ -41,17 +40,21 @@ class Team
     #[Groups(['team:list', 'team:read', 'team:write'])]
     private ?string $name = null;
 
-    #[ORM\OneToOne(inversedBy: 'team', cascade: ['persist'])]
+    #[ORM\OneToOne(cascade: ['persist'])]
     #[ORM\JoinColumn(nullable: false)]
     #[Groups(['team:list', 'team:read'])]
     private ?User $leader = null;
 
-    #[ORM\OneToMany(mappedBy: 'team', targetEntity: TeamMembers::class, orphanRemoval: true)]
-    private Collection $teamMembers;
+    /**
+     * @var Collection<int, TeamMembers>
+     */
+    #[ORM\OneToMany(targetEntity: TeamMembers::class, mappedBy: 'team', cascade: ['persist','remove'], orphanRemoval: true)]
+    #[Groups(['team:list', 'team:read'])]
+    private Collection $members;
 
     public function __construct()
     {
-        $this->teamMembers = new ArrayCollection();
+        $this->members = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -86,39 +89,27 @@ class Team
     /**
      * @return Collection<int, TeamMembers>
      */
-    public function getTeamMembers(): Collection
+    public function getMembers(): Collection
     {
-        return $this->teamMembers;
+        return $this->members;
     }
 
-    #[Groups(['team:list', 'team:read'])]
-    #[SerializedName('members')]
-    public function getMembers(): array
+    public function addMember(TeamMembers $member): static
     {
-        $leaderId = $this->leader?->getId();
-
-        return array_values(array_filter(
-            $this->teamMembers->map(fn($tm) => $tm->getUser())->toArray(),
-            fn($user) => $user->getId() !== $leaderId
-        ));
-    }
-
-    public function addTeamMember(TeamMembers $teamMember): static
-    {
-        if (!$this->teamMembers->contains($teamMember)) {
-            $this->teamMembers->add($teamMember);
-            $teamMember->setTeam($this);
+        if (!$this->members->contains($member)) {
+            $this->members->add($member);
+            $member->setTeam($this);
         }
 
         return $this;
     }
 
-    public function removeTeamMember(TeamMembers $teamMember): static
+    public function removeMember(TeamMembers $member): static
     {
-        if ($this->teamMembers->removeElement($teamMember)) {
+        if ($this->members->removeElement($member)) {
             // set the owning side to null (unless already changed)
-            if ($teamMember->getTeam() === $this) {
-                $teamMember->setTeam(null);
+            if ($member->getTeam() === $this) {
+                $member->setTeam(null);
             }
         }
 
