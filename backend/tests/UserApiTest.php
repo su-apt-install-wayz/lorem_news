@@ -10,8 +10,8 @@ class UserApiTest extends WebTestCase {
     public function testCreateUser(): void {
         $client = static::createClient();
         $data = [
-            "username" => "test_user1",
-            "email" => "test1@example.com",
+            "username" => "test_user",
+            "email" => "test@example.com",
             "roles" => ["ROLE_ADMIN"],
             "password" => "root"
         ];
@@ -78,10 +78,11 @@ class UserApiTest extends WebTestCase {
     }
 
     // Get & Delete
-    public function testGetUsers(): void {
-        // Get
+    public function testGetAndDeleteUser(): void {
         $client = static::createClient();
         $token = $this->logIn($client);
+
+        // Get
         $client->request('GET', '/api/users', [], [], [
             'HTTP_AUTHORIZATION' => 'Bearer ' . $token,
         ]);
@@ -91,23 +92,37 @@ class UserApiTest extends WebTestCase {
         
         $data = json_decode($client->getResponse()->getContent(), true);
         $this->assertIsArray($data);
-        
-        foreach ($data as $user) {
-            $this->assertArrayHasKey('id', $user);
-            $this->assertArrayHasKey('username', $user);
-            $this->assertArrayHasKey('email', $user);
-            $this->assertArrayHasKey('roles', $user);
+        $this->assertNotEmpty($data, 'La liste des utilisateurs ne doit pas être vide.');
 
-            $id = $user['id'];
-        }
+        // On prend le premier utilisateur pour les tests suivants
+        $user = $data[0];
+        $this->assertArrayHasKey('id', $user);
+        $this->assertArrayHasKey('username', $user);
+        $this->assertArrayHasKey('email', $user);
+        $this->assertArrayHasKey('roles', $user);
+        $id = $user['id'];
+
+        // Get{id}
+        $client->request('GET', '/api/users/' . $id, [], [], [
+            'HTTP_AUTHORIZATION' => 'Bearer ' . $token,
+        ]);
+
+        $this->assertResponseIsSuccessful();
+        $this->assertResponseFormatSame('json');
+        $userData = json_decode($client->getResponse()->getContent(), true);
+
+        $this->assertEquals($id, $userData['id']);
+        $this->assertArrayHasKey('username', $userData);
+        $this->assertArrayHasKey('email', $userData);
+        $this->assertArrayHasKey('roles', $userData);
 
         // Delete
         $client->request('DELETE', '/api/users/' . $id, [], [], [
             'CONTENT_TYPE' => 'application/json',
             'HTTP_ACCEPT' => 'application/json',
             'HTTP_AUTHORIZATION' => 'Bearer ' . $token,
-        ], json_encode($data));
+        ]);
 
-        $this->assertResponseStatusCodeSame(204); // User resource deleted
+        $this->assertResponseStatusCodeSame(204); // User deleted successfully
     }
 }

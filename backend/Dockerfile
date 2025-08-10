@@ -49,7 +49,7 @@ ENV LC_ALL=fr_FR.UTF-8
 RUN php -r "copy('https://getcomposer.org/installer', 'composer-setup.php');" && \
     php composer-setup.php --install-dir=/usr/local/bin --filename=composer && \
     php -r "unlink('composer-setup.php');" \
-    composer require --dev symfony/test-pack
+    composer require --dev symfony/test-pack symfony/browser-kit symfony/http-client
 
 WORKDIR /var/www/html
 
