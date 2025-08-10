@@ -82,7 +82,7 @@ class Article
     private ?\DateTimeImmutable $published_at = null;
 
     #[ORM\ManyToOne(inversedBy: 'articles')]
-    #[ORM\JoinColumn(nullable: false)]
+    #[ORM\JoinColumn(nullable: true)]
     #[Groups(['article:list', 'article:read'])]
     private ?User $user = null;
 

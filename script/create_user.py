@@ -2,6 +2,8 @@ import requests
 import time
 import random
 import string
+import os
+import base64
 
 # Configuration
 API_URL = "http://localhost:8080/api/users"
@@ -22,18 +24,29 @@ def create_user(index):
     email = f"{username}@example.com"
     password = "azerty123"
     
+    # Sélectionne un nom d’image aléatoire depuis le dossier
+    profile_dir = os.path.join(os.path.dirname(__file__), '..', 'frontend', 'public', 'assets', 'profile')
+    images = [f for f in os.listdir(profile_dir) if os.path.isfile(os.path.join(profile_dir, f))]
+
+    if not images:
+        raise FileNotFoundError(f"Aucune image trouvée dans {profile_dir}. Ajoute une image par défaut.")
+
+    image_file = random.choice(images)
+            
     if ROLES:
         payload = {
             "username": username,
             "email": email,
             "roles": ROLES,
-            "password": password
+            "password": password,
+            "picture": image_file
         }
     else:
         payload = {
             "username": username,
             "email": email,
-            "password": password
+            "password": password,
+            "picture": image_file
         }
 
     try:
