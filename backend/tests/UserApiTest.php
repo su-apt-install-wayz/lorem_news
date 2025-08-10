@@ -77,7 +77,7 @@ class UserApiTest extends WebTestCase {
         $this->assertContains('ROLE_ADMIN', $data['roles']);
     }
 
-    // Get & Delete
+    // Get + Get{id} + Delete
     public function testGetAndDeleteUser(): void {
         $client = static::createClient();
         $token = $this->logIn($client);
