@@ -1,0 +1,46 @@
+# Étape 1 : Build
+FROM node:24-alpine AS builder
+
+# Définir le répertoire de travail dans le conteneur
+WORKDIR /app
+
+# Installer git
+RUN apk add --no-cache git
+
+# Copier les fichiers package.json et package-lock.json
+COPY package*.json ./
+
+# Installation des dépendances
+RUN npm install --legacy-peer-deps --no-audit --no-fund \
+  && npm install --no-save --platform=linuxmusl --arch=x64 lightningcss
+
+# Copier tout le code source
+COPY . .
+
+# Build de l'application Next.js
+RUN npm run build
+
+# Étape 2 : Runner sécurisé pour la prod
+FROM node:24-alpine
+
+WORKDIR /app
+
+ENV NODE_ENV=production
+
+# Créer un groupe et un utilisateur non-root
+RUN addgroup -g 1001 app && adduser -D -G app -u 1001 app
+
+# Copier uniquement les fichiers nécessaires à l'exécution
+COPY --from=builder /app/package*.json ./
+COPY --from=builder /app/node_modules ./node_modules
+COPY --from=builder /app/.next ./.next
+COPY --from=builder /app/public ./public
+
+# Passer à l'utilisateur non-root
+USER app
+
+# Exposer le port utilisé par Next
+EXPOSE 3000
+
+# Commande de démarrage
+CMD ["npm", "run", "start"]

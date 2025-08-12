@@ -1,0 +1,94 @@
+x-defaults: &default
+  network: &network
+    networks:
+      - lorem_news
+
+services:
+  php:
+    container_name: "lorem_news-php"
+    build:
+      context: ./backend
+    volumes:
+      - ./backend:/var/www/html:delegated
+      - ./backend/php/php.ini:/usr/local/etc/php/php.ini
+    expose:
+      - "9000"
+    restart: unless-stopped
+    <<: *network
+    entrypoint: [ "/usr/local/bin/entrypoint.sh" ]
+    env_file:
+      - ./backend/.env
+
+  nginx:
+    container_name: "lorem_news-nginx"
+    image: nginx:latest
+    ports:
+      - "8080:80"
+    volumes:
+      - ./backend:/var/www/html:delegated
+      - ./backend/php/nginx.conf:/etc/nginx/nginx.conf:ro
+      - ./backend/php/default.conf:/etc/nginx/conf.d/default.conf:ro
+    depends_on:
+      - php
+    restart: unless-stopped
+    <<: *network
+
+  db:
+    container_name: "lorem_news-db"
+    image: postgres:latest
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    environment:
+      - POSTGRES_DB=${POSTGRES_DB}
+      - POSTGRES_USER=${POSTGRES_USER}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+      - TZ=Europe/Paris
+    restart: unless-stopped
+    <<: *network
+    env_file:
+      - .env
+
+  pgadmin:
+    container_name: "lorem_news-pgadmin"
+    image: dpage/pgadmin4
+    depends_on:
+      - "db"
+    restart: unless-stopped
+    environment:
+      - PGADMIN_DEFAULT_EMAIL=${PGADMIN_EMAIL}
+      - PGADMIN_DEFAULT_PASSWORD=${PGADMIN_PASSWORD}
+    volumes:
+      - pgadmin_data:/var/lib/pgadmin
+    ports:
+      - "89:80"
+    <<: *network
+    env_file:
+      - .env
+
+  frontend:
+    container_name: "lorem_news-frontend"
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile.dev
+    ports:
+      - "80:3000"
+    volumes:
+      - ./frontend:/app:delegated 
+      - /app/node_modules
+    environment:
+      - NODE_ENV=development
+    depends_on:
+      - "nginx"
+    restart: unless-stopped
+    <<: *network
+
+volumes:
+  pgadmin_data:
+    name: lorem_news_pgadmin_data
+  postgres_data:
+    name: lorem_news_postgres_data
+
+networks:
+  lorem_news:
