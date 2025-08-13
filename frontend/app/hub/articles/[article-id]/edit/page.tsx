@@ -21,6 +21,22 @@ import { CardCategorySelector } from "@/components/editor/editor-category";
 import { CardTagInput } from "@/components/editor/editor-tags";
 import { useParams } from "next/navigation";
 
+type ArticleUser = { username: string; picture: string };
+type ArticleCategory = { id: number; name: string; color: string };
+type Article = {
+    id: number;
+    title: string;
+    description: string;
+    content: string;
+    slug: string;
+    image: string | null;
+    published_at: string;
+    user: ArticleUser;
+    status: string;
+    category: ArticleCategory | null;
+    tags: string[];
+};
+
 const getArticleSchema = (articleId: string) => z.object({
     title: z.string().min(1, "Le titre est requis").max(50, "Le titre ne peut pas dépasser 50 caractères"),
     description: z.string().min(1, "La description est requise").max(100, "La description ne peut pas dépasser 100 caractères"),
@@ -35,7 +51,7 @@ const getArticleSchema = (articleId: string) => z.object({
         const res = await api.get("/api/articles", { params: { title: data.title } });
 
         const sameTitleButDifferentId = res.data.some(
-            (article: any) => String(article.id) !== String(articleId)
+            (article: Article) => String(article.id) !== String(articleId)
         );
 
         if (sameTitleButDifferentId) {
@@ -145,7 +161,7 @@ export default function ArticleEditorCreate() {
                     setIsTitleAvailable(true);
                 } else {
                     // S'il y a un article, mais que c'est celui en cours d'édition, c'est OK
-                    const isAvailable = res.data.every((article: any) => article.id == articleId);
+                    const isAvailable = res.data.every((article: Article) => String(article.id) === String(articleId));
                     setIsTitleAvailable(isAvailable);
                 }
             } catch {
@@ -277,7 +293,7 @@ export default function ArticleEditorCreate() {
                                     name="status"
                                     control={control}
                                     render={({ field }) => (
-                                        <Switch id="article-finished" checked={field.value === "1"} onCheckedChange={(checked: any) => field.onChange(checked ? "1" : "0")} />
+                                        <Switch id="article-finished" checked={field.value === "1"} onCheckedChange={(checked: boolean) => field.onChange(checked ? "1" : "0")} />
                                     )}
                                 />
 
@@ -304,7 +320,7 @@ export default function ArticleEditorCreate() {
 
                 <Section className="p-0">
                     <form className="flex flex-col space-y-4">
-                        <ImageCard setValue={setValue} />
+                        <ImageCard setImage={(val) => setValue("image", val, { shouldDirty: true })} />
 
                         <Controller control={control} name="published_at"
                             render={({ field }) => (

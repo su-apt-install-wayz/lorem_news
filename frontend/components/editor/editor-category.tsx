@@ -46,7 +46,7 @@ export function CardCategorySelector({ value, onChange }: CardCategorySelectorPr
         <Card className="w-full rounded-md shadow-none">
             <CardHeader>
                 <CardTitle className="flex justify-between items-center">
-                    <span>Catégorie de l'article</span>
+                    <span>Catégorie de l&apos;article</span>
                     {!loading && (
                         <Button size={"sm"} variant={"ghost"} onClick={fetchCategories}><RotateCcwIcon /></Button>
                     )}
@@ -91,7 +91,7 @@ export function CardCategorySelector({ value, onChange }: CardCategorySelectorPr
                                         id={`category-${category.id}`}
                                         className="sr-only"
                                     />
-                                    <CategoryBadge categoryName={category.name} bgColor={category.color || "#313545"} />
+                                    <CategoryBadge categoryName={category.name} />
                                 </Label>
                             );
                         })}

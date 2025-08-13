@@ -25,6 +25,7 @@ export default function ArticlesPage() {
                 setArticles(response.data);
                 setLoading(false);
             } catch (err) {
+                console.error("Error fetching articles:", err);
                 toast.error("Erreur lors du chargement des articles.");
                 setError("Impossible de récupérer les articles. Veuillez réessayer plus tard.");
             }

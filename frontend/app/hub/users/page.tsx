@@ -1,28 +1,14 @@
 import { HubHeader } from "@/components/hub/hub-header";
 import { HubContent } from "@/components/hub/hub-content";
-import { deleteUsers, getUsers, updateUser } from "./actions";
+import { getUsers, handleDeleteUsers, handleUpdateUser } from "./actions";
 import UsersList from "@/components/hub/users/UsersList";
-import { revalidatePath } from "next/cache";
 
-export async function handleUpdateUser(id: number, payload: { email: string; username: string; roles: string[]; }) {
-    "use server";
-    const success = await updateUser(id, payload);
-    if (success) {
-        revalidatePath("/hub/users");
-    }
-    return success;
-}
+type SearchParams = { page?: string };
+type PageProps = { searchParams: Promise<SearchParams> };
 
-export async function handleDeleteUsers(ids: number[]): Promise<number[]> {
-    "use server";
-    const res = await deleteUsers(ids);
-    revalidatePath("/hub/users");
-    return res;
-}
-
-export default async function HubUsersPage(props: { searchParams: { page?: string; } }) {
-    const searchParams = await props.searchParams;
-    const page = Number(searchParams.page ?? 1);
+export default async function HubUsersPage({ searchParams }: PageProps) {
+    const sp = await searchParams;
+    const page = Number(sp.page ?? 1);
 
     const users = await getUsers();
     const itemsPerPage = 10;

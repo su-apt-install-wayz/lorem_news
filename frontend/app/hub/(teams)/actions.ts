@@ -1,8 +1,10 @@
 "use server";
 
+import { Team } from "@/components/hub/teams/TeamsList";
 import { createApiServer } from "@/lib/apiServer";
+import { revalidatePath } from "next/cache";
 
-export async function getTeams(): Promise<any[]> {
+export async function getTeams(): Promise<Team[]> {
     try {
         const api = await createApiServer();
         const res = await api.get("/api/teams");
@@ -93,4 +95,32 @@ export async function searchWriters(searchQuery: string) {
         console.error("Erreur searchWriters:", e);
         return [];
     }
+}
+
+export async function handleCreateTeam(payload: { name: string; leaderId: number; memberIds: number[] }) {
+    const res = await createTeam(payload);
+    if (res.success) revalidatePath("/hub/teams");
+    return res;
+}
+
+export async function handleUpdateTeam(id: number, payload: { name: string; leaderId: number; memberIds: number[] }) {
+    const res = await updateTeam(id, payload);
+    if (res.success) revalidatePath("/hub/teams");
+    return res;
+}
+
+export async function handleDeleteTeams(ids: number[]): Promise<number[]> {
+    const res = await deleteTeams(ids);
+    revalidatePath("/hub/teams");
+    return res;
+}
+
+export async function handleSearchLeaders(query: string) {
+    const res = await searchLeaders(query);
+    return res;
+}
+
+export async function handleSearchWriters(query: string) {
+    const res = await searchWriters(query);
+    return res;
 }

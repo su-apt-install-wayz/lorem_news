@@ -1,49 +1,18 @@
 import { HubHeader } from "@/components/hub/hub-header";
 import { HubContent } from "@/components/hub/hub-content";
-import { revalidatePath } from "next/cache";
 import { CreateTeamDialog } from "@/components/hub/teams/CreateTeamDialog";
 import { Button } from "@/components/ui/button";
 import { IconUsersPlus } from "@tabler/icons-react";
-import { getTeams, createTeam, deleteTeams, updateTeam, searchLeaders, searchWriters } from "../actions";
+import { getTeams, handleCreateTeam, handleDeleteTeams, handleSearchLeaders, handleSearchWriters, handleUpdateTeam } from "../actions";
 import TeamsList from "@/components/hub/teams/TeamsList";
 
-export async function handleCreateTeam(payload: { name: string; leaderId: number; memberIds: number[] }) {
-    "use server";
-    const res = await createTeam(payload);
-    if (res.success) revalidatePath("/hub/teams");
-    return res;
-}
+type SearchParams = { page?: string; search?: string };
+type PageProps = { searchParams: Promise<SearchParams> };
 
-export async function handleUpdateTeam(id: number, payload: { name: string; leaderId: number; memberIds: number[] }) {
-    "use server";
-    const res = await updateTeam(id, payload);
-    if (res.success) revalidatePath("/hub/teams");
-    return res;
-}
-
-export async function handleDeleteTeams(ids: number[]): Promise<number[]> {
-    "use server";
-    const res = await deleteTeams(ids);
-    revalidatePath("/hub/teams");
-    return res;
-}
-
-export async function handleSearchLeaders(query: string) {
-    "use server";
-    const res = await searchLeaders(query);
-    return res;
-}
-
-export async function handleSearchWriters(query: string) {
-    "use server";
-    const res = await searchWriters(query);
-    return res;
-}
-
-export default async function HubTeamsPage(props: { searchParams: { page?: string; search?: string } }) {
-    const searchParams = await props.searchParams;
-    const page = Number(searchParams.page ?? 1);
-    const search = searchParams.search?.toLowerCase() ?? "";
+export default async function HubTeamsPage({ searchParams }: PageProps) {
+    const sp = await searchParams;
+    const page = Number(sp.page ?? 1);
+    const search = (sp.search ?? "").toLowerCase();
 
     const teams = await getTeams();
     const itemsPerPage = 10;

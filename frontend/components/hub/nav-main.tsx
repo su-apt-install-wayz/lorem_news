@@ -11,13 +11,14 @@ import { LoaderCircleIcon } from "lucide-react"
 import { useState } from "react"
 import { CreateCategoryDialog } from "./categories/CreateCategoryDialog"
 
-export async function handleCreateCategory(payload: { name: string; color: string }) {
+export async function handleCreateCategory(payload: { name: string; color: `#${string}` }) : Promise<{ success: boolean; message?: string }> {
+    console.log("Creating category with payload:", payload);
     // "use server";
     // const success = await createCategory(payload);
     // if (success) {
     //     // revalidatePath("/hub/categories");
     // }
-    return true;
+    return { success: true };
 }
 
 export function NavMain({ items }: {

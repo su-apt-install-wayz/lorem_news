@@ -1,6 +1,8 @@
 import NextAuth, { CredentialsSignin } from "next-auth"
 import Credentials from "next-auth/providers/credentials"
 
+const AUTH_SECRET = process.env.AUTH_SECRET ?? process.env.NEXTAUTH_SECRET;
+
 class InvalidLoginError extends CredentialsSignin {
     code = "Email ou mot de passe invalide"
 }
@@ -18,6 +20,7 @@ declare module "next-auth" {
 }
 
 export const { handlers, signIn, signOut, auth } = NextAuth({
+    secret: AUTH_SECRET, 
     providers: [
         Credentials({
             credentials: {

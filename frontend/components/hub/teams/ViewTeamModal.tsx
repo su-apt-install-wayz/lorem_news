@@ -25,7 +25,7 @@ export default function ViewTeamModal({ team }: { team: Team }) {
 
             <DialogContent className="max-w-md">
                 <DialogHeader>
-                    <DialogTitle>Membres de l'équipe</DialogTitle>
+                    <DialogTitle>Membres de l&apos;équipe</DialogTitle>
                 </DialogHeader>
 
                 <div className="space-y-6 max-h-[60vh] overflow-y-auto">
@@ -47,7 +47,7 @@ export default function ViewTeamModal({ team }: { team: Team }) {
                     )}
 
                     <div className="flex flex-col p-0 gap-3">
-                        <span className="text-sm text-muted-foreground">Rédacteurs de l'équipe</span>
+                        <span className="text-sm text-muted-foreground">Rédacteurs de l&apos;équipe</span>
                         <div className="flex flex-col gap-3">
                             {(team.members?.length ?? 0) > 0 ? (
                                 team.members.map((member) => (

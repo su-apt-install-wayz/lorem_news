@@ -74,32 +74,15 @@ services:
     build:
       context: ./frontend
       dockerfile: Dockerfile.prod
-    volumes:
-      - ./frontend:/app:delegated 
-      - /app/node_modules
-      - /app/.next
-    expose:
-      - "3000"
+    volumes: []
+    ports:
+      - "80:3000"
     environment:
       - NODE_ENV=production
     depends_on:
-      - "nginx-backend"
+      - "nginx"
     restart: unless-stopped
     <<: *network
-
-  nginx-frontend:
-    container_name: "lorem_news-nginx-frontend"
-    image: jc21/nginx-proxy-manager:latest
-    restart: unless-stopped
-    ports:
-      - "80:80"
-      - "443:443"
-      - "81:81"
-    volumes:
-      - ./npm/data:/data
-      - ./npm/letsencrypt:/etc/letsencrypt
-    networks:
-      - lorem_news
 
 volumes:
   pgadmin_data:
