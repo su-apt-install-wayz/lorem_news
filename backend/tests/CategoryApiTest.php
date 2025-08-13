@@ -5,7 +5,7 @@ namespace App\Tests;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Symfony\Bundle\FrameworkBundle\KernelBrowser;
 
-class CategoriesApiTest extends WebTestCase {
+class CategoryApiTest extends WebTestCase {
     private function logIn(KernelBrowser $client): string {
         $client->request('POST', '/api/users', [], [], [
             'CONTENT_TYPE' => 'application/json',

@@ -11,7 +11,6 @@ const mockUser: User = {
   roles: ['ROLE_USER', 'ROLE_ADMIN'],
 }
 
-// On groupe tous les tests du composant UserCard
 describe('UserCard', () => {
   // Test 1 : Vérifie que les infos principales s'affichent correctement
   it('affiche le nom, email et image de profil', () => {
@@ -25,13 +24,12 @@ describe('UserCard', () => {
       />
     )
 
-    // Vérifie que le nom est présent
+    // Vérifie que le nom et e-mail son présent
     expect(screen.getByText('Jean Dupont')).toBeInTheDocument()
-    // Vérifie que l'email est présent
     expect(screen.getByText('jean.dupont@example.com')).toBeInTheDocument()
   })
 
-  // Test 2 : Vérifie que les rôles sont affichés avec leur label (selon roleMap)
+  // Test 2 : Vérifie que les rôles sont affichés avec leur label
   it('affiche les rôles avec le bon label', () => {
     render(
       <UserCard
