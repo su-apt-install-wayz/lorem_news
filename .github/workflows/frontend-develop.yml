@@ -1,9 +1,8 @@
-name: Workflow for frontend
+name: Workflow for frontend - Develop
 
 on:
   push:
     branches:
-      - main
       - develop
   pull_request:
     types: [opened, synchronize, reopened]
@@ -25,7 +24,7 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '22'
+          node-version: '24'
 
       # Étape 3 : Installation des dépendances
       - name: Install dependencies
