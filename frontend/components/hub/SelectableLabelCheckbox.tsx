@@ -9,21 +9,14 @@ interface Props {
     labelChecked: string;
     onChange?: (checked: boolean) => void;
     checked?: boolean;
-    disabled?:boolean;
+    disabled?: boolean;
     defaultChecked?: boolean;
     id?: string;
 }
 
-export function SelectableLabelCheckbox({
-    labelUnchecked,
-    labelChecked,
-    checked,
-    disabled,
-    defaultChecked = false,
-    id,
-    onChange,
-}: Props) {
-    const checkboxId = id ?? useId();
+export function SelectableLabelCheckbox({ labelUnchecked, labelChecked, checked, disabled, defaultChecked = false, id, onChange }: Props) {
+    const generatedId = useId();
+    const checkboxId = id || generatedId;
     const isControlled = checked !== undefined;
 
     return (

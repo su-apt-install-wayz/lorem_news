@@ -2,16 +2,18 @@ import axios from "axios";
 import { getToken } from "next-auth/jwt";
 import { cookies } from "next/headers";
 
+const AUTH_SECRET = process.env.AUTH_SECRET ?? process.env.NEXTAUTH_SECRET;
+
 export async function createApiServer() {
     const cookieHeader = (await cookies()).toString();
 
     const token = await getToken({
         req: { headers: { cookie: cookieHeader } },
-        secret: process.env.NEXTAUTH_SECRET!,
+        secret: AUTH_SECRET,
     });
 
     const api = axios.create({
-        baseURL: "http://localhost:8080",
+        baseURL: process.env.API_URL,
         headers: {
             Accept: "application/json",
             "Content-Type": "application/json",

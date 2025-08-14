@@ -1,6 +1,7 @@
 "use server";
 
 import { createApiServer } from "@/lib/apiServer";
+import { revalidatePath } from "next/cache";
 
 export async function getUsers() {
     const api = await createApiServer();
@@ -43,4 +44,18 @@ export async function deleteUsers(userIds: number[]): Promise<number[]> {
     );
 
     return failed;
+}
+
+export async function handleUpdateUser(id: number, payload: { email: string; username: string; roles: string[]; }) {
+    const success = await updateUser(id, payload);
+    if (success) {
+        revalidatePath("/hub/users");
+    }
+    return success;
+}
+
+export async function handleDeleteUsers(ids: number[]): Promise<number[]> {
+    const res = await deleteUsers(ids);
+    revalidatePath("/hub/users");
+    return res;
 }

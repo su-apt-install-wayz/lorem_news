@@ -4,6 +4,7 @@ import Link from "next/link";
 import CategoryBadge from "@/components/CategoryBadge";
 import { Article } from "@/components/articles/ArticlesList";
 import { Skeleton } from "@/components/ui/skeleton";
+import Image from "next/image";
 
 interface ArticleCardProps {
     article: Article;
@@ -41,7 +42,7 @@ export function ArticleCardSkeleton() {
 export default function ArticleCard({ article }: ArticleCardProps) {
     return (
         <Card className="relative p-0 rounded-md gap-1 overflow-hidden shadow-none">
-            <img className="w-full h-auto object-cover" src={article?.image ?? "/assets/Image.png"} alt="" />
+            <Image width={350} className="w-full h-auto object-cover" src={article?.image ?? "/assets/Image.png"} alt="" />
 
             <div className="mt-3 px-3">
                 {article?.category && (<CategoryBadge categoryName={article.category.name} />)}

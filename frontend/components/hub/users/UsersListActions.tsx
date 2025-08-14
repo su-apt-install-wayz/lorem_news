@@ -10,10 +10,9 @@ import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "../../
 import { Filter, UserRoundX } from "lucide-react";
 import { AlertDialog, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from "../../ui/alert-dialog";
 import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle, SheetTrigger } from "../../ui/sheet";
-import { useSession } from "next-auth/react";
 
 export default function UsersListActions({ users, deleteSelectedUsers }: { users: User[]; deleteSelectedUsers: (ids: number[]) => Promise<number[]>; }) {
-    const { data: session } = useSession();
+    // const { data: session } = useSession();
     // const currentUserId = session?.user?.id;
     const currentUserId = 1;
 
@@ -56,7 +55,6 @@ export default function UsersListActions({ users, deleteSelectedUsers }: { users
             }
         });
     };
-
 
     return (
         <div className="flex flex-wrap-reverse justify-between items-center gap-4 px-1">

@@ -2,13 +2,12 @@
 
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { ImageDropzone } from "@/components/image-dropzone";
-import { UseFormSetValue } from "react-hook-form";
 
 interface ImageCardProps {
-    setValue: UseFormSetValue<any>;
+    setImage: (value: string | null) => void;
 }
 
-export function ImageCard({ setValue }: ImageCardProps) {
+export function ImageCard({ setImage }: ImageCardProps) {
     return (
         <Card className="w-full min-w-xs max-w-lg max-lg:max-w-none rounded-md shadow-none">
             <CardHeader>
@@ -16,7 +15,7 @@ export function ImageCard({ setValue }: ImageCardProps) {
                 <CardDescription>Sélectionnez une image de présentation.</CardDescription>
             </CardHeader>
             <CardContent>
-                <ImageDropzone onImageChange={(base64) => setValue("image", base64)} />
+                <ImageDropzone onImageChange={(base64) => setImage(base64 ?? "")} />
             </CardContent>
         </Card>
     );

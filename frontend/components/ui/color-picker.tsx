@@ -2,7 +2,6 @@
 
 import type { PopoverContentProps } from '@radix-ui/react-popover';
 import {
-    type HexColor,
     hexToHsva,
     type HslaColor,
     hslaToHsva,
@@ -41,10 +40,6 @@ type ColorPickerValue = {
 
 type ColorPickerProps = {
     value?: `#${string}` | HsvaColor | HslaColor | RgbaColor;
-    type?: 'hsl' | 'rgb' | 'hex';
-    swatches?: HexColor[];
-    hideContrastRatio?: boolean;
-    hideDefaultSwatches?: boolean;
     className?: string;
     onValueChange?: (value: ColorPickerValue) => void;
 } & PopoverContentProps;
@@ -52,10 +47,6 @@ type ColorPickerProps = {
 function ColorPicker({
     value,
     children,
-    type = 'hsl',
-    swatches = [],
-    hideContrastRatio,
-    hideDefaultSwatches,
     onValueChange,
     className,
     ...props

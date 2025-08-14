@@ -49,7 +49,7 @@ export default function CategoriesListActions({ categories, deleteSelectedCatego
                 const failed = await deleteSelectedCategories(selectedIds);
 
                 if (failed.length === 0) {
-                    toast.success("Catégories supprimées");
+                    toast.success("Catégorie(s) supprimée(s)");
                 } else {
                     toast.error(`Échec pour ${failed.length} catégorie(s)`);
                 }
