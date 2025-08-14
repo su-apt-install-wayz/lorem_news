@@ -66,7 +66,7 @@ export function CreateCategoryDialog({ createCategory, children }: PropsWithChil
                     <div className="grid gap-2">
                         <Label htmlFor="color">Couleur</Label>
                         <ColorPicker value={color} onValueChange={(value) => setColor(value.hex as `#${string}`)}>
-                            <Button id="color" variant="outline" className="flex items-center gap-2">
+                            <Button variant="outline" className="flex items-center gap-2">
                                 <span className="size-3 rounded-full" style={{ backgroundColor: color }} />
                                 {color}
                                 <ChevronDownIcon size={16} />
