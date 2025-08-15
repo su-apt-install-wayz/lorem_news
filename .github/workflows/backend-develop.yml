@@ -2,8 +2,7 @@ name: Workflow for backend - Develop
 
 on:
   push:
-    branches:
-      - develop
+    branches: [develop]
   pull_request:
     types: [opened, synchronize, reopened]
 
@@ -21,51 +20,82 @@ jobs:
         ports:
           - 5432:5432
         options: >-
-          --health-cmd pg_isready
+          --health-cmd "pg_isready -U symfony"
           --health-interval 10s
           --health-timeout 5s
-          --health-retries 5
+          --health-retries 10
 
     defaults:
       run:
         working-directory: backend
 
+    env:
+      # Secrets injectés au runtime (réutilisés par .env.ci)
+      APP_SECRET: ${{ secrets.APP_SECRET }}
+      JWT_PASSPHRASE: ${{ secrets.JWT_PASSPHRASE }}
+      APP_ENV: test
+      APP_DEBUG: 0
+
     steps:
-      # Étape 1 : Récupération du code
       - name: Checkout code
         uses: actions/checkout@v4
 
-      # Étape 2 : Configuration PHP
-      - name: Setup PHP 8.4 - fpm
+      - name: Setup PHP 8.4
         uses: shivammathur/setup-php@v2
         with:
           php-version: '8.4'
-          extensions: pdo,pdo_pgsql,intl,ctype,json
-      
+          coverage: none
+          extensions: pdo, pdo_pgsql, intl, ctype, json
+          tools: composer:v2
+
+      - name: Validate composer.json
+        run: composer validate --no-check-publish
+
+      - name: Cache Composer dependencies
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.composer/cache/files
+            vendor
+          key: ${{ runner.os }}-php${{ steps.php-versions.outputs.php-version || '8.4' }}-composer-${{ hashFiles('**/composer.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-php${{ steps.php-versions.outputs.php-version || '8.4' }}-composer-
+
       - name: Copy env file
         run: cp .env.ci .env
 
-      # Étape 3 : Installation des dépendances
       - name: Install dependencies
-        run: composer install --no-interaction --no-ansi --optimize-autoloader
+        run: composer install --no-interaction --no-progress --prefer-dist --optimize-autoloader
 
-      # Étape 4 : Create test database de test
+      - name: Generate JWT keys
+        run: |
+          mkdir -p config/jwt
+          openssl genrsa -aes256 -passout pass:"$JWT_PASSPHRASE" -out config/jwt/private.pem 4096
+          openssl rsa -pubout -in config/jwt/private.pem -passin pass:"$JWT_PASSPHRASE" -out config/jwt/public.pem
+          chmod 600 config/jwt/private.pem config/jwt/public.pem
+
+      - name: Wait for Postgres (extra safety)
+        run: |
+          for i in {1..30}; do
+            if php -r 'fsockopen("postgres", 5432) ? exit(0) : exit(1);'; then
+              echo "Postgres is up"; break
+            fi
+            echo "Waiting for Postgres... ($i/30)"
+            sleep 2
+          done
+
       - name: Create test database
-        run: php bin/console doctrine:database:create --env=test
-      
-      # Étape 5 : Migration de la base de test
+        run: php bin/console doctrine:database:create --if-not-exists --env=test
+
       - name: Run migrations
         run: php bin/console doctrine:migrations:migrate --env=test --no-interaction
 
-      # Étape 6 : Exécution des
       - name: Run PHPStan
         run: vendor/bin/phpstan analyse src --level=max
 
-      # Étape 7 : Exécution des tests
       - name: Run tests
         run: vendor/bin/phpunit --colors=always
 
-      # Étape 8 : Analyse SonarQube
       - name: SonarQube Scan
         uses: SonarSource/sonarqube-scan-action@v5
         continue-on-error: true
