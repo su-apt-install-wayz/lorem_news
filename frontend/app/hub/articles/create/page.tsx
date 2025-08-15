@@ -234,7 +234,7 @@ export default function ArticleEditorCreate() {
                                         name="status"
                                         control={control}
                                         render={({ field }) => (
-                                            <Switch id="article-finished" checked={field.value === "1"} onCheckedChange={(checked: any) => field.onChange(checked ? "1" : "0")} />
+                                            <Switch id="article-finished" checked={field.value === "1"} onCheckedChange={(checked: boolean) => field.onChange(checked ? "1" : "0")} />
                                         )}
                                     />
 
@@ -261,7 +261,7 @@ export default function ArticleEditorCreate() {
 
                     <Section className="p-0">
                         <form className="flex flex-col space-y-4">
-                            <ImageCard setValue={setValue} />
+                            <ImageCard setImage={(val) => setValue("image", val, { shouldDirty: true })} />
 
                             <Controller control={control} name="published_at"
                                 render={({ field }) => (

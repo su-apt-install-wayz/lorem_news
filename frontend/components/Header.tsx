@@ -55,7 +55,7 @@ export const Header = () => {
         <header className="sticky top-0 w-full flex flex-col justify-end items-center bg-background border-b shadow-sm z-99">
             <Section className="w-full flex flex-col justify-center items-center relative px-0">
                 <div className="w-full max-w-[1500px] flex justify-between items-center gap-4 p-4 py-2">
-                    <Image className="w-28" src={Logo1} alt="Logo Lorem News" />
+                    <Image width={112} height={56} className="w-28" src={Logo1} alt="Logo Lorem News" />
 
                     <SearchForm variant='desktop' className="max-w-xl rounded-sm overflow-hidden max-sm:hidden" />
 

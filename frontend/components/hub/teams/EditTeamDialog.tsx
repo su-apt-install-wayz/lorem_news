@@ -81,9 +81,9 @@ export function EditTeamDialog({ team, updateTeam, onOptimisticUpdate, searchLea
             </DialogTrigger>
             <DialogContent className="sm:max-w-[500px]">
                 <DialogHeader>
-                    <DialogTitle>Modifier l'équipe</DialogTitle>
+                    <DialogTitle>Modifier l&apos;équipe</DialogTitle>
                     <DialogDescription>
-                        Mettez à jour les informations de l'équipe <span className="font-semibold">{team.name}</span>.
+                        Mettez à jour les informations de l&apos;équipe <span className="font-semibold">{team.name}</span>.
                     </DialogDescription>
                 </DialogHeader>
 
@@ -108,7 +108,7 @@ export function EditTeamDialog({ team, updateTeam, onOptimisticUpdate, searchLea
                         <UserCombobox value={null} onChange={addMember} placeholder="Ajouter un rédacteur..." fetchUsers={searchWriters} />
                         <div className="mt-2 flex items-center gap-2 flex-wrap">
                             <TooltipProvider>
-                                {members.map((member, index) => (
+                                {members.map((member) => (
                                     <Tooltip key={member.user?.id}>
                                         <TooltipTrigger className="cursor-pointer" asChild>
                                             <div className="relative">

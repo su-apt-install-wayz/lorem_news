@@ -9,7 +9,7 @@ export const Footer = () => {
     return (
         <footer className="w-full flex justify-center border-t">
             <Section className="w-full flex flex-col gap-4 py-8">
-                <Image className='m-auto w-48' src={Logo} alt="Logo" />
+                <Image width={192} height={130} className='m-auto w-48' src={Logo} alt="Logo" />
                 <h4 className="text-center font-bold text-2xl text-primary">Lorem News Industry</h4>
                 <h5 className="text-center font-semibold">Entreprise astoniale depuis 2025</h5>
                 <p className="text-center text-sm text-muted-foreground">Copyright © 2025 - Tous droits réservés</p>

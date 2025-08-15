@@ -1,13 +1,19 @@
 FROM php:8.4-fpm
 
-RUN apt-get update && apt-get install -y \
-    libpq-dev postgresql-client wget vim git zip unzip zlib1g-dev libzip-dev libpng-dev \
-    nano tzdata locales nodejs npm cron libxml2-dev tesseract-ocr tesseract-ocr-fra dos2unix \
-    poppler-utils \
-    && apt-get clean \
+# Sys deps nécessaires (intl, gd, zip, soap, pgsql)
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    libicu-dev pkg-config \
+    libxml2-dev \
+    zlib1g-dev libzip-dev \
+    libpng-dev libjpeg62-turbo-dev libwebp-dev libfreetype6-dev \
+    libpq-dev postgresql-client wget vim git zip unzip nano tzdata locales nodejs npm cron \
+    tesseract-ocr tesseract-ocr-fra dos2unix poppler-utils \
     && rm -rf /var/lib/apt/lists/*
 
-RUN docker-php-ext-install pdo pdo_pgsql gd zip pcntl exif soap intl
+# Config/compile des extensions
+RUN docker-php-ext-configure gd --with-jpeg --with-freetype --with-webp \
+    && docker-php-ext-configure intl \
+    && docker-php-ext-install -j"$(nproc)" pdo pdo_pgsql gd zip pcntl exif soap intl
 
 RUN pecl install apcu && \
     pecl install xdebug && \
