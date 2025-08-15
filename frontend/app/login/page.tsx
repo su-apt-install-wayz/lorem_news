@@ -72,7 +72,7 @@ export default function LoginPage() {
     return (
         <Section className="flex h-full min-h-screen p-4">
             <div className="w-full max-w-1/2 flex flex-col justify-center items-center rounded-md p-4 gap-8 max-md:max-w-none max-md:p-0">
-                <Image width={224} className="w-56" src="/assets/logo2.png" alt="" />
+                <Image width={224} height={153} className="w-56" src="/assets/logo2.png" alt="" />
                 <p className="mb-14 text-xl text-secondary font-semibold text-center">Connectez-vous et accédez à tous nos articles</p>
                 <Form {...form}>
                     <form onSubmit={handleSubmit(onSubmit)} className="w-full max-w-xl space-y-8">
