@@ -29,13 +29,6 @@ jobs:
       run:
         working-directory: backend
 
-    env:
-      # Secrets injectés au runtime (réutilisés par .env.ci)
-      APP_SECRET: ${{ secrets.APP_SECRET }}
-      JWT_PASSPHRASE: ${{ secrets.JWT_PASSPHRASE }}
-      APP_ENV: test
-      APP_DEBUG: 0
-
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -48,6 +41,19 @@ jobs:
           extensions: pdo, pdo_pgsql, intl, ctype, json
           tools: composer:v2
 
+      # Génère des valeurs éphémères et les exporte dans l'env du job (pas de GitHub Secrets)
+      - name: Set ephemeral env values
+        shell: bash
+        run: |
+          echo "APP_ENV=test" >> $GITHUB_ENV
+          echo "APP_DEBUG=0" >> $GITHUB_ENV
+          # 64 hex chars pour APP_SECRET
+          APP_SECRET=$(php -r 'echo bin2hex(random_bytes(32));')
+          echo "APP_SECRET=$APP_SECRET" >> $GITHUB_ENV
+          # Passphrase JWT aléatoire
+          JWT_PASSPHRASE=$(php -r 'echo bin2hex(random_bytes(24));')
+          echo "JWT_PASSPHRASE=$JWT_PASSPHRASE" >> $GITHUB_ENV
+
       - name: Validate composer.json
         run: composer validate --no-check-publish
 
@@ -56,10 +62,10 @@ jobs:
         with:
           path: |
             ~/.composer/cache/files
-            vendor
-          key: ${{ runner.os }}-php${{ steps.php-versions.outputs.php-version || '8.4' }}-composer-${{ hashFiles('**/composer.lock') }}
+            backend/vendor
+          key: ${{ runner.os }}-php-8.4-composer-${{ hashFiles('backend/composer.lock') }}
           restore-keys: |
-            ${{ runner.os }}-php${{ steps.php-versions.outputs.php-version || '8.4' }}-composer-
+            ${{ runner.os }}-php-8.4-composer-
 
       - name: Copy env file
         run: cp .env.ci .env
@@ -74,7 +80,7 @@ jobs:
           openssl rsa -pubout -in config/jwt/private.pem -passin pass:"$JWT_PASSPHRASE" -out config/jwt/public.pem
           chmod 600 config/jwt/private.pem config/jwt/public.pem
 
-      - name: Wait for Postgres (extra safety)
+      - name: Wait for Postgres
         run: |
           for i in {1..30}; do
             if php -r 'fsockopen("postgres", 5432) ? exit(0) : exit(1);'; then
