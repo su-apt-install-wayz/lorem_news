@@ -1,9 +1,8 @@
-name: Workflow for frontend
+name: Workflow for frontend - Develop
 
 on:
   push:
     branches:
-      - main
       - develop
   pull_request:
     types: [opened, synchronize, reopened]
@@ -29,7 +28,7 @@ jobs:
 
       # Étape 3 : Installation des dépendances
       - name: Install dependencies
-        run: npm install --legacy-peer-deps
+        run: npm ci
 
       # Étape 4 : Exécution de ESLint
       - name: Run ESLint

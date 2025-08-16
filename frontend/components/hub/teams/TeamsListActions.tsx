@@ -8,14 +8,13 @@ import { toast } from "sonner";
 import { Team } from "./TeamsList";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { AlertDialog, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from "@/components/ui/alert-dialog";
-import { useSession } from "next-auth/react";
 import { IconUsersMinus } from "@tabler/icons-react";
 import { Input } from "@/components/ui/input";
 import { LoaderCircle, Search } from "lucide-react";
 import { useRouter, useSearchParams } from "next/navigation";
 
 export default function TeamsListActions({ teams, deleteSelectedTeams }: { teams: Team[]; deleteSelectedTeams: (ids: number[]) => Promise<number[]>; }) {
-    const { data: session } = useSession();
+    // const { data: session } = useSession();
     //   const currentUserId = session?.user?.id;
     const currentUserId = 1;
 

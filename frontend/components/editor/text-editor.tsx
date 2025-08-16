@@ -155,7 +155,7 @@ const TextEditor: React.FC<{ defaultContent?: string, onContentChange?: (value: 
             if (format === "paragraph") {
                 editor.chain().focus().setParagraph().run();
             } else {
-                editor.chain().focus().toggleHeading({ level: parseInt(format) as any }).run();
+                editor.chain().focus().toggleHeading({ level: parseInt(format, 10) as 1 | 2 | 3 | 4 | 5 | 6 }).run();
             }
         }
     };

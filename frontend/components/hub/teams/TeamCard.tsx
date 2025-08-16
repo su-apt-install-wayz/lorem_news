@@ -92,7 +92,7 @@ export default function TeamCard({ team, selected, onToggle, updateTeam, onOptim
             </CardHeader>
 
             <CardContent className="flex flex-col p-0 gap-2">
-                <span className="text-xs text-muted-foreground">Membres de l'équipe</span>
+                <span className="text-xs text-muted-foreground">Membres de l&apos;équipe</span>
 
                 <div className="flex justify-between items-center gap-2">
                     {(team.members?.length ?? 0) > 0 && (

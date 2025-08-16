@@ -1,0 +1,44 @@
+name: Workflow for frontend - Main
+
+on:
+  workflow_call:
+
+jobs:
+  build_and_test:
+    runs-on: ubuntu-latest
+
+    defaults:
+      run:
+        working-directory: frontend
+
+    steps:
+      # Étape 1 : Récupération du code
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
+      # Étape 2 : Configuration Node.js
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: 'npm'
+          cache-dependency-path: package-lock.json
+
+      # Étape 3 : Installation des dépendances
+      - name: Install dependencies
+        run: npm ci
+
+      # Étape 4 : Exécution de ESLint
+      - name: Run ESLint
+        run: npm run lint
+
+      # Étape 5 : Exécution des tests
+      - name: Run Tests
+        run: npm run test
+
+      # Étape 6 : Analyse SonarQube
+      - name: SonarQube Scan
+        uses: SonarSource/sonarqube-scan-action@v5
+        continue-on-error: true
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}

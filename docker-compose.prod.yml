@@ -16,6 +16,8 @@ services:
     restart: unless-stopped
     <<: *network
     entrypoint: [ "/usr/local/bin/entrypoint.sh" ]
+    env_file:
+      - ./backend/.env
 
   nginx:
     container_name: "lorem_news-nginx"
@@ -67,15 +69,16 @@ services:
 
   frontend:
     container_name: "lorem_news-frontend"
+    env_file:
+      - ./frontend/.env
     build:
       context: ./frontend
+      dockerfile: Dockerfile.prod
+    volumes: []
     ports:
       - "80:3000"
-    volumes:
-      - ./frontend:/app:delegated
-      - /app/node_modules
     environment:
-      - NODE_ENV=development
+      - NODE_ENV=production
     depends_on:
       - "nginx"
     restart: unless-stopped
@@ -83,7 +86,10 @@ services:
 
 volumes:
   pgadmin_data:
+    name: lorem_news_pgadmin_data
   postgres_data:
+    name: lorem_news_postgres_data
+  .next_cache:
 
 networks:
   lorem_news:

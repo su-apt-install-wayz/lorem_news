@@ -1,12 +1,7 @@
-name: Workflow for backend
+name: Workflow for backend - Main
 
 on:
-  push:
-    branches:
-      - main
-      - develop
-  pull_request:
-    types: [opened, synchronize, reopened]
+  workflow_call:
 
 jobs:
   build_and_test:

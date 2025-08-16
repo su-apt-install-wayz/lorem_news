@@ -20,11 +20,56 @@ import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, 
 import { AlertDialogTitle } from "@radix-ui/react-alert-dialog";
 import ScrollProgressBar from "@/components/ui/scroll-progress-bar";
 
+
+type ArticleUser = {
+    username: string;
+    picture: string;
+};
+
+type ArticleCategory = {
+    id: number;
+    name: string;
+    color: string;
+};
+
+type Article = {
+    id: number;
+    title: string;
+    description: string;
+    content: string;
+    slug: string;
+    image: string;
+    published_at: string; // ISO date
+    user: ArticleUser;
+    status: string;
+    category: ArticleCategory;
+    tags: string[];
+};
+
+type CommentUser = {
+    id: number;
+    username: string;
+    picture: string;
+};
+
+type CommentArticleRef = {
+    id: number;
+};
+
+type CommentItem = {
+    id: number;
+    content: string;
+    created_at: string; // ISO date
+    edited_at?: string | null; // ISO date or null
+    article: CommentArticleRef;
+    user: CommentUser;
+};
+
 export default function ArticlePage() {
     const params = useParams();
     const articleId = params["article-id"];
 
-    const [article, setArticle] = useState<any>(null);
+    const [article, setArticle] = useState<Article | null>(null);
     const [loadingArticle, setLoadingArticle] = useState(true);
     const [errorArticle, setErrorArticle] = useState<string | null>(null);
 
@@ -41,6 +86,7 @@ export default function ArticlePage() {
                 setArticle(res.data);
                 setLoadingArticle(false);
             } catch (err) {
+                console.error("Error fetching article:", err);
                 toast.error("Erreur lors du chargement de l'article.");
                 setErrorArticle("Erreur lors du chargement de l'article.");
             }
@@ -48,7 +94,7 @@ export default function ArticlePage() {
         fetchArticle();
     }, [articleId]);
 
-    const [comments, setComments] = useState<any[]>([]);
+    const [comments, setComments] = useState<CommentItem[]>([]);
     const [loadingComments, setLoadingComments] = useState(true);
     const [errorComments, setErrorComments] = useState<string | null>(null);
 
@@ -63,7 +109,7 @@ export default function ArticlePage() {
                 const res = await api.get(`/api/comments?article=${article.id}`);
 
                 setComments(
-                    res.data.sort((a: any, b: any) => {
+                    res.data.sort((a: CommentItem, b: CommentItem) => {
                         const isAUser = a.user.id == 2;
                         const isBUser = b.user.id == 2;
                         if (isAUser && !isBUser) return -1;
@@ -72,6 +118,7 @@ export default function ArticlePage() {
                     })
                 );
             } catch (err) {
+                console.error("Error fetching comments:", err);
                 toast.error("Erreur lors du chargement des commentaires.");
                 setErrorArticle("Erreur lors du chargement des commentaires.");
             } finally {
@@ -115,6 +162,7 @@ export default function ArticlePage() {
             setNewCommentContent("");
             toast.success("Commentaire ajouté !");
         } catch (err) {
+            console.error("Error adding comment:", err);
             toast.error("Erreur lors de l'ajout du commentaire.");
         } finally {
             setAddingComment(false);
@@ -125,7 +173,7 @@ export default function ArticlePage() {
     const [editingContent, setEditingContent] = useState<string>("");
     const [savingEdit, setSavingEdit] = useState(false);
 
-    const editComment = (comment: any) => {
+    const editComment = (comment: CommentItem) => {
         if (comment.user.id !== 1) return;
         setEditingCommentId(comment.id);
         setEditingContent(comment.content);
@@ -157,13 +205,14 @@ export default function ArticlePage() {
             setEditingCommentId(null);
             setEditingContent("");
         } catch (err) {
+            console.error("Error saving comment edit:", err);
             toast.error("Erreur lors de la modification.");
         } finally {
             setSavingEdit(false);
         }
     };
 
-    const [commentToDelete, setCommentToDelete] = useState<any | null>(null);
+    const [commentToDelete, setCommentToDelete] = useState<number | null>(null);
     const [deleting, setDeleting] = useState(false);
     const [isDialogOpen, setIsDialogOpen] = useState(false);
 
@@ -181,6 +230,7 @@ export default function ArticlePage() {
             setCommentToDelete(null);
             setIsDialogOpen(false);
         } catch (err) {
+            console.error("Error deleting comment:", err);
             toast.error("Erreur lors de la suppression.");
         } finally {
             setDeleting(false);
@@ -233,8 +283,8 @@ export default function ArticlePage() {
                     <>
                         <div className="flex flex-wrap justify-between items-center gap-3">
                             <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                                <CategoryBadge categoryName={article?.category?.name} />
-                                <p>{new Date(article?.published_at).toLocaleDateString('fr-FR', { day: 'numeric', month: 'long', year: 'numeric' })}</p>
+                                <CategoryBadge categoryName={article?.category?.name ?? "Inconnu"} />
+                                <p>{article?.published_at ? new Date(article.published_at).toLocaleDateString('fr-FR', { day: 'numeric', month: 'long', year: 'numeric' }) : ""}</p>
                             </div>
 
                             <TooltipProvider>
@@ -256,9 +306,9 @@ export default function ArticlePage() {
                             <h2 className="text-md text-primary font-semibold">{article?.description}</h2>
                         </div>
 
-                        <Image width={1468} height={384} src={article?.imageUrl || "/assets/Image.png"} className="w-full max-h-96 rounded-md object-cover" alt="Image de présentation de l'article" />
+                        <Image width={1468} height={384} src={article?.image || "/assets/Image.png"} className="w-full max-h-96 rounded-md object-cover" alt="Image de présentation de l'article" />
 
-                        <div dangerouslySetInnerHTML={{ __html: article?.content }} className="max-w-none text-foreground min-h-[200px] focus-visible:outline-none [&_ul]:list-disc [&_ol]:list-decimal [&_ul,&_ol]:pl-6 [&_li]:my-1 [&_blockquote]:border-l-4 [&_blockquote]:pl-4 [&_blockquote]:italic [&_blockquote]:my-4 [&_h1]:text-3xl [&_h1]:font-bold [&_h1]:mt-4 [&_h1]:mb-2 [&_h2]:text-2xl [&_h2]:font-bold [&_h2]:mt-4 [&_h2]:mb-2 [&_h3]:text-xl [&_h3]:font-semibold [&_h3]:mt-4 [&_h3]:mb-2 [&_h4]:text-lg [&_h4]:font-semibold [&_h4]:mt-3 [&_h4]:mb-2 [&_h5]:text-md [&_h5]:font-medium [&_h5]:mt-3 [&_h5]:mb-2 [&_h6]:text-base [&_h6]:font-medium [&_h6]:mt-2 [&_h6]:mb-2" />
+                        <div dangerouslySetInnerHTML={{ __html: article?.content ?? "" }} className="max-w-none text-foreground min-h-[200px] focus-visible:outline-none [&_ul]:list-disc [&_ol]:list-decimal [&_ul,&_ol]:pl-6 [&_li]:my-1 [&_blockquote]:border-l-4 [&_blockquote]:pl-4 [&_blockquote]:italic [&_blockquote]:my-4 [&_h1]:text-3xl [&_h1]:font-bold [&_h1]:mt-4 [&_h1]:mb-2 [&_h2]:text-2xl [&_h2]:font-bold [&_h2]:mt-4 [&_h2]:mb-2 [&_h3]:text-xl [&_h3]:font-semibold [&_h3]:mt-4 [&_h3]:mb-2 [&_h4]:text-lg [&_h4]:font-semibold [&_h4]:mt-3 [&_h4]:mb-2 [&_h5]:text-md [&_h5]:font-medium [&_h5]:mt-3 [&_h5]:mb-2 [&_h6]:text-base [&_h6]:font-medium [&_h6]:mt-2 [&_h6]:mb-2" />
                     </>
                 )}
             </Section>
@@ -316,7 +366,7 @@ export default function ArticlePage() {
                     comments.length === 0 ? (
                         <p className="text-muted-foreground">Aucun commentaire pour le moment. Ecrivez le premier commentaire sur cet article.</p>
                     ) : (
-                        comments.map((comment: any) => (
+                        comments.map((comment: CommentItem) => (
                             <div key={comment.id} className="flex gap-3 items-start">
                                 <Avatar className="w-10 h-10 border-4">
                                     <AvatarImage src={`/assets/profile/${comment.user?.picture ?? "Ander.png"}`} />
