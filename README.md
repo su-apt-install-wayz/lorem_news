@@ -19,18 +19,33 @@ Vous devez également configurer les fichiers d’environnement :
 - `./frontend/.env.local`  
   Exemple :  
   ```env
-  NEXT_PUBLIC_API_URL=http://localhost:8080
+  AUTH_SECRET="" # Added by `npx auth`. Read more: https://cli.authjs.dev
   NEXTAUTH_URL=http://localhost
-  AUTH_SECRET=...
+  AUTH_URL=http://localhost
+  API_URL=http://nginx
   ```
 
 - `./backend/.env`  
-  Contient la configuration de la base de données, Redis, CORS et la clé JWT :  
+  Exemple :  
   ```env
-  DATABASE_URL=...
-  REDIS_URL=...
-  JWT_PASSPHRASE=...
-  CORS_ALLOW_ORIGIN=...
+  ###> symfony/framework-bundle ###
+  APP_ENV=dev | prod
+  APP_SECRET=
+  ###< symfony/framework-bundle ###
+
+  ###> doctrine/doctrine-bundle ###
+  DATABASE_URL="postgresql://user:mdp@db:5432/bdd?serverVersion=16&charset=utf8"
+  ###< doctrine/doctrine-bundle ###
+
+  ###> lexik/jwt-authentication-bundle ###
+  JWT_SECRET_KEY=%kernel.project_dir%/config/jwt/private.pem
+  JWT_PUBLIC_KEY=%kernel.project_dir%/config/jwt/public.pem
+  JWT_PASSPHRASE=
+  ###< lexik/jwt-authentication-bundle ###
+
+  ###> nelmio/cors-bundle ###
+  CORS_ALLOW_ORIGIN='^https?://(localhost|127\.0\.0\.1)(:[0-9]+)?$'
+  ###< nelmio/cors-bundle ###
   ```
 
 ---
@@ -102,7 +117,37 @@ docker compose logs -f nginx
 
 ---
 
-## 3. Intégration Continue & Déploiement Continu (CI/CD)
+## 3. Entrypoint backend (automatisation)
+
+Un script `entrypoint.sh` est fourni pour automatiser l’initialisation du backend :  
+
+```bash
+#!/bin/bash
+
+# Exécuter composer install si le dossier vendor n'existe pas
+if [ ! -d "vendor" ]; then
+    composer install --no-interaction --optimize-autoloader
+    php bin/console doctrine:migrations:migrate --no-interaction
+fi
+
+# Exécuter génération clés JWT si répertoire n'existe pas
+if [ ! -d "config/jwt" ]; then
+    php bin/console lexik:jwt:generate-keypair
+fi
+
+# Lancer PHP-FPM
+php-fpm
+```
+
+Ce script garantit que :
+- Les dépendances Symfony sont installées.  
+- Les migrations sont appliquées.  
+- Les clés JWT sont générées si nécessaires.  
+- PHP-FPM démarre correctement.  
+
+---
+
+## 4. Intégration Continue & Déploiement Continu (CI/CD)
 
 Le projet utilise **GitHub Actions** pour automatiser :  
 - **Les tests** (unitaires, intégration, end-to-end).  
@@ -112,7 +157,7 @@ Le projet utilise **GitHub Actions** pour automatiser :
 
 ---
 
-### 3.1 Workflows GitHub Actions
+### 4.1 Workflows GitHub Actions
 
 #### 🔹 Déploiement (`deploy.yml`)
 - Déclenché sur **push sur `main`**.  
@@ -151,14 +196,14 @@ Le projet utilise **GitHub Actions** pour automatiser :
 
 ---
 
-### 3.2 Cycle complet CI/CD
+### 4.2 Cycle complet CI/CD
 1. **Push sur `develop`** → tests et builds (frontend & backend).  
 2. **Pull Request vers `main`** → CI complète (lint + tests + SonarCloud).  
 3. **Merge sur `main`** → build des images Docker + publication + déploiement auto.  
 
 ---
 
-## 4. Schéma du workflow CI/CD
+## 5. Schéma du workflow CI/CD
 
 ```mermaid
 flowchart TD
@@ -174,7 +219,7 @@ flowchart TD
 
 ---
 
-## 5. Bonnes pratiques de maintenance
+## 6. Bonnes pratiques de maintenance
 
 - Vérifier régulièrement les logs :  
   ```bash
@@ -186,7 +231,7 @@ flowchart TD
 
 ---
 
-## 6. Résumé
+## 7. Résumé
 
 - **Local** → `docker-compose.dev.yml` (hot-reload, debug).  
 - **Production** → `docker-compose.prod.yml` (images optimisées).  
