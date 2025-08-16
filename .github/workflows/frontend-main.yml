@@ -24,7 +24,7 @@ jobs:
 
       # Étape 3 : Installation des dépendances
       - name: Install dependencies
-        run: npm install
+        run: npm ci
 
       # Étape 4 : Exécution de ESLint
       - name: Run ESLint
