@@ -36,6 +36,9 @@ COPY --from=builder /app/node_modules ./node_modules
 COPY --from=builder /app/.next ./.next
 COPY --from=builder /app/public ./public
 
+# Corriger les droits pour l'user non-root
+RUN mkdir -p .next/cache && chown -R app:app .next
+
 # Passer à l'utilisateur non-root
 USER app
 
