@@ -67,7 +67,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     private ?string $password = null;
 
     #[ORM\Column(type: Types::TEXT)]
-    #[Groups(['article:list', 'article:read', 'user:list', 'user:read', 'user:write', 'user:patch', 'comment:list', 'comment:read', 'team:list', 'team:read'])]
+    #[Groups(['article:list', 'article:read', 'user:list', 'user:read', 'user:patch', 'comment:list', 'comment:read', 'team:list', 'team:read'])]
     private ?string $picture = null;
 
     // changer ça si on peut supprimer un user avec des articles
