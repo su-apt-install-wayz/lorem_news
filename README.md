@@ -126,13 +126,16 @@ Un script `entrypoint.sh` est fourni pour automatiser l’initialisation du back
 
 # Exécuter composer install si le dossier vendor n'existe pas
 if [ ! -d "vendor" ]; then
-    composer install --no-interaction --optimize-autoloader
-    php bin/console doctrine:migrations:migrate --no-interaction
+  composer install --no-interaction --optimize-autoloader
+  php bin/console doctrine:migrations:migrate --no-interaction
+
+  php bin/console doctrine:database:create --env=test --if-not-exists
+  php bin/console doctrine:migrations:migrate --env=test -n
 fi
 
 # Exécuter génération clés JWT si répertoire n'existe pas
 if [ ! -d "config/jwt" ]; then
-    php bin/console lexik:jwt:generate-keypair
+  php bin/console lexik:jwt:generate-keypair
 fi
 
 # Lancer PHP-FPM
@@ -180,7 +183,6 @@ Le projet utilise **GitHub Actions** pour automatiser :
 - **`frontend-main.yml`**  
   - Déclenché sur **push sur `main`**.  
   - Exécute lint + tests unitaires + build.  
-  - Construit et publie l’image Docker sur DockerHub/GHCR.  
 
 ---
 
@@ -191,8 +193,7 @@ Le projet utilise **GitHub Actions** pour automatiser :
 
 - **`backend-main.yml`**  
   - Déclenché sur **push sur `main`**.  
-  - Exécute lint + tests + analyse qualité (SonarCloud).  
-  - Construit et publie l’image Docker sur DockerHub/GHCR.  
+  - Exécute lint + tests + analyse qualité (SonarCloud).   
 
 ---
 
