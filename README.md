@@ -16,7 +16,7 @@ Vous devez également configurer les fichiers d’environnement :
 - `./.env`  
   Contient les variables globales (DB, pgAdmin, secrets).  
 
-- `./frontend/.env.local`  
+- `./frontend/.env`  
   Exemple :  
   ```env
   AUTH_SECRET="" # Added by `npx auth`. Read more: https://cli.authjs.dev
@@ -213,9 +213,8 @@ flowchart TD
     C --> D[CI complète : lint + tests + SonarCloud]
     D --> E[Merge sur main]
     E --> F[Build images Docker]
-    F --> G[Push vers DockerHub/GHCR]
-    G --> H[Déploiement auto via deploy.yml]
-    H --> I[Serveur prod mis à jour]
+    F --> G[Déploiement auto via deploy.yml]
+    G --> H[Serveur prod mis à jour]
 ```
 
 ---
@@ -240,3 +239,5 @@ flowchart TD
 - **Automatisation** → déploiement auto après merge sur `main`.  
 
 ✅ Cette documentation couvre l’ensemble du cycle de vie : du développement local au déploiement automatisé en production.
+
+Date : 17/08/2025
