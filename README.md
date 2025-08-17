@@ -239,5 +239,3 @@ flowchart TD
 - **Automatisation** → déploiement auto après merge sur `main`.  
 
 ✅ Cette documentation couvre l’ensemble du cycle de vie : du développement local au déploiement automatisé en production.
-
-Date : 17/08/2025
