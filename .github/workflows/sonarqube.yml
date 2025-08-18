@@ -1,0 +1,31 @@
+name: Workflow Sonarqube
+
+on:
+  push:
+    branches:
+        - main
+        - develop
+  pull_request:
+    types: [opened, synchronize, reopened]
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build_and_test:
+    runs-on: ubuntu-latest
+
+    steps:
+      # Étape 1 : Récupération du code
+      - name: Checkout repo
+        uses: actions/checkout@v4
+        with:
+            fetch-depth: 0
+
+      # Étape 2 : Analyse SonarQube
+      - name: SonarQube Scan
+        uses: SonarSource/sonarqube-scan-action@v5
+        continue-on-error: true
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
