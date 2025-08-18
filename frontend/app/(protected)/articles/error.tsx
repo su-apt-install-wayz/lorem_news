@@ -9,7 +9,10 @@ import { AlertCircleIcon } from "lucide-react";
 export default function Error() {
     return (
         <Section className="px-0">
-            <h1 className="text-2xl text-primary font-bold text-center">LES ACTUALITÉS<span className="max-sm:hidden">{" "}DE LOREM NEWS</span></h1>
+            <div className="flex justify-between items-center gap-4">
+                <h1 className="text-2xl text-primary font-bold max-sm:text-lg">TOUS LES ARTICLES<span className="max-sm:hidden">{" "}DE LOREM NEWS</span></h1>
+                {/* <FilterPanel onFilterChange={setFilters} /> */}
+            </div>
             <Spacing size="xs" />
 
             <Alert variant="destructive" className="mb-5 border-destructive/20 bg-destructive/5 text-destructive">
