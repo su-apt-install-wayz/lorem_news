@@ -1,10 +1,9 @@
 name: Workflow for frontend - Develop
 
 on:
-  push:
+  pull_request:
     branches:
       - develop
-  pull_request:
     types: [opened, synchronize, reopened]
 
 concurrency:
