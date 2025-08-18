@@ -69,10 +69,10 @@ Une fois les conteneurs démarrés :
 
 ### 1.4 Vérification et logs
 ```bash
-docker compose ps
-docker compose logs -f nginx
-docker compose logs -f frontend
-docker compose logs -f php
+docker ps
+docker logs -f lorem_news-nginx
+docker logs -f lorem_news-frontend
+docker logs -f lorem_news-php
 ```
 
 ---
@@ -111,8 +111,10 @@ docker compose -f docker-compose.prod.yml up -d --build
 
 ### 2.4 Vérification
 ```bash
-docker compose ps
-docker compose logs -f nginx
+docker ps
+docker logs -f lorem_news-nginx
+docker logs -f lorem_news-frontend
+docker logs -f lorem_news-php
 ```
 
 ---
