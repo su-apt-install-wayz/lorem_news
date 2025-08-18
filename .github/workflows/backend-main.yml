@@ -63,11 +63,4 @@ jobs:
 
       # Étape 7 : Exécution des tests
       - name: Run tests
-        run: vendor/bin/phpunit --colors=always
-
-      # Étape 8 : Analyse SonarQube
-      - name: SonarQube Scan
-        uses: SonarSource/sonarqube-scan-action@v5
-        continue-on-error: true
-        env:
-          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+        run: vendor/bin/phpunit
