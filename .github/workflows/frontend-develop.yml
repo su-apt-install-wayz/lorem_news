@@ -7,6 +7,10 @@ on:
   pull_request:
     types: [opened, synchronize, reopened]
 
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
 jobs:
   build_and_test:
     runs-on: ubuntu-latest
@@ -37,10 +41,3 @@ jobs:
       # Étape 5 : Exécution des tests
       - name: Run Tests
         run: npm run test
-
-      # Étape 6 : Analyse SonarQube
-      - name: SonarQube Scan
-        uses: SonarSource/sonarqube-scan-action@v5
-        continue-on-error: true
-        env:
-          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
