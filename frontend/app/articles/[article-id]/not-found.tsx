@@ -10,8 +10,8 @@ export default function NotFound() {
             <Spacing size="sm" />
             <main className="w-full max-w-[1500px] mx-auto p-4 max-md:p-2">
                 <Section className="relative px-0 space-y-4 max-w-5xl">
-                    <h1 className="text-2xl font-bold">Article introuvable</h1>
-                    <p className="text-muted-foreground">Le contenu demandé n&apos;existe pas ou a été supprimé.</p>
+                    <h1 className="text-2xl font-bold text-center">Article introuvable</h1>
+                    <p className="text-muted-foreground text-center">Le contenu demandé n&apos;existe pas ou a été supprimé.</p>
                 </Section>
             </main>
             <Spacing size="lg" />
