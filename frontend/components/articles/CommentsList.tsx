@@ -5,12 +5,16 @@ import { Avatar, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { LoaderCircle as LoaderCircleIcon } from "lucide-react";
-import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
-import { AlertCircleIcon } from "lucide-react";
 import { CommentItem, handleCreateComment, handleDeleteComment, handleUpdateComment } from "@/app/articles/[article-id]/actions";
 import { Skeleton } from "@/components/ui/skeleton";
 import CommentLine from "./CommentLine";
 import { toast } from "sonner";
+
+type CommentsAction =
+    | { type: "add"; comment: CommentItem }
+    | { type: "replaceTemp"; tempId: number; real: CommentItem }
+    | { type: "update"; id: number; content: string }
+    | { type: "delete"; id: number };
 
 function sortComments(list: CommentItem[]) {
     return [...list].sort((a, b) => {
@@ -59,20 +63,25 @@ export default function CommentsList({ initialComments, articleId, currentPath }
     const [rowBusyId, setRowBusyId] = useState<number | null>(null);
     const [newComment, setNewComment] = useState("");
 
-    const [comments, apply] = useOptimistic(initialComments, (state: CommentItem[], action: any) => {
-        switch (action.type) {
-            case "add":
-                return sortComments([action.comment, ...state]);
-            case "replaceTemp":
-                return sortComments(state.map((c) => (c.id === action.tempId ? action.real : c)));
-            case "update":
-                return state.map((c) => (c.id === action.id ? { ...c, content: action.content, edited_at: new Date().toISOString() } : c));
-            case "delete":
-                return state.filter((c) => c.id !== action.id);
-            default:
-                return state;
+    const [comments, apply] = useOptimistic<CommentItem[], CommentsAction>(
+        initialComments,
+        (state, action): CommentItem[] => {
+            switch (action.type) {
+                case "add":
+                    return sortComments([action.comment, ...state]);
+                case "replaceTemp":
+                    return sortComments(state.map((c) => (c.id === action.tempId ? action.real : c)));
+                case "update":
+                    return state.map((c) =>
+                        c.id === action.id ? { ...c, content: action.content, edited_at: new Date().toISOString() } : c
+                    );
+                case "delete":
+                    return state.filter((c) => c.id !== action.id);
+                default:
+                    return state;
+            }
         }
-    });
+    );
 
     async function onAdd() {
         const content = newComment.trim();
@@ -121,7 +130,7 @@ export default function CommentsList({ initialComments, articleId, currentPath }
         startRowTransition(() => apply({ type: "delete", id }));
         try {
             const res = await handleDeleteComment(id, currentPath);
-            if (res) {  
+            if (res) {
                 toast.success("Commentaire supprimé.");
             } else {
                 toast.error("Erreur lors de la suppression.");
