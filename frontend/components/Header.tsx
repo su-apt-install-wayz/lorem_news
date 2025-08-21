@@ -14,7 +14,7 @@ import { cn } from '@/lib/utils';
 import { signOut, useSession, signIn } from 'next-auth/react';
 import { Drawer, DrawerContent, DrawerDescription, DrawerHeader, DrawerTitle, DrawerTrigger } from "@/components/ui/drawer";
 import { useRouter } from 'next/navigation';
-import { Avatar, AvatarImage } from '@/components/ui/avatar';
+import { Avatar , AvatarImage } from '@/components/ui/avatar';
 
 const components: { title: string; href: string; }[] = [
     {
@@ -117,11 +117,10 @@ export const Header = () => {
                     <NavigationMenu>
                         <NavigationMenuList>
                             <NavigationMenuItem>
-                                <NavigationMenuLink asChild>
-                                    <Link href="/" className={`${navigationMenuTriggerStyle()} font-semibold`}>Accueil</Link>
-                                </NavigationMenuLink>
+                                <Link href="/" legacyBehavior passHref>
+                                    <NavigationMenuLink className={`${navigationMenuTriggerStyle()} font-semibold`}>Accueil</NavigationMenuLink>
+                                </Link>
                             </NavigationMenuItem>
-
                             <NavigationMenuItem>
                                 <NavigationMenuTrigger className='font-semibold cursor-pointer'>Articles</NavigationMenuTrigger>
                                 <NavigationMenuContent>
